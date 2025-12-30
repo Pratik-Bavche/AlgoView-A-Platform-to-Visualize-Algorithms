@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Play, Code, Upload, Clock, ArrowRight, TrendingUp, Search, Sparkles, Zap, GitBranch } from "lucide-react";
+import { Play, Code, Code2, Upload, Clock, ArrowRight, TrendingUp, Search, Sparkles, Zap, GitBranch } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +33,78 @@ export const Dashboard = () => {
 
     const handleVisualize = (algo) => {
         navigate(`/visualize/${algo.toLowerCase().replace(/['\s]/g, '-')}`);
+    };
+
+    const [activeCategory, setActiveCategory] = useState("Sorting");
+
+    const algorithmCategories = {
+        "Sorting": [
+            { name: "Bubble Sort", desc: "Simple comparison-based sorting", complexity: "O(n²)" },
+            { name: "Selection Sort", desc: "Selects smallest element repeatedly", complexity: "O(n²)" },
+            { name: "Insertion Sort", desc: "Builds sorted array one item at a time", complexity: "O(n²)" },
+            { name: "Merge Sort", desc: "Stable, divide-and-conquer sorting", complexity: "O(n log n)" },
+            { name: "Quick Sort", desc: "Efficient divide-and-conquer sorting", complexity: "O(n log n)" },
+            { name: "Heap Sort", desc: "Binary heap-based sorting", complexity: "O(n log n)" },
+        ],
+        "Searching": [
+            { name: "Linear Search", desc: "Sequentially checks each element", complexity: "O(n)" },
+            { name: "Binary Search", desc: "Search in sorted array by dividing interval", complexity: "O(log n)" },
+        ],
+        "Graph": [
+            { name: "BFS", desc: "Breadth-First Search traversal", complexity: "O(V+E)" },
+            { name: "DFS", desc: "Depth-First Search traversal", complexity: "O(V+E)" },
+            { name: "Topological Sort", desc: "Linear ordering of vertices", complexity: "O(V+E)" },
+        ],
+        "Shortest Path": [
+            { name: "Dijkstra", desc: "Shortest path in weighted graph", complexity: "O((V+E)logV)" },
+            { name: "Bellman-Ford", desc: "Shortest path with negative edges", complexity: "O(VE)" },
+            { name: "Floyd–Warshall", desc: "All-pairs shortest path", complexity: "O(V³)" },
+        ],
+        "MST": [
+            { name: "Prim's Algo", desc: "Builds MST from arbitrary node", complexity: "O(E log V)" },
+            { name: "Kruskal's Algo", desc: "Builds MST by adding edges", complexity: "O(E log E)" },
+        ],
+        "Dynamic Prog.": [
+            { name: "Fibonacci (DP)", desc: "Calculates Fib numbers efficiently", complexity: "O(n)" },
+            { name: "Knapsack Problem", desc: "Maximize value with weight limit", complexity: "O(nW)" },
+            { name: "LCS", desc: "Longest Common Subsequence", complexity: "O(nm)" },
+            { name: "LIS", desc: "Longest Increasing Subsequence", complexity: "O(n²)" },
+        ],
+        "Greedy": [
+            { name: "Activity Selection", desc: "Max non-overlapping activities", complexity: "O(n log n)" },
+            { name: "Huffman Coding", desc: "Lossless data compression", complexity: "O(n log n)" },
+            { name: "Coin Change", desc: "Min coins for value (Greedy)", complexity: "O(V)" },
+        ],
+        "Backtracking": [
+            { name: "N-Queens", desc: "Place N queens safely on NxN board", complexity: "O(N!)" },
+            { name: "Sudoku Solver", desc: "Fills 9x9 grid with constraints", complexity: "Exponential" },
+            { name: "Rat in a Maze", desc: "Find path from start to end", complexity: "O(2^N²)" },
+        ],
+        "Divide & Conquer": [
+            { name: "Merge Sort", desc: "Sorts by dividing list into halves", complexity: "O(n log n)" },
+            { name: "Quick Sort", desc: "Sorts by partitioning around pivot", complexity: "O(n log n)" },
+            { name: "Binary Search", desc: "Search by dividing range", complexity: "O(log n)" },
+        ],
+        "Tree": [
+            { name: "Traversals", desc: "Inorder, Preorder, Postorder", complexity: "O(n)" },
+            { name: "BST Operations", desc: "Insert, Delete, Search", complexity: "O(h)" },
+            { name: "AVL Rotations", desc: "Self-balancing tree operations", complexity: "O(1)" },
+        ],
+        "String": [
+            { name: "Naive Match", desc: "Simple pattern searching", complexity: "O(mn)" },
+            { name: "KMP Algorithm", desc: "Pattern search with prefix array", complexity: "O(n+m)" },
+            { name: "Rabin-Karp", desc: "Rolling hash pattern match", complexity: "O(n+m)" },
+        ],
+        "Bit Manip.": [
+            { name: "Bitwise Ops", desc: "AND, OR, XOR operations", complexity: "O(1)" },
+            { name: "Count Set Bits", desc: "Number of 1s in binary", complexity: "O(log n)" },
+            { name: "Power of Two", desc: "Check if number is power of 2", complexity: "O(1)" },
+        ],
+        "Math": [
+            { name: "Prime Check", desc: "Determine if number is prime", complexity: "O(√n)" },
+            { name: "Sieve of Eratosthenes", desc: "Find all primes up to n", complexity: "O(n log log n)" },
+            { name: "GCD / LCM", desc: "Euclidean algorithm", complexity: "O(log(min(a,b)))" },
+        ]
     };
 
     return (
@@ -110,6 +183,49 @@ export const Dashboard = () => {
                 </div>
             </motion.div>
 
+            {/* Algorithm Catalog */}
+            <motion.div variants={item} className="space-y-4">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-bold tracking-tight">Browse Algorithms</h2>
+                </div>
+
+                <div className="flex flex-wrap gap-2 p-1 bg-muted/50 rounded-lg w-fit">
+                    {Object.keys(algorithmCategories).map((cat) => (
+                        <button
+                            key={cat}
+                            onClick={() => setActiveCategory(cat)}
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeCategory === cat
+                                ? "bg-background text-foreground shadow-sm"
+                                : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                                }`}
+                        >
+                            {cat}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {algorithmCategories[activeCategory].map((algo) => (
+                        <Card
+                            key={algo.name}
+                            className="group cursor-pointer hover:shadow-md transition-all border-primary/10 hover:border-primary/30"
+                            onClick={() => handleVisualize(algo.name)}
+                        >
+                            <CardHeader className="p-4">
+                                <div className="flex justify-between items-start mb-2">
+                                    <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                                        <Code2 className="h-4 w-4" />
+                                    </div>
+                                    <Badge variant="outline" className="text-xs font-normal">{algo.complexity}</Badge>
+                                </div>
+                                <CardTitle className="text-base">{algo.name}</CardTitle>
+                                <CardDescription className="text-xs line-clamp-2 mt-1">{algo.desc}</CardDescription>
+                            </CardHeader>
+                        </Card>
+                    ))}
+                </div>
+            </motion.div>
+
             {/* Action Cards */}
             <motion.div variants={item} className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 <Card
@@ -123,12 +239,12 @@ export const Dashboard = () => {
                         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                             <Play className="h-5 w-5 text-primary" />
                         </div>
-                        <CardTitle>Visualize Algorithm</CardTitle>
-                        <CardDescription>Choose from our extensive library</CardDescription>
+                        <CardTitle>Full Library</CardTitle>
+                        <CardDescription>View all 50+ algorithms</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <p className="text-sm text-muted-foreground">
-                            Explore popular algorithms like sorting, graphs, and trees with step-by-step guidance.
+                            Browse the complete catalog of algorithms organized by category and difficulty.
                         </p>
                     </CardContent>
                 </Card>
@@ -170,117 +286,7 @@ export const Dashboard = () => {
                 </Card>
             </motion.div>
 
-            {/* Main Content Split */}
-            <div className="grid gap-6 grid-cols-1 lg:grid-cols-7">
-                {/* Recent Activity */}
-                <motion.div variants={item} className="col-span-1 lg:col-span-4">
-                    <Card className="h-full">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Clock className="h-5 w-5 text-muted-foreground" />
-                                Recent Visualizations
-                            </CardTitle>
-                            <CardDescription>
-                                Continue where you left off.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {recentActivity.map((activity, index) => (
-                                    <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border bg-card hover:bg-accent/50 transition-colors gap-4">
-                                        <div className="flex items-start gap-4">
-                                            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-1 sm:mt-0 flex-shrink-0">
-                                                <GitBranch className="h-5 w-5" />
-                                            </div>
-                                            <div>
-                                                <h4 className="font-semibold">{activity.title}</h4>
-                                                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                                                    <span>{activity.type}</span>
-                                                    <span>•</span>
-                                                    <span>{activity.steps} steps</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
-                                            <span className="text-xs text-muted-foreground">{activity.date}</span>
-                                            <Button size="sm" variant="outline" className="h-8 gap-2" onClick={() => handleVisualize(activity.title)}>
-                                                Resume <ArrowRight className="h-3 w-3" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </motion.div>
 
-                {/* Learning Progress Widget */}
-                <motion.div variants={item} className="col-span-1 lg:col-span-3">
-                    <Card className="h-full">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <TrendingUp className="h-5 w-5 text-muted-foreground" />
-                                Learning Progress
-                            </CardTitle>
-                            <CardDescription>Track your mastery</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-6">
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <span className="font-medium text-sm">Graph Algorithms</span>
-                                        <span className="text-sm text-green-600 font-bold">75%</span>
-                                    </div>
-                                    <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                                        <div className="h-full bg-green-500 w-3/4 rounded-full transition-all duration-1000" />
-                                    </div>
-                                    <div className="flex justify-end">
-                                        <Button variant="link" size="sm" className="h-auto p-0 text-xs text-primary">
-                                            Practice specific topics &rarr;
-                                        </Button>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <span className="font-medium text-sm">Sorting</span>
-                                        <span className="text-sm text-yellow-600 font-bold">40%</span>
-                                    </div>
-                                    <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                                        <div className="h-full bg-yellow-500 w-2/5 rounded-full transition-all duration-1000" />
-                                    </div>
-                                    <div className="flex justify-end">
-                                        <Button variant="link" size="sm" className="h-auto p-0 text-xs text-primary">
-                                            Improve usage &rarr;
-                                        </Button>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <span className="font-medium text-sm">Dynamic Programming</span>
-                                        <span className="text-sm text-red-600 font-bold">10%</span>
-                                    </div>
-                                    <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                                        <div className="h-full bg-red-500 w-[10%] rounded-full transition-all duration-1000" />
-                                    </div>
-                                    <div className="flex justify-end">
-                                        <Button variant="link" size="sm" className="h-auto p-0 text-xs text-primary">
-                                            Start basic problems &rarr;
-                                        </Button>
-                                    </div>
-                                </div>
-
-                                <div className="pt-2">
-                                    <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80">
-                                        View Full Report
-                                    </Button>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </motion.div>
-            </div>
         </motion.div>
     );
 };
