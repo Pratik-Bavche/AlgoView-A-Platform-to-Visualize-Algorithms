@@ -36,6 +36,13 @@ export const Dashboard = () => {
         navigate(`/visualize/${algo.toLowerCase().replace(/['\s]/g, '-')}`);
     };
 
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const handleSearch = () => {
+        if (searchQuery.trim()) {
+            handleVisualize(searchQuery);
+        }
+    };
     const [activeCategory, setActiveCategory] = useState("Array");
     const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -316,6 +323,17 @@ export const Dashboard = () => {
         }
     };
 
+    const allAlgorithms = Object.values(algorithmCategories).flatMap(cat => [
+        ...(cat.common || []),
+        ...(cat.advanced || [])
+    ]);
+
+    const suggestions = searchQuery.trim()
+        ? allAlgorithms.filter(algo =>
+            algo.name.toLowerCase().includes(searchQuery.toLowerCase())
+        ).slice(0, 5)
+        : [];
+
     const scrollContainerRef = useRef(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
 
@@ -364,7 +382,7 @@ export const Dashboard = () => {
                     </p>
                 </div>
 
-                <div className="w-full max-w-2xl relative">
+                <div className="w-full max-w-2xl relative z-50">
                     <div className="relative group">
                         <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-purple-600 rounded-lg blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
                         <div className="relative flex items-center bg-background rounded-lg border shadow-sm">
@@ -372,12 +390,16 @@ export const Dashboard = () => {
                             <Input
                                 placeholder="Explain Bellman-Ford with negative cycle..."
                                 className="pl-12 h-14 text-lg border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/50 pr-32"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                             />
                             <div className="absolute right-2 hidden sm:block">
                                 <Button
                                     className="h-10 px-6 rounded-md"
                                     size="sm"
-                                    onClick={() => handleVisualize("Bellman-Ford")}
+                                    onClick={handleSearch}
+                                    disabled={!searchQuery.trim()}
                                 >
                                     <Sparkles className="h-4 w-4 mr-2" />
                                     Visualize
@@ -387,13 +409,33 @@ export const Dashboard = () => {
                                 <Button
                                     size="icon"
                                     className="h-10 w-10 rounded-md"
-                                    onClick={() => handleVisualize("Bellman-Ford")}
+                                    onClick={handleSearch}
+                                    disabled={!searchQuery.trim()}
                                 >
                                     <Sparkles className="h-4 w-4" />
                                 </Button>
                             </div>
                         </div>
                     </div>
+
+                    {/* Search Suggestions */}
+                    {suggestions.length > 0 && searchQuery !== suggestions[0]?.name && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-card border rounded-lg shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-1 z-50">
+                            {suggestions.map((algo) => (
+                                <div
+                                    key={algo.name}
+                                    className="px-4 py-3 hover:bg-muted/50 cursor-pointer flex items-center gap-3 transition-colors"
+                                    onClick={() => setSearchQuery(algo.name)}
+                                >
+                                    <Search className="h-4 w-4 text-muted-foreground" />
+                                    <div className="flex flex-col">
+                                        <span className="font-medium text-sm">{algo.name}</span>
+                                        <span className="text-xs text-muted-foreground">{algo.desc}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-muted-foreground">
