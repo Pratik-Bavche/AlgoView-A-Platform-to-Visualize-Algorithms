@@ -42,7 +42,7 @@ export const Dashboard = () => {
             className="space-y-8 pb-8"
         >
             {/* Hero Section */}
-            <motion.div variants={item} className="flex flex-col items-center justify-center text-center space-y-6 py-8 md:py-12">
+            <motion.div variants={item} className="flex flex-col items-center justify-center text-center space-y-6 py-8 md:py-12 px-4">
                 <div className="space-y-2">
                     <h1 className="text-3xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
                         What would you like to visualize today?
@@ -59,28 +59,39 @@ export const Dashboard = () => {
                             <Search className="absolute left-4 h-5 w-5 text-muted-foreground" />
                             <Input
                                 placeholder="Explain Bellman-Ford with negative cycle..."
-                                className="pl-12 h-14 text-lg border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/50"
+                                className="pl-12 h-14 text-lg border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/50 pr-32"
                             />
-                            <Button
-                                className="absolute right-2 h-10 px-6 rounded-md"
-                                size="sm"
-                                onClick={() => handleVisualize("Bellman-Ford")}
-                            >
-                                <Sparkles className="h-4 w-4 mr-2" />
-                                Visualize
-                            </Button>
+                            <div className="absolute right-2 hidden sm:block">
+                                <Button
+                                    className="h-10 px-6 rounded-md"
+                                    size="sm"
+                                    onClick={() => handleVisualize("Bellman-Ford")}
+                                >
+                                    <Sparkles className="h-4 w-4 mr-2" />
+                                    Visualize
+                                </Button>
+                            </div>
+                            <div className="absolute right-2 sm:hidden">
+                                <Button
+                                    size="icon"
+                                    className="h-10 w-10 rounded-md"
+                                    onClick={() => handleVisualize("Bellman-Ford")}
+                                >
+                                    <Sparkles className="h-4 w-4" />
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-muted-foreground">
-                    <span>Try:</span>
+                    <span className="hidden sm:inline">Try:</span>
                     <Badge
                         variant="secondary"
                         className="cursor-pointer hover:bg-secondary/80 transition-colors"
                         onClick={() => handleVisualize("Bubble Sort")}
                     >
-                        Bubble sort with [4,2,7,1]
+                        Bubble sort
                     </Badge>
                     <Badge
                         variant="secondary"
@@ -94,13 +105,13 @@ export const Dashboard = () => {
                         className="cursor-pointer hover:bg-secondary/80 transition-colors"
                         onClick={() => handleVisualize("N-Queens")}
                     >
-                        N-Queens Problem
+                        N-Queens
                     </Badge>
                 </div>
             </motion.div>
 
             {/* Action Cards */}
-            <motion.div variants={item} className="grid gap-6 md:grid-cols-3">
+            <motion.div variants={item} className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 <Card
                     className="hover:shadow-xl transition-all duration-300 border-primary/10 bg-gradient-to-br from-card to-primary/5 cursor-pointer group relative overflow-hidden"
                     onClick={() => navigate('/library')}
@@ -140,7 +151,7 @@ export const Dashboard = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="hover:shadow-xl transition-all duration-300 border-primary/10 cursor-pointer group relative overflow-hidden">
+                <Card className="hover:shadow-xl transition-all duration-300 border-primary/10 cursor-pointer group relative overflow-hidden md:col-span-2 lg:col-span-1">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <Upload className="w-24 h-24 text-primary transform translate-x-4 -translate-y-4" />
                     </div>
@@ -160,9 +171,9 @@ export const Dashboard = () => {
             </motion.div>
 
             {/* Main Content Split */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+            <div className="grid gap-6 grid-cols-1 lg:grid-cols-7">
                 {/* Recent Activity */}
-                <motion.div variants={item} className="col-span-4">
+                <motion.div variants={item} className="col-span-1 lg:col-span-4">
                     <Card className="h-full">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -178,7 +189,7 @@ export const Dashboard = () => {
                                 {recentActivity.map((activity, index) => (
                                     <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border bg-card hover:bg-accent/50 transition-colors gap-4">
                                         <div className="flex items-start gap-4">
-                                            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-1 sm:mt-0">
+                                            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-1 sm:mt-0 flex-shrink-0">
                                                 <GitBranch className="h-5 w-5" />
                                             </div>
                                             <div>
@@ -204,7 +215,7 @@ export const Dashboard = () => {
                 </motion.div>
 
                 {/* Learning Progress Widget */}
-                <motion.div variants={item} className="col-span-3">
+                <motion.div variants={item} className="col-span-1 lg:col-span-3">
                     <Card className="h-full">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">

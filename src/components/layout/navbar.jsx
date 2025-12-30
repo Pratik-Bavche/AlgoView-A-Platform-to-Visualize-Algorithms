@@ -24,11 +24,11 @@ export const Navbar = () => {
     const [isVoiceOn, setIsVoiceOn] = useState(false);
 
     return (
-        <div className="flex items-center p-4 border-b h-16 bg-background/50 backdrop-blur-md sticky top-0 z-30 ml-0 md:ml-64 transition-all duration-300">
+        <div className="flex items-center p-4 border-b h-16 bg-background/50 backdrop-blur-md sticky top-0 z-30 ml-0 transition-all duration-300">
             <MobileSidebar />
 
             {/* Search Bar */}
-            <div className="flex-1 px-4 hidden sm:block">
+            <div className="flex-1 px-4 hidden sm:flex justify-center">
                 <div className="relative w-full max-w-md">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
