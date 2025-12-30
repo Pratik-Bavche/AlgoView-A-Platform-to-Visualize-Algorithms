@@ -38,10 +38,12 @@ export function Sidebar({ className }) {
     return (
         <div className={cn("h-screen border-r bg-card hidden md:flex flex-col w-64 fixed left-0 top-0", className)}>
             <div className="px-6 py-6 flex items-center">
-                <div className="h-8 w-8 mr-2 bg-primary rounded-lg flex items-center justify-center">
-                    <Code2 className="h-5 w-5 text-primary-foreground" />
-                </div>
-                <h2 className="text-xl font-bold tracking-tight">AlgoView</h2>
+                <Link to="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                    <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+                        <Code2 className="h-5 w-5 text-primary-foreground" />
+                    </div>
+                    <h2 className="text-xl font-bold tracking-tight">AlgoView</h2>
+                </Link>
             </div>
 
             <ScrollArea className="flex-1 px-4">
