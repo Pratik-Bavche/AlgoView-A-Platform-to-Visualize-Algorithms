@@ -335,30 +335,70 @@ export const getAlgorithmGenerator = (id) => {
         return steps;
     };
 
+    // Generic Placeholder for unimplemented algorithms
+    const generatePlaceholderSteps = (arr, algoName = "this algorithm") => {
+        return [{
+            array: [...arr],
+            comparing: [],
+            description: `Visualization for ${algoName.replace(/-/g, ' ')} is under development. coming soon!`
+        }];
+    };
+
     const map = {
         // Sorting
         'bubble-sort': { type: 'sorting', func: generateBubbleSortSteps },
         'selection-sort': { type: 'sorting', func: generateSelectionSortSteps },
         'insertion-sort': { type: 'sorting', func: generateInsertionSortSteps },
-        'merge-sort': { type: 'sorting', func: generateBubbleSortSteps },
-        'quick-sort': { type: 'sorting', func: generateBubbleSortSteps },
+        'merge-sort': { type: 'sorting', func: (arr) => generatePlaceholderSteps(arr, 'Merge Sort') },
+        'quick-sort': { type: 'sorting', func: (arr) => generatePlaceholderSteps(arr, 'Quick Sort') },
+        'heap-sort': { type: 'sorting', func: (arr) => generatePlaceholderSteps(arr, 'Heap Sort') },
+        'counting-sort': { type: 'sorting', func: (arr) => generatePlaceholderSteps(arr, 'Counting Sort') },
+        'radix-sort': { type: 'sorting', func: (arr) => generatePlaceholderSteps(arr, 'Radix Sort') },
 
         // Searching
         'linear-search': { type: 'searching', func: generateLinearSearchSteps },
         'binary-search': { type: 'searching', func: generateBinarySearchSteps },
+        'rotated-search': { type: 'searching', func: generateLinearSearchSteps }, // Fallback to Linear for now
+        'ternary-search': { type: 'searching', func: (arr) => generatePlaceholderSteps(arr, 'Ternary Search') },
 
         // Array
         'find-max-min': { type: 'array', func: generateFindMaxMinSteps },
-        'find-max-min': { type: 'array', func: generateFindMaxMinSteps },
         'reverse-array': { type: 'array', func: generateReverseArraySteps },
         'rotate-array': { type: 'array', func: generateRotateArraySteps },
-        'two-sum': { type: 'searching', func: generateTwoSumSteps }, // Marked as searching to enable Target input
+        'two-sum': { type: 'searching', func: generateTwoSumSteps },
         'move-zeros': { type: 'array', func: generateMoveZerosSteps },
-        'remove-duplicates': { type: 'array', func: generateMoveZerosSteps }, // Placeholder logic
+        'remove-duplicates': { type: 'array', func: generateMoveZerosSteps }, // Placeholder logic using Move Zeros pattern
+
+        // Dynamic Programming (Fallbacks)
+        'fibonacci-dp': { type: 'dp', func: (arr) => generatePlaceholderSteps(arr, 'Fibonacci (DP)') },
+        'climbing-stairs': { type: 'dp', func: (arr) => generatePlaceholderSteps(arr, 'Climbing Stairs') },
+        'coin-change': { type: 'dp', func: (arr) => generatePlaceholderSteps(arr, 'Coin Change') },
+
+        // Graph (Fallbacks)
+        'bfs': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, 'BFS') },
+        'dfs': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, 'DFS') },
+        'dijkstra': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, 'Dijkstra') },
+
+        // Tree (Fallbacks)
+        'traversals': { type: 'tree', func: (arr) => generatePlaceholderSteps(arr, 'Tree Traversals') },
+
+        // Stack/Queue
+        'valid-parentheses': { type: 'stack', func: (arr) => generatePlaceholderSteps(arr, 'Valid Parentheses') },
+
+        // Linked List
+        'reverse-ll': { type: 'linked-list', func: (arr) => generatePlaceholderSteps(arr, 'Reverse Linked List') },
+
+        // Math
+        'prime-check': { type: 'math', func: (arr) => generatePlaceholderSteps(arr, 'Prime Check') },
 
         // Generic Fallback
         'default': { type: 'sorting', func: generateBubbleSortSteps }
     };
 
-    return map[key] || map['default'];
+    // Dynamic fallback for any unmapped key
+    if (!map[key]) {
+        return { type: 'unknown', func: (arr) => generatePlaceholderSteps(arr, key) };
+    }
+
+    return map[key];
 };

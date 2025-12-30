@@ -214,7 +214,7 @@ export const Visualizer = () => {
                                     value={[playbackSpeed]}
                                     max={100}
                                     step={1}
-                                    className="w-full"
+                                    className="w-full cursor-pointer"
                                     onValueChange={(val) => setPlaybackSpeed(val[0])}
                                 />
                             </div>
