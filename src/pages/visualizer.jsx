@@ -189,7 +189,7 @@ export const Visualizer = () => {
     };
 
     return (
-        <div className="h-[calc(100vh-8rem)] flex flex-col gap-4">
+        <div className="min-h-full lg:h-[calc(100vh-8rem)] flex flex-col gap-4">
             {/* Header Section */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
@@ -241,7 +241,7 @@ export const Visualizer = () => {
                     </div>
 
                     {/* Canvas Area */}
-                    <div className={`flex-1 flex px-8 pb-12 gap-2 sm:gap-4 relative pt-20 transition-all ${viewMode === 'numbers' ? 'items-center justify-center flex-wrap content-center' : 'items-end justify-center'}`}>
+                    <div className={`flex-1 flex px-8 pb-12 relative pt-20 transition-all overflow-y-auto overflow-x-hidden min-h-0 ${(viewMode === 'numbers' || viewMode === 'pointer') ? `items-center justify-center flex-wrap content-center gap-4 ${viewMode === 'pointer' ? 'gap-y-12 gap-x-12' : ''}` : 'items-end justify-center overflow-x-auto gap-2 sm:gap-4'}`}>
 
                         {viewMode === 'graph' ? (
                             <div className="relative w-full h-full flex items-center justify-center">
@@ -310,14 +310,13 @@ export const Visualizer = () => {
                                                     ${viewMode === 'bars' ? 'w-8 sm:w-12 rounded-t-md flex items-end justify-center pb-2 text-white font-bold text-xs sm:text-sm shadow-lg' : ''}
                                                     ${viewMode === 'dots' ? 'w-8 sm:w-12 flex flex-col justify-end items-center relative' : ''}
                                                     ${(viewMode === 'numbers' || viewMode === 'pointer') ? 'w-12 h-12 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-md relative' : ''}
-                                                    ${viewMode === 'pointer' ? 'mr-8' : ''}
                                                 `}
                                             >
                                                 {viewMode === 'bars' && value}
                                                 {(viewMode === 'numbers' || viewMode === 'pointer') && value}
 
                                                 {viewMode === 'pointer' && idx < stepData.array.length - 1 && (
-                                                    <div className="absolute -right-8 top-1/2 -translate-y-1/2 text-muted-foreground flex items-center justify-center w-8">
+                                                    <div className="absolute -right-12 top-1/2 -translate-y-1/2 text-muted-foreground flex items-center justify-center w-12">
                                                         <ArrowRight className="w-5 h-5" />
                                                     </div>
                                                 )}
