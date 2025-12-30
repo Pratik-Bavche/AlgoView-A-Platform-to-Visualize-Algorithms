@@ -60,21 +60,40 @@ export const Visualizer = () => {
     }, [currentStep, id]);
 
 
+    const [isReversed, setIsReversed] = useState(false);
+
+    // ... (effects)
+
     // Handle Input Change / Reset
     const handleReset = (newArray = null) => {
         setIsPlaying(false);
         if (newArray) {
-            // If array provided, standard effect will pick it up via setInputArray
-            // So we don't need to do much here except ensure state updates
-            // But setInputArray is async.
+            setInputArray(newArray);
         }
         setCurrentStep(0);
     };
 
     const handleRandomize = () => {
-        const randomArr = Array.from({ length: 8 }, () => Math.floor(Math.random() * 50) + 1);
+        let randomArr = Array.from({ length: 8 }, () => Math.floor(Math.random() * 50) + 1);
+        if (isReversed) {
+            randomArr.sort((a, b) => b - a);
+        }
         setInputArray(randomArr);
-        // Effect will trigger regeneration
+    };
+
+    const toggleReverseMode = () => {
+        const newState = !isReversed;
+        setIsReversed(newState);
+        if (newState) {
+            // Force current array to reverse sorted (Worst Case)
+            // Note: If we just want "reverse order", we reverse. 
+            // If we want "Worst Case" (Reverse Sorted), we sort descending.
+            // "Reverse Order" implies indices flip. "Worst Case" implies data values flip.
+            // Given "Reverse is enable... perform oprtaon accordingly", I'll assume Worst Case Mode (Sort Descending).
+            handleReset([...inputArray].sort((a, b) => b - a));
+        } else {
+            // If turning off, we just let it be. User can randomize next.
+        }
     };
 
     // --- Playback Control ---
@@ -240,7 +259,7 @@ export const Visualizer = () => {
                             <p className="font-medium text-foreground mb-2">Step {currentStep + 1}</p>
                             <p className="text-muted-foreground">{stepData.description}</p>
 
-                            {stepData.comparing.length > 0 && (
+                            {stepData.comparing && stepData.comparing.length > 0 && (
                                 <div className="mt-4 p-3 bg-background/50 rounded border text-xs font-mono space-y-1">
                                     <div className="flex justify-between">
                                         <span>comparing:</span>
@@ -283,8 +302,13 @@ export const Visualizer = () => {
                                     <Shuffle className="w-3 h-3 mr-2" />
                                     Randomize
                                 </Button>
-                                <Button variant="outline" className="w-full text-xs" onClick={() => handleReset([5, 4, 3, 2, 1])}>
-                                    Reverse
+                                <Button
+                                    variant="outline"
+                                    className={`w-full text-xs ${isReversed ? "border-blue-500 bg-blue-500/10 text-blue-500" : ""}`}
+                                    onClick={toggleReverseMode}
+                                    title={isReversed ? "Disable Worst-Case Mode" : "Enable Worst-Case Mode (Sorts Descending)"}
+                                >
+                                    Reverse Order
                                 </Button>
                             </div>
                             <div className="pt-2 border-t">

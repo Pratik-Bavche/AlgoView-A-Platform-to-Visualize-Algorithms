@@ -314,35 +314,62 @@ export const generateMoveZerosSteps = (initialArray) => {
     return steps;
 };
 
+export const generateRotateArraySteps = (arr) => {
+    const steps = [];
+    const array = [...arr];
+    steps.push({ array: [...array], comparing: [], description: "Initial State. Rotating right by 1 for visualization." });
+    const last = array[array.length - 1];
+    for (let i = array.length - 1; i > 0; i--) {
+        steps.push({ array: [...array], comparing: [i, i - 1], description: `Moving ${array[i - 1]} to index ${i}` });
+        array[i] = array[i - 1];
+        steps.push({ array: [...array], comparing: [i], swapped: true, description: "Moved." });
+    }
+    array[0] = last;
+    steps.push({ array: [...array], comparing: [0], swapped: true, description: `Placed last element ${last} at start.` });
+    return steps;
+};
+
+// Generic Placeholder for unimplemented algorithms
+// Generic Placeholder for unimplemented algorithms
+export const generatePlaceholderSteps = (arr, algoName = "this algorithm") => {
+    const steps = [];
+    const array = [...arr];
+
+    // Initial
+    steps.push({
+        array: [...array],
+        comparing: [],
+        description: `Visualization for ${algoName.replace(/-/g, ' ')} is under development.`
+    });
+
+    // Dummy animation loop (10 steps)
+    for (let i = 0; i < 10; i++) {
+        // Highlight random comparisons to simulate "thinking"
+        const idx1 = Math.floor(Math.random() * array.length);
+        const idx2 = Math.floor(Math.random() * array.length);
+
+        steps.push({
+            array: [...array],
+            comparing: [idx1, idx2],
+            description: `Work in progress... (Simulating step ${i + 1})`
+        });
+    }
+
+    // Final
+    steps.push({
+        array: [...array],
+        comparing: [],
+        sorted: [...Array(array.length).keys()], // Turn all blue/sorted to show "Done"
+        description: `Stay tuned for updates on ${algoName.replace(/-/g, ' ')}!`
+    });
+
+    return steps;
+};
+
 // --- Registry Mapping ---
 export const getAlgorithmGenerator = (id) => {
     // Normalize ID safely handling slashes and spaces
     const key = id.toLowerCase().replace(/['\s/]/g, '-');
-
-    // Fallback for rotation
-    const generateRotateArraySteps = (arr) => {
-        const steps = [];
-        const array = [...arr];
-        steps.push({ array: [...array], description: "Initial State. Rotating right by 1 for visualization." });
-        const last = array[array.length - 1];
-        for (let i = array.length - 1; i > 0; i--) {
-            steps.push({ array: [...array], comparing: [i, i - 1], description: `Moving ${array[i - 1]} to index ${i}` });
-            array[i] = array[i - 1];
-            steps.push({ array: [...array], comparing: [i], swapped: true, description: "Moved." });
-        }
-        array[0] = last;
-        steps.push({ array: [...array], comparing: [0], swapped: true, description: `Placed last element ${last} at start.` });
-        return steps;
-    };
-
-    // Generic Placeholder for unimplemented algorithms
-    const generatePlaceholderSteps = (arr, algoName = "this algorithm") => {
-        return [{
-            array: [...arr],
-            comparing: [],
-            description: `Visualization for ${algoName.replace(/-/g, ' ')} is under development. coming soon!`
-        }];
-    };
 
     const map = {
         // Sorting
@@ -367,7 +394,7 @@ export const getAlgorithmGenerator = (id) => {
         'rotate-array': { type: 'array', func: generateRotateArraySteps },
         'two-sum': { type: 'searching', func: generateTwoSumSteps },
         'move-zeros': { type: 'array', func: generateMoveZerosSteps },
-        'remove-duplicates': { type: 'array', func: generateMoveZerosSteps }, // Placeholder logic using Move Zeros pattern
+        'remove-duplicates': { type: 'array', func: generateMoveZerosSteps }, // Placeholder
 
         // Dynamic Programming (Fallbacks)
         'fibonacci-dp': { type: 'dp', func: (arr) => generatePlaceholderSteps(arr, 'Fibonacci (DP)') },
@@ -378,6 +405,20 @@ export const getAlgorithmGenerator = (id) => {
         'bfs': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, 'BFS') },
         'dfs': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, 'DFS') },
         'dijkstra': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, 'Dijkstra') },
+        'bellman-ford': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, 'Bellman Ford') },
+        'floyd-warshall': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, 'Floyd Warshall') },
+        'prim-s-algo': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, "Prim's Algorithm") },
+        'kruskal-s': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, "Kruskal's Algorithm") },
+        'union-find': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, 'Union Find') },
+        'topological-sort': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, 'Topological Sort') },
+        'cycle-detect': { type: 'graph', func: (arr) => generatePlaceholderSteps(arr, 'Cycle Detection') },
+
+        // DP & Others
+        '0-1-knapsack': { type: 'dp', func: (arr) => generatePlaceholderSteps(arr, '0/1 Knapsack') },
+        'lcs': { type: 'dp', func: (arr) => generatePlaceholderSteps(arr, 'Longest Common Subsequence') },
+        'max-subarray': { type: 'array', func: (arr) => generatePlaceholderSteps(arr, 'Maximum Subarray') },
+        'n-queens': { type: 'backtracking', func: (arr) => generatePlaceholderSteps(arr, 'N-Queens') },
+        'sudoku-solver': { type: 'backtracking', func: (arr) => generatePlaceholderSteps(arr, 'Sudoku Solver') },
 
         // Tree (Fallbacks)
         'traversals': { type: 'tree', func: (arr) => generatePlaceholderSteps(arr, 'Tree Traversals') },
