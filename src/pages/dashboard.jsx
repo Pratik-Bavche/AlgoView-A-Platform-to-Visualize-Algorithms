@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Code2, Search, Sparkles, Zap, ChevronLeft, ChevronRight } from "lucide-react";
@@ -38,7 +38,18 @@ export const Dashboard = () => {
             handleVisualize(searchQuery);
         }
     };
-    const [activeCategory, setActiveCategory] = useState("Array");
+    const [activeCategory, setActiveCategory] = useState(() => {
+        // Persist category across navigation
+        if (typeof window !== "undefined") {
+            return localStorage.getItem("activeCategory") || "Array";
+        }
+        return "Array";
+    });
+
+    // Update localStorage when activeCategory changes
+    useEffect(() => {
+        localStorage.setItem("activeCategory", activeCategory);
+    }, [activeCategory]);
     const [showAdvanced, setShowAdvanced] = useState(false);
 
     const algorithmCategories = {
@@ -210,7 +221,7 @@ export const Dashboard = () => {
         "Stack": {
             common: [
                 { name: "Valid Parentheses", desc: "Check balanced brackets", complexity: "O(n)" },
-                { name: "Implementation", desc: "Basic stack operations", complexity: "O(1)" },
+                { name: "Stack Implementation", desc: "Basic stack operations", complexity: "O(1)" },
             ],
             advanced: [
                 { name: "Next Greater", desc: "Find next greater element", complexity: "O(n)" },
@@ -220,18 +231,18 @@ export const Dashboard = () => {
         },
         "Queue": {
             common: [
-                { name: "Implementation", desc: "Basic queue operations", complexity: "O(1)" },
+                { name: "Queue Implementation", desc: "Basic queue operations", complexity: "O(1)" },
                 { name: "Circular Queue", desc: "Ring buffer implementation", complexity: "O(1)" },
             ],
             advanced: [
-                { name: "Sliding Window", desc: "Maximum in sliding window", complexity: "O(n)" },
-                { name: "Deque Apps", desc: "Double-ended queue problems", complexity: "O(1)" },
+                { name: "Sliding Window Max", desc: "Maximum in sliding window", complexity: "O(n)" },
+                { name: "Deque Applications", desc: "Double-ended queue problems", complexity: "O(1)" },
             ]
         },
         "Heap": {
             common: [
-                { name: "K Largest/Smallest", desc: "Find top k elements", complexity: "O(n log k)" },
-                { name: "Heap Sort", desc: "Sort using heap", complexity: "O(n log n)" },
+                { name: "K Largest Smallest", desc: "Find top k elements", complexity: "O(n log k)" },
+                { name: "Heap Sort Algo", desc: "Sort using heap", complexity: "O(n log n)" },
             ],
             advanced: [
                 { name: "Median Stream", desc: "Find median in data stream", complexity: "O(log n)" },
@@ -241,9 +252,9 @@ export const Dashboard = () => {
         },
         "Linked List": {
             common: [
-                { name: "Reverse LL", desc: "Reverse linked list", complexity: "O(n)" },
-                { name: "Detect Loop", desc: "Cycle detection (Floyd's)", complexity: "O(n)" },
-                { name: "Find Middle", desc: "Middle of linked list", complexity: "O(n)" },
+                { name: "Reverse Linked List", desc: "Reverse linked list", complexity: "O(n)" },
+                { name: "Detect Loop Floyd s", desc: "Cycle detection (Floyd's)", complexity: "O(n)" },
+                { name: "Middle of Linked List", desc: "Middle of linked list", complexity: "O(n)" },
             ],
             advanced: [
                 { name: "Merge Two", desc: "Merge sorted lists", complexity: "O(n)" },
@@ -257,63 +268,51 @@ export const Dashboard = () => {
                 { name: "Max Sum Sub.", desc: "Max sum of subarray size K", complexity: "O(n)" },
             ],
             advanced: [
-                { name: "Longest Substr", desc: "No repeating chars", complexity: "O(n)" },
-                { name: "Min Window", desc: "Minimum window substring", complexity: "O(n)" },
+                { name: "Max Sum Subarray of Size K", desc: "Sliding window of size k", complexity: "O(n)" },
+                { name: "Longest Substring Without Repeating Characters", desc: "Longest unique substring", complexity: "O(n)" },
+                { name: "Minimum Window Substring", desc: "Smallest window with all chars", complexity: "O(n)" },
             ]
         },
         "Two Pointer": {
             common: [
-                { name: "Pair Sum", desc: "Find pair with target sum", complexity: "O(n)" },
-                { name: "Remove Dup.", desc: "Remove duplicates sorted", complexity: "O(n)" },
+                { name: "Two Sum Sorted", desc: "Find pair with target sum", complexity: "O(n)" },
+                { name: "Remove Duplicates from Sorted Array", desc: "Remove duplicates sorted", complexity: "O(n)" },
             ],
             advanced: [
-                { name: "Container", desc: "Most water container", complexity: "O(n)" },
-                { name: "3-Sum / 4-Sum", desc: "Find triplets/quads summing to 0", complexity: "O(n²)" },
+                { name: "Container With Most Water", desc: "Most water container", complexity: "O(n)" },
+                { name: "Sum 3Sum", desc: "Find triplets summing to 0", complexity: "O(n²)" },
             ]
         },
         "Matrix": {
             common: [
-                { name: "Traversal", desc: "Row-wise / Col-wise", complexity: "O(nm)" },
-                { name: "Row/Col Sum", desc: "Sum of rows and columns", complexity: "O(nm)" },
+                { name: "Spiral Matrix", desc: "Clockwise spiral traversal", complexity: "O(nm)" },
+                { name: "Rotate Matrix", desc: "Rotate image 90 degrees", complexity: "O(nm)" },
             ],
             advanced: [
-                { name: "Rotate Matrix", desc: "Rotate image 90 degrees", complexity: "O(nm)" },
-                { name: "Flood Fill", desc: "DFS on grid", complexity: "O(nm)" },
+                { name: "Flood Fill", desc: "Color filling algorithm", complexity: "O(nm)" },
                 { name: "Island Count", desc: "Number of islands in grid", complexity: "O(nm)" },
-                { name: "Word Search", desc: "Find word in matrix", complexity: "Exponential" },
+                { name: "Word Search Matrix", desc: "Find word in matrix", complexity: "Exponential" },
             ]
         },
         "Recursion": {
             common: [
-                { name: "Factorial", desc: "Calculate n!", complexity: "O(n)" },
-                { name: "Fibonacci", desc: "Nth Fibonacci number", complexity: "O(2^n)" },
-                { name: "Power Calc", desc: "Calculate x^n", complexity: "O(n)" },
+                { name: "Factorial", desc: "Recursive factorial", complexity: "O(n)" },
+                { name: "Fibonacci Recursive", desc: "Recursive fibonacci", complexity: "O(2ⁿ)" },
             ],
             advanced: [
-                { name: "Tower of Hanoi", desc: "Classic recursion puzzle", complexity: "O(2^n)" },
-                { name: "Tree Recursion", desc: "Solving tree problems", complexity: "O(n)" },
-                { name: "Backtracking", desc: "General backtracking", complexity: "Exponential" },
-            ]
-        },
-        "Union-Find": {
-            common: [
-                { name: "DSU Impl.", desc: "Disjoint Set Union basics", complexity: "O(α(n))" },
-            ],
-            advanced: [
-                { name: "Cycle Detect", desc: "Cycle detection using DSU", complexity: "O(α(n))" },
-                { name: "Network Connect", desc: "Connectivity problems", complexity: "O(α(n))" },
+                { name: "Tower of Hanoi", desc: "Classic recursive puzzle", complexity: "O(2ⁿ)" },
             ]
         },
         "Real-World": {
             common: [
-                { name: "Scheduling", desc: "Basic task scheduling", complexity: "O(n)" },
-                { name: "Resource Alloc.", desc: "Simple resource distribution", complexity: "O(n)" },
+                { name: "GPS Route Planning", desc: "Shortest path in city maps", complexity: "O(E log V)" },
+                { name: "Meeting Scheduler", desc: "Conflict-free time allocation", complexity: "O(n log n)" },
+                { name: "Resource Allocation", desc: "Distribute tasks across servers", complexity: "O(n)" },
             ],
             advanced: [
-                { name: "TSP", desc: "Traveling Salesman Problem", complexity: "NP-Hard" },
-                { name: "Max Flow", desc: "Network flow algorithms", complexity: "O(V²E)" },
-                { name: "Load Balance", desc: "Distribute load efficiently", complexity: "O(n)" },
-                { name: "Routing Opt.", desc: "Optimizing network paths", complexity: "NP-Hard" },
+                { name: "Network Max Flow", desc: "Pushing data through networks", complexity: "O(V E²)" },
+                { name: "Knapsack Packing", desc: "Maximize value in container", complexity: "O(nW)" },
+                { name: "Job-Candidate Matching", desc: "Optimal bipartite matching", complexity: "O(V E)" },
             ]
         }
     };
@@ -445,9 +444,9 @@ export const Dashboard = () => {
                     <Badge
                         variant="secondary"
                         className="cursor-pointer hover:bg-secondary/80 transition-colors"
-                        onClick={() => handleVisualize("Dijkstra")}
+                        onClick={() => handleVisualize("Anagram Check")}
                     >
-                        Dijkstra's Algorithm
+                        Anagram Check
                     </Badge>
                     <Badge
                         variant="secondary"

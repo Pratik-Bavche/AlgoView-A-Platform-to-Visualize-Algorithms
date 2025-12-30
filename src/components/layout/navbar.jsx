@@ -1,6 +1,15 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { User, LayoutDashboard, Home } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
+    Menu,
+    Search,
+    Bell,
+    Settings,
+    User,
+    LogOut,
+    Home,
+    LayoutDashboard
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
@@ -16,7 +25,6 @@ const titles = [
 ];
 
 export const Navbar = () => {
-    const [isVoiceOn, setIsVoiceOn] = useState(false);
     const [statusIndex, setStatusIndex] = useState(0);
 
     useEffect(() => {

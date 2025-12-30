@@ -1,0 +1,120 @@
+﻿
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\components\layout\navbar.jsx
+   4:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                 no-unused-vars
+  19:12  error  'isVoiceOn' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u     no-unused-vars
+  19:23  error  'setIsVoiceOn' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\components\ui\badge.jsx
+  32:17  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\components\ui\button.jsx
+  48:18  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\components\visualizers\ArrayVisualizer.jsx
+   2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  19:35  error  'value' is defined but never used                                              no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\components\visualizers\BacktrackingVisualizer.jsx
+    2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  149:48  error  'problemType' is defined but never used                                        no-unused-vars
+  149:61  error  'history' is defined but never used                                            no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\components\visualizers\BitVisualizer.jsx
+   2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u         no-unused-vars
+   4:41  error  'label' is defined but never used                                                     no-unused-vars
+  66:9   error  'type' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\components\visualizers\GraphVisualizer.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\components\visualizers\GreedyVisualizer.jsx
+  15:49  error  'value' is defined but never used  no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\components\visualizers\GridVisualizer.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\components\visualizers\MathVisualizer.jsx
+   2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                    no-unused-vars
+  63:9   error  'secondaryValues' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  66:9   error  'operation' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u        no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\components\visualizers\SortingVisualizer.jsx
+   2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u            no-unused-vars
+   9:9   error  'swapped' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  17:33  error  'value' is defined but never used                                                        no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\components\visualizers\StringVisualizer.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\lib\algorithms.js
+  1747:11  error  'createGrid' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  2225:43  error  '_' is defined but never used                                                               no-unused-vars
+  2225:46  error  'r' is defined but never used                                                               no-unused-vars
+  2226:40  error  '_' is defined but never used                                                               no-unused-vars
+  2226:43  error  'c' is defined but never used                                                               no-unused-vars
+  2733:43  error  'inputArray' is defined but never used                                                      no-unused-vars
+  2822:11  error  'isSafe' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u      no-unused-vars
+  3565:19  error  'oldHash' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u     no-unused-vars
+  3714:11  error  'bits' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u        no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\lib\combinations_logic.js
+  1:43  error  'inputArray' is defined but never used  no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\lib\word_search_logic.js
+  26:11  error  'isSafe' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\pages\dashboard.jsx
+    3:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               no-unused-vars
+  367:14  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+  365 |
+  366 |     // Initial check
+> 367 |     useState(() => {
+      |              ^^^^^^^
+> 368 |         checkScroll();
+      | ^^^^^^^^^^^^^^^^^^^^^^
+> 369 |     }, []);
+      | ^^^^^^ Passing a ref to a function may read its value during render
+  370 |
+  371 |     return (
+  372 |         <motion.div  react-hooks/refs
+
+D:\DYPCOE\Additional\WEB\Projects\AlgoView\src\pages\visualizer.jsx
+  127:8   warning  React Hook useEffect has a missing dependency: 'generator'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               react-hooks/exhaustive-deps
+  241:13  error    Error: Cannot access variable before it is declared
+
+`saveProgress` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  239 |     useEffect(() => {
+  240 |         if (steps.length > 0) {
+> 241 |             saveProgress(generator.type === 'string' ? mainString : inputArray, currentStep);
+      |             ^^^^^^^^^^^^ `saveProgress` accessed before it is declared
+  242 |         }
+  243 |     }, [currentStep, inputArray, mainString, steps, generator.type]);
+  244 |
+
+  243 |     }, [currentStep, inputArray, mainString, steps, generator.type]);
+  244 |
+> 245 |     const saveProgress = (data, step) => {
+      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 246 |         localStorage.setItem(`algoView_${id}`, JSON.stringify({
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 247 |             data: data,
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 248 |             step: step,
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 249 |             timestamp: new Date().toISOString()
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 250 |         }));
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 251 |     };
+      | ^^^^^^^ `saveProgress` is declared here
+  252 |
+  253 |     // --- Render Helpers ---
+  254 |     const stepData = steps[currentStep] || {  react-hooks/immutability
+  243:8   warning  React Hook useEffect has a missing dependency: 'saveProgress'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            react-hooks/exhaustive-deps
+
+Γ£û 39 problems (37 errors, 2 warnings)
+
