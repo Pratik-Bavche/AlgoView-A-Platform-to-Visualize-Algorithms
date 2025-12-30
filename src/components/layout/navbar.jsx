@@ -1,27 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, Globe, Mic, MicOff, Bell, User, Flame, Shuffle, Trophy, Sparkles, LayoutDashboard } from "lucide-react";
+import { User, LayoutDashboard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge"; // Ensure Badge is imported if not already, or use a styled div
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const titles = [
     "Visualize complex algorithms with ease",

@@ -1,8 +1,6 @@
-import { Menu } from "lucide-react";
+import { Menu, Home, Library, TestTube, Save, BarChart, Settings, Code2 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Sidebar } from "@/components/layout/sidebar";
-import { Home, Library, TestTube, Save, BarChart, Settings, Code2 } from "lucide-react";
 
 export const MobileSidebar = () => {
 

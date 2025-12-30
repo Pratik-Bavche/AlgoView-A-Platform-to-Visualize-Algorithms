@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, SkipBack, SkipForward, RotateCcw, Settings, ChevronRight, Shuffle, BarChart2, Circle, Grid, Network, ArrowRight } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, RotateCcw, ChevronRight, Shuffle, BarChart2, Circle, Grid, Network, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -87,36 +87,12 @@ export const Visualizer = () => {
         }
     }, [id, algorithmName]);
 
-    // Check for saved progress on mount (only once per id)
-    useEffect(() => {
-        const saved = localStorage.getItem(`algoView_${id || 'bubble-sort'}`);
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                // Apply saved state if valid? 
-                // Actually, simpler to just restore step if array matches, 
-                // but for now let's just restore step index if possible, 
-                // or just ignore to avoid sync issues. 
-                // Let's stick to fresh start for consistency unless simple.
-                // We will skip complex restore for now to ensure stability.
-            } catch (e) { }
-        }
-    }, [id]);
 
-    // Save progress
-    useEffect(() => {
-        if (currentStep > 0) {
-            localStorage.setItem(`algoView_${id || 'bubble-sort'}`, JSON.stringify({
-                step: currentStep,
-                timestamp: new Date().toISOString()
-            }));
-        }
-    }, [currentStep, id]);
 
 
     const [isReversed, setIsReversed] = useState(false);
 
-    // ... (effects)
+
 
     // Handle Input Change / Reset
     const handleReset = (newArray = null) => {

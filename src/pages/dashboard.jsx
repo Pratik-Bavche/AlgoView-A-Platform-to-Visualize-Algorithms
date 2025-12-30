@@ -1,12 +1,11 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Play, Code, Code2, Upload, Clock, ArrowRight, TrendingUp, Search, Sparkles, Zap, GitBranch, ChevronLeft, ChevronRight } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Code2, Search, Sparkles, Zap, ChevronLeft, ChevronRight } from "lucide-react";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const Dashboard = () => {
     const navigate = useNavigate();
@@ -26,11 +25,7 @@ export const Dashboard = () => {
         show: { y: 0, opacity: 1 }
     };
 
-    const recentActivity = [
-        { title: "Dijkstra's Algorithm", type: "Graph", steps: 12, date: "2 hours ago", status: "Completed" },
-        { title: "Merge Sort Visualization", type: "Sorting", steps: 45, date: "Yesterday", status: "In Progress" },
-        { title: "Binary Search Tree", type: "Tree", steps: 8, date: "2 days ago", status: "Completed" },
-    ];
+
 
     const handleVisualize = (algo) => {
         navigate(`/visualize/${algo.toLowerCase().replace(/['\s/]/g, '-')}`);
