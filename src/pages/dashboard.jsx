@@ -33,7 +33,7 @@ export const Dashboard = () => {
     ];
 
     const handleVisualize = (algo) => {
-        navigate(`/visualize/${algo.toLowerCase().replace(/['\s]/g, '-')}`);
+        navigate(`/visualize/${algo.toLowerCase().replace(/['\s/]/g, '-')}`);
     };
 
     const [searchQuery, setSearchQuery] = useState("");
