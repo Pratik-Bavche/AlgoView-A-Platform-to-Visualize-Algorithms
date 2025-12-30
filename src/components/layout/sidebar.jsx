@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Home, Zap, Clock, Code2 } from "lucide-react";
+import { Home, Zap, Clock, Code2, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function Sidebar({ className }) {
     const [recentItems, setRecentItems] = useState([]);
@@ -82,23 +83,17 @@ export function Sidebar({ className }) {
             </ScrollArea>
 
             <div className="p-4 mt-auto">
-                <div className="bg-gradient-to-br from-primary/10 to-purple-500/10 rounded-xl p-4 border border-primary/10">
-                    <div className="flex items-center gap-2 mb-2">
-                        <div className="bg-primary/20 p-1.5 rounded-md">
-                            <Zap className="h-4 w-4 text-primary" />
-                        </div>
-                        <h4 className="font-semibold text-sm text-primary">Pro Features</h4>
+                <div className="bg-muted/30 rounded-xl p-3 border border-border/50 flex items-center gap-3">
+                    <Avatar className="h-9 w-9 border border-border">
+                        <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
+                        <AvatarFallback>IV</AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col flex-1 overflow-hidden">
+                        <span className="text-sm font-medium truncate">John Doe</span>
+                        <span className="text-xs text-muted-foreground truncate">Free Plan</span>
                     </div>
-                    <ul className="text-xs text-muted-foreground space-y-1 mb-3 pl-1">
-                        <li className="flex items-center gap-1.5">
-                            <span className="h-1 w-1 rounded-full bg-primary" /> Advanced Algorithms
-                        </li>
-                        <li className="flex items-center gap-1.5">
-                            <span className="h-1 w-1 rounded-full bg-primary" /> Voice Explanations
-                        </li>
-                    </ul>
-                    <Button size="sm" className="w-full h-8 text-xs bg-primary hover:bg-primary/90 shadow-sm">
-                        Upgrade to Pro
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                        <Settings className="h-4 w-4" />
                     </Button>
                 </div>
             </div>
