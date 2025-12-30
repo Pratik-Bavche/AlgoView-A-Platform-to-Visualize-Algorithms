@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { User, LayoutDashboard } from "lucide-react";
+import { User, LayoutDashboard, Home } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
@@ -54,6 +54,13 @@ export const Navbar = () => {
                     <Link to="/">
                         <LayoutDashboard className="h-4 w-4" />
                         Dashboard
+                    </Link>
+                </Button>
+
+                {/* Home Icon for Mobile */}
+                <Button variant="ghost" size="icon" asChild className="md:hidden">
+                    <Link to="/">
+                        <Home className="h-5 w-5" />
                     </Link>
                 </Button>
 

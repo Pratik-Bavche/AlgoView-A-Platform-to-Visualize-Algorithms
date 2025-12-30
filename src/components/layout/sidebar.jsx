@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-export function Sidebar({ className }) {
+export function Sidebar({ className, isMobile = false, onItemClick }) {
     const [recentItems, setRecentItems] = useState([]);
 
     useEffect(() => {
@@ -35,9 +35,18 @@ export function Sidebar({ className }) {
     }, []);
 
     return (
-        <div className={cn("h-screen border-r bg-card hidden md:flex flex-col w-64 fixed left-0 top-0", className)}>
+        <div className={cn(
+            "h-screen border-r bg-card flex flex-col",
+            !isMobile && "hidden md:flex w-64 fixed left-0 top-0",
+            isMobile && "w-full border-none",
+            className
+        )}>
             <div className="px-6 py-6 flex items-center">
-                <Link to="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                <Link
+                    to="/"
+                    className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={onItemClick}
+                >
                     <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
                         <Code2 className="h-5 w-5 text-primary-foreground" />
                     </div>
@@ -62,6 +71,7 @@ export function Sidebar({ className }) {
                                         variant="ghost"
                                         className="w-full justify-start font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all text-sm h-9"
                                         asChild
+                                        onClick={onItemClick}
                                     >
                                         <Link to={item.href}>
                                             <Clock className="mr-3 h-4 w-4" />
