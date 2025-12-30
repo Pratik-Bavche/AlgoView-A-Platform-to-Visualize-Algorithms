@@ -354,9 +354,9 @@ export const Dashboard = () => {
             {/* ... keeping Hero section ... */}
 
             {/* Hero Section */}
-            <motion.div variants={item} className="flex flex-col items-center justify-center text-center space-y-6 py-8 md:py-12 px-4">
+            <motion.div variants={item} className="flex flex-col items-center justify-center text-center space-y-6 pt-2 pb-6 px-4">
                 <div className="space-y-2">
-                    <h1 className="text-3xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                    <h1 className="text-3xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent pb-2 leading-tight">
                         What would you like to visualize today?
                     </h1>
                     <p className="text-muted-foreground text-lg max-w-[600px] mx-auto">
@@ -527,64 +527,7 @@ export const Dashboard = () => {
             </motion.div>
 
             {/* Action Cards */}
-            <motion.div variants={item} className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                <Card
-                    className="hover:shadow-xl transition-all duration-300 border-primary/10 bg-gradient-to-br from-card to-primary/5 cursor-pointer group relative overflow-hidden"
-                    onClick={() => navigate('/library')}
-                >
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <Play className="w-24 h-24 text-primary transform translate-x-4 -translate-y-4" />
-                    </div>
-                    <CardHeader>
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                            <Play className="h-5 w-5 text-primary" />
-                        </div>
-                        <CardTitle>Full Library</CardTitle>
-                        <CardDescription>View all 50+ algorithms</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                            Browse the complete catalog of algorithms organized by category and difficulty.
-                        </p>
-                    </CardContent>
-                </Card>
 
-                <Card className="hover:shadow-xl transition-all duration-300 border-primary/10 cursor-pointer group relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <Code className="w-24 h-24 text-primary transform translate-x-4 -translate-y-4" />
-                    </div>
-                    <CardHeader>
-                        <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                            <Code className="h-5 w-5 text-blue-500" />
-                        </div>
-                        <CardTitle>Custom Input</CardTitle>
-                        <CardDescription>Paste code, array, or graph data</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                            Visualize your own data structures and see how algorithms process your specific inputs.
-                        </p>
-                    </CardContent>
-                </Card>
-
-                <Card className="hover:shadow-xl transition-all duration-300 border-primary/10 cursor-pointer group relative overflow-hidden md:col-span-2 lg:col-span-1">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <Upload className="w-24 h-24 text-primary transform translate-x-4 -translate-y-4" />
-                    </div>
-                    <CardHeader>
-                        <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                            <Upload className="h-5 w-5 text-purple-500" />
-                        </div>
-                        <CardTitle>Upload Problem</CardTitle>
-                        <CardDescription>Extract from book or screenshot</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                            Take a picture of a textbook problem or whiteboard and let AI convert it to a visualization.
-                        </p>
-                    </CardContent>
-                </Card>
-            </motion.div>
 
 
         </motion.div>

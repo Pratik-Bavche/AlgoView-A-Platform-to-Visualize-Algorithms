@@ -27,17 +27,7 @@ export const Navbar = () => {
         <div className="flex items-center p-4 border-b h-16 bg-background/50 backdrop-blur-md sticky top-0 z-30 ml-0 transition-all duration-300">
             <MobileSidebar />
 
-            {/* Search Bar */}
-            <div className="flex-1 px-4 hidden sm:flex justify-center">
-                <div className="relative w-full max-w-md">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        type="search"
-                        placeholder="Explain Bellman-Ford..."
-                        className="w-full pl-9 bg-secondary/50 border-none ring-offset-0 focus-visible:ring-1 focus-visible:ring-primary rounded-xl"
-                    />
-                </div>
-            </div>
+
 
             <div className="flex items-center gap-x-3 ml-auto">
                 {/* Language Selector */}
