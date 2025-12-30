@@ -1,14 +1,39 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, SkipBack, SkipForward, RotateCcw, Settings, ChevronRight, Shuffle } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, RotateCcw, Settings, ChevronRight, Shuffle, BarChart2, Circle, Grid, Network, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { getAlgorithmGenerator } from "@/lib/algorithms";
+
+const getAlgorithmDescription = (id) => {
+    const map = {
+        'bubble-sort': "Bubble Sort repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order. This pass through the list is repeated until the list is sorted.",
+        'selection-sort': "Selection Sort divides the input list into two parts: the sublist of items already sorted and the sublist of items remaining to be sorted. It repeatedly finds the minimum element and moves it to the sorted list.",
+        'insertion-sort': "Insertion Sort builds the final sorted array one item at a time. It iterates through an input element and finds the location it belongs within the sorted list.",
+        'merge-sort': "Merge Sort is a divide-and-conquer algorithm that divides the input array into two halves, calls itself for the two halves, and then merges the two sorted halves.",
+        'quick-sort': "Quick Sort is a divide-and-conquer algorithm. It picks an element as a pivot and partitions the given array around the picked pivot.",
+        'linear-search': "Linear Search sequentially checks each element of the list until a match is found or the whole list has been searched.",
+        'binary-search': "Binary Search locates a target value within a sorted array. It compares the target value to the middle element of the array.",
+        'find-max-min': "This algorithm iterates through the array to find the maximum and minimum values by comparing each element with the current max and min.",
+        'reverse-array': "Reversing an array involves swapping the first and last elements, then the second and second-to-last, and so on, until the middle is reached.",
+        'rotate-array': "Array Rotation involves shifting the elements of the array by a specified number of positions (k).",
+        'two-sum': "Two Sum finds two numbers in the array that add up to a specific target number.",
+        'move-zeros': "Move Zeros involves moving all zeros in the array to the end while maintaining the relative order of the non-zero elements.",
+        'bellman-ford': "Bellman-Ford computes shortest paths from a single source vertex to all of the other vertices in a weighted digraph.",
+    };
+    return map[id] || "Visualization logic for this algorithm is simulated or under development. It demonstrates the expected behavior.";
+};
 
 export const Visualizer = () => {
     const { id } = useParams();
@@ -21,6 +46,7 @@ export const Visualizer = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [playbackSpeed, setPlaybackSpeed] = useState(50);
+    const [viewMode, setViewMode] = useState("bars"); // 'bars', 'dots', 'numbers'
     const intervalRef = useRef(null);
 
     const generator = getAlgorithmGenerator(id || "");
@@ -32,6 +58,34 @@ export const Visualizer = () => {
         setCurrentStep(0);
         setIsPlaying(false);
     }, [id, inputArray, target]);
+
+    // Save to Recent Activity
+    useEffect(() => {
+        if (!id) return;
+        try {
+            const key = 'algoView_recent';
+            const recentStr = localStorage.getItem(key);
+            let recent = [];
+            if (recentStr) {
+                recent = JSON.parse(recentStr);
+            }
+
+            // Remove duplicates
+            recent = recent.filter(item => item.id !== id);
+
+            // Add to top
+            recent.unshift({
+                id,
+                name: algorithmName,
+                date: new Date().toISOString()
+            });
+
+            // Keep max 6
+            localStorage.setItem(key, JSON.stringify(recent.slice(0, 6)));
+        } catch (e) {
+            console.error("Failed to update recent", e);
+        }
+    }, [id, algorithmName]);
 
     // Check for saved progress on mount (only once per id)
     useEffect(() => {
@@ -167,9 +221,37 @@ export const Visualizer = () => {
                     <p className="text-muted-foreground text-sm">Sorting • O(n²) • Stable</p>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => localStorage.removeItem(`algoView_${id}`)}>
-                        Clear Save
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="gap-2">
+                                {viewMode === 'bars' && <BarChart2 className="w-4 h-4" />}
+                                {viewMode === 'dots' && <Circle className="w-4 h-4" />}
+                                {viewMode === 'numbers' && <Grid className="w-4 h-4" />}
+                                {viewMode === 'graph' && <Network className="w-4 h-4" />}
+                                {viewMode === 'pointer' && <ArrowRight className="w-4 h-4" />}
+                                View
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setViewMode('bars')} className="gap-2">
+                                <BarChart2 className="w-4 h-4" /> Bars
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setViewMode('dots')} className="gap-2">
+                                <Circle className="w-4 h-4" /> Scatter Plot
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setViewMode('numbers')} className="gap-2">
+                                <Grid className="w-4 h-4" /> Numbers
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setViewMode('graph')} className="gap-2">
+                                <Network className="w-4 h-4" /> Graph Nodes
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setViewMode('pointer')} className="gap-2">
+                                <ArrowRight className="w-4 h-4" /> Pointer List
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+
                 </div>
             </div>
 
@@ -183,29 +265,106 @@ export const Visualizer = () => {
                     </div>
 
                     {/* Canvas Area */}
-                    <div className="flex-1 flex items-end justify-center px-8 pb-12 gap-2 sm:gap-4 relative pt-20">
-                        <AnimatePresence>
-                            {stepData.array.map((value, idx) => (
-                                <motion.div
-                                    key={idx}
-                                    layout
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{
-                                        opacity: 1,
-                                        y: 0,
-                                        height: `${Math.max(10, (value / 50) * 100)}%`,
-                                        backgroundColor: getBarColor(idx)
-                                    }}
-                                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                                    className={`w-8 sm:w-12 rounded-t-md flex items-end justify-center pb-2 text-white font-bold text-xs sm:text-sm shadow-lg`}
-                                >
-                                    {value}
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
+                    <div className={`flex-1 flex px-8 pb-12 gap-2 sm:gap-4 relative pt-20 transition-all ${viewMode === 'numbers' ? 'items-center justify-center flex-wrap content-center' : 'items-end justify-center'}`}>
 
-                        {/* Base Line */}
-                        <div className="absolute bottom-10 left-0 right-0 h-0.5 bg-border mx-8" />
+                        {viewMode === 'graph' ? (
+                            <div className="relative w-full h-full flex items-center justify-center">
+                                {/* SVG Lines for Comparisons */}
+                                <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
+                                    {stepData.comparing && stepData.comparing.length === 2 && (
+                                        <line
+                                            x1={`${50 + 35 * Math.cos((2 * Math.PI * stepData.comparing[0]) / stepData.array.length)}%`}
+                                            y1={`${50 + 35 * Math.sin((2 * Math.PI * stepData.comparing[0]) / stepData.array.length)}%`}
+                                            x2={`${50 + 35 * Math.cos((2 * Math.PI * stepData.comparing[1]) / stepData.array.length)}%`}
+                                            y2={`${50 + 35 * Math.sin((2 * Math.PI * stepData.comparing[1]) / stepData.array.length)}%`}
+                                            stroke="#eab308"
+                                            strokeWidth="2"
+                                            strokeDasharray="5,5"
+                                        >
+                                            <animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite" />
+                                        </line>
+                                    )}
+                                </svg>
+
+                                <AnimatePresence>
+                                    {stepData.array.map((value, idx) => {
+                                        const angle = (2 * Math.PI * idx) / stepData.array.length;
+                                        const x = 50 + 35 * Math.cos(angle); // %
+                                        const y = 50 + 35 * Math.sin(angle); // %
+                                        const color = getBarColor(idx);
+
+                                        return (
+                                            <motion.div
+                                                key={idx}
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1, backgroundColor: color }}
+                                                className="absolute w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shadow-lg border-2 border-background z-10"
+                                                style={{
+                                                    left: `${x}%`,
+                                                    top: `${y}%`,
+                                                    transform: 'translate(-50%, -50%)'
+                                                }}
+                                            >
+                                                {value}
+                                                <span className="absolute -bottom-6 text-xs text-muted-foreground font-mono">idx:{idx}</span>
+                                            </motion.div>
+                                        );
+                                    })}
+                                </AnimatePresence>
+                            </div>
+                        ) : (
+                            <>
+                                <AnimatePresence>
+                                    {stepData.array.map((value, idx) => {
+                                        const color = getBarColor(idx);
+
+                                        return (
+                                            <motion.div
+                                                key={idx}
+                                                layout
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{
+                                                    opacity: 1,
+                                                    y: 0,
+                                                    height: (viewMode === 'numbers' || viewMode === 'pointer') ? 'auto' : `${Math.max(10, (value / 50) * 100)}%`,
+                                                    backgroundColor: (viewMode === 'bars' || viewMode === 'numbers' || viewMode === 'pointer') ? color : 'transparent'
+                                                }}
+                                                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                                                className={`
+                                                    ${viewMode === 'bars' ? 'w-8 sm:w-12 rounded-t-md flex items-end justify-center pb-2 text-white font-bold text-xs sm:text-sm shadow-lg' : ''}
+                                                    ${viewMode === 'dots' ? 'w-8 sm:w-12 flex flex-col justify-end items-center relative' : ''}
+                                                    ${(viewMode === 'numbers' || viewMode === 'pointer') ? 'w-12 h-12 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-md relative' : ''}
+                                                    ${viewMode === 'pointer' ? 'mr-8' : ''}
+                                                `}
+                                            >
+                                                {viewMode === 'bars' && value}
+                                                {(viewMode === 'numbers' || viewMode === 'pointer') && value}
+
+                                                {viewMode === 'pointer' && idx < stepData.array.length - 1 && (
+                                                    <div className="absolute -right-8 top-1/2 -translate-y-1/2 text-muted-foreground flex items-center justify-center w-8">
+                                                        <ArrowRight className="w-5 h-5" />
+                                                    </div>
+                                                )}
+
+                                                {viewMode === 'dots' && (
+                                                    <>
+                                                        <div
+                                                            className="w-4 h-4 sm:w-6 sm:h-6 rounded-full shadow-md z-10 transition-colors duration-200"
+                                                            style={{ backgroundColor: color }}
+                                                        />
+                                                        <div className="w-0.5 bg-border/20 flex-1 rounded-full mt-[-2px]" />
+                                                        <span className="absolute -bottom-6 text-xs text-muted-foreground font-medium">{value}</span>
+                                                    </>
+                                                )}
+                                            </motion.div>
+                                        );
+                                    })}
+                                </AnimatePresence>
+
+                                {/* Base Line (Hidden in Numbers/Grid/Pointer mode) */}
+                                {viewMode !== 'numbers' && viewMode !== 'pointer' && <div className="absolute bottom-10 left-0 right-0 h-0.5 bg-border mx-8" />}
+                            </>
+                        )}
                     </div>
 
                     {/* Playback Controls (Bottom of Canvas) */}
@@ -253,30 +412,47 @@ export const Visualizer = () => {
                             <div className="p-1.5 bg-primary/10 rounded-md">
                                 <ChevronRight className="w-4 h-4 text-primary" />
                             </div>
-                            <h3 className="font-semibold">What's happening?</h3>
+                            <h3 className="font-semibold">
+                                {currentStep === 0 && !isPlaying ? "Algorithm Details" : "What's happening?"}
+                            </h3>
                         </div>
                         <div className="bg-muted/30 rounded-lg p-4 text-sm leading-relaxed flex-1 border border-border/50">
-                            <p className="font-medium text-foreground mb-2">Step {currentStep + 1}</p>
-                            <p className="text-muted-foreground">{stepData.description}</p>
 
-                            {stepData.comparing && stepData.comparing.length > 0 && (
-                                <div className="mt-4 p-3 bg-background/50 rounded border text-xs font-mono space-y-1">
-                                    <div className="flex justify-between">
-                                        <span>comparing:</span>
-                                        <span className="text-primary">indices [{stepData.comparing.join(", ")}]</span>
+                            {currentStep === 0 && !isPlaying ? (
+                                <div className="space-y-3">
+                                    <p className="font-medium text-foreground">{algorithmName}</p>
+                                    <p className="text-muted-foreground">
+                                        {getAlgorithmDescription(id)}
+                                    </p>
+                                    <div className="text-xs text-muted-foreground mt-4 pt-4 border-t">
+                                        Click <span className="font-bold text-primary">Play</span> to start the visualization.
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span>values:</span>
-                                        <span>
-                                            [{stepData.comparing.map(idx => stepData.array[idx]).join(", ")}]
-                                        </span>
-                                    </div>
-                                    {stepData.swapped && (
-                                        <div className="text-purple-500 font-bold mt-1">
-                                            &rarr; SWAPPED
+                                </div>
+                            ) : (
+                                <>
+                                    <p className="font-medium text-foreground mb-2">Step {currentStep + 1}</p>
+                                    <p className="text-muted-foreground">{stepData.description}</p>
+
+                                    {stepData.comparing && stepData.comparing.length > 0 && (
+                                        <div className="mt-4 p-3 bg-background/50 rounded border text-xs font-mono space-y-1">
+                                            <div className="flex justify-between">
+                                                <span>comparing:</span>
+                                                <span className="text-primary">indices [{stepData.comparing.join(", ")}]</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span>values:</span>
+                                                <span>
+                                                    [{stepData.comparing.map(idx => stepData.array[idx]).join(", ")}]
+                                                </span>
+                                            </div>
+                                            {stepData.swapped && (
+                                                <div className="text-purple-500 font-bold mt-1">
+                                                    &rarr; SWAPPED
+                                                </div>
+                                            )}
                                         </div>
                                     )}
-                                </div>
+                                </>
                             )}
                         </div>
                     </Card>

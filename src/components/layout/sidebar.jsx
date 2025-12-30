@@ -11,24 +11,28 @@ export function Sidebar({ className }) {
 
     useEffect(() => {
         const loadRecent = () => {
-            const items = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith("algoView_")) {
-                    // Extract name from algoView_bubble-sort
-                    const algoNameSlug = key.replace("algoView_", "");
-                    const displayName = algoNameSlug.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
-                    items.push({ name: displayName, href: `/visualize/${algoNameSlug}` });
+            try {
+                const recentStr = localStorage.getItem('algoView_recent');
+                if (recentStr) {
+                    const items = JSON.parse(recentStr);
+                    setRecentItems(items.map(item => ({
+                        name: item.name,
+                        href: `/visualize/${item.id}`
+                    })));
+                } else {
+                    // Fallback/Legacy scan (optional, but cleaner to rely on the list)
+                    setRecentItems([]);
                 }
+            } catch (e) {
+                console.error("Failed to load recent history", e);
             }
-            // Simple method to just show the list, ideally we'd sort by last accessed if we stored timestamps in separate index
-            setRecentItems(items.slice(0, 10)); // Limit to 10
         };
 
         loadRecent();
-        // Listen for storage events in case other tabs update it
-        window.addEventListener('storage', loadRecent);
-        return () => window.removeEventListener('storage', loadRecent);
+        // Custom event dispatcher or interval check could be better, 
+        // but 'storage' event works for cross-tab, and we can add a short interval for same-tab updates if needed.
+        const interval = setInterval(loadRecent, 1000);
+        return () => clearInterval(interval);
     }, []);
 
     return (
