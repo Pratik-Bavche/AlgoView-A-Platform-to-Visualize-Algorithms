@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Search, Globe, Mic, MicOff, Bell, User, Flame, Shuffle, Trophy, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Search, Globe, Mic, MicOff, Bell, User, Flame, Shuffle, Trophy, Sparkles, LayoutDashboard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,43 +67,11 @@ export const Navbar = () => {
 
 
             <div className="flex items-center gap-x-3 ml-auto">
-                {/* Language Selector */}
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary hidden sm:flex">
-                            <Globe className="h-5 w-5" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Language</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>English</DropdownMenuItem>
-                        <DropdownMenuItem>Hindi</DropdownMenuItem>
-                        <DropdownMenuItem>Español</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-
-                {/* Voice Toggle */}
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className={`text-muted-foreground hover:text-primary ${isVoiceOn ? "text-primary bg-primary/10" : ""}`}
-                                onClick={() => setIsVoiceOn(!isVoiceOn)}
-                            >
-                                {isVoiceOn ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>Voice Narration: {isVoiceOn ? "ON" : "OFF"}</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                    <Bell className="h-5 w-5" />
+                <Button variant="ghost" size="sm" asChild className="hidden md:flex gap-2">
+                    <Link to="/">
+                        <LayoutDashboard className="h-4 w-4" />
+                        Dashboard
+                    </Link>
                 </Button>
 
                 {/* Profile */}

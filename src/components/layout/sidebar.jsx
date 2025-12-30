@@ -42,19 +42,7 @@ export function Sidebar({ className }) {
 
             <ScrollArea className="flex-1 px-4">
                 <div className="space-y-6">
-                    {/* Main Menu */}
-                    <div className="space-y-2">
-                        <Button
-                            variant="ghost"
-                            className="w-full justify-start font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all text-sm h-9"
-                            asChild
-                        >
-                            <Link to="/">
-                                <Home className="mr-3 h-4 w-4" />
-                                Home
-                            </Link>
-                        </Button>
-                    </div>
+
 
                     {/* Recent Visualizations - Only shows if there are items */}
                     {recentItems.length > 0 && (
@@ -82,21 +70,7 @@ export function Sidebar({ className }) {
                 </div>
             </ScrollArea>
 
-            <div className="p-4 mt-auto">
-                <div className="bg-muted/30 rounded-xl p-3 border border-border/50 flex items-center gap-3">
-                    <Avatar className="h-9 w-9 border border-border">
-                        <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
-                        <AvatarFallback>IV</AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col flex-1 overflow-hidden">
-                        <span className="text-sm font-medium truncate">John Doe</span>
-                        <span className="text-xs text-muted-foreground truncate">Free Plan</span>
-                    </div>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                        <Settings className="h-4 w-4" />
-                    </Button>
-                </div>
-            </div>
+
         </div>
     );
 }
