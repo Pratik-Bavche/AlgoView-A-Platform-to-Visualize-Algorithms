@@ -151,6 +151,8 @@ export const Visualizer = () => {
     const [isReversed, setIsReversed] = useState(false);
     const [viewMode, setViewMode] = useState('default'); // 'bars', 'dots', 'numbers', 'block', 'list'
     const [rawInput, setRawInput] = useState(generator.type === 'graph' ? "A-B, B-C, C-D, D-A, A-C" : inputArray.join(", "));
+    const [rotationDirection, setRotationDirection] = useState('right');
+    const [rotationK, setRotationK] = useState(1);
 
     // Refs
     const intervalRef = useRef(null);
@@ -184,14 +186,14 @@ export const Visualizer = () => {
         } else if (generator.type === 'graph') {
             newSteps = generator.func(rawInput);
         } else {
-            newSteps = generator.func(inputArray, target);
+            newSteps = generator.func(inputArray, id === 'rotate-array' ? rotationK : target, id === 'rotate-array' ? rotationDirection : undefined);
         }
         setSteps(newSteps);
         setCurrentStep(0);
         setIsPlaying(false);
         setIsReversed(false);
         if (!['string', 'bit', 'recursion', 'real-world', 'graph'].includes(generator.type)) setRawInput(inputArray.join(", "));
-    }, [id, inputArray, target, mainString, targetString, rawInput]);
+    }, [id, inputArray, target, mainString, targetString, rawInput, rotationDirection, rotationK]);
 
     // Set default view mode and inputs based on type/id
     useEffect(() => {
@@ -840,6 +842,72 @@ export const Visualizer = () => {
                                         <p className="text-[10px] text-muted-foreground opacity-70 italic">
                                             Format: Node1-Node2:Weight (Weight is optional)
                                         </p>
+                                    </div>
+                                </>
+                            ) : id === 'rotate-array' ? (
+                                <>
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-xs">Array to Rotate</Label>
+                                            <Input
+                                                value={rawInput}
+                                                onChange={(e) => setRawInput(e.target.value)}
+                                                onBlur={() => {
+                                                    const arr = rawInput.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
+                                                    if (arr.length > 0) handleReset(arr);
+                                                }}
+                                                className="h-8 text-sm font-mono"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-xs">Rotation Direction & Count</Label>
+                                            <div className="flex gap-2">
+                                                <div className="grid grid-cols-2 gap-2 flex-1">
+                                                    <Button
+                                                        variant={rotationDirection === 'left' ? "default" : "outline"}
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            setRotationDirection('left');
+                                                            handleReset();
+                                                        }}
+                                                        className="h-8 gap-2"
+                                                    >
+                                                        <SkipBack className="w-3 h-3" />
+                                                        Left
+                                                    </Button>
+                                                    <Button
+                                                        variant={rotationDirection === 'right' ? "default" : "outline"}
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            setRotationDirection('right');
+                                                            handleReset();
+                                                        }}
+                                                        className="h-8 gap-2"
+                                                    >
+                                                        <SkipForward className="w-3 h-3" />
+                                                        Right
+                                                    </Button>
+                                                </div>
+                                                <div className="w-20">
+                                                    <Input
+                                                        type="number"
+                                                        value={rotationK}
+                                                        min={1}
+                                                        max={inputArray.length}
+                                                        onChange={(e) => {
+                                                            const val = parseInt(e.target.value) || 1;
+                                                            setRotationK(val);
+                                                            handleReset();
+                                                        }}
+                                                        className="h-8 text-sm text-center font-mono"
+                                                        placeholder="k"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <p className="text-[10px] text-muted-foreground opacity-70 italic">
+                                                Rotate the array {rotationK} time(s) to the {rotationDirection}.
+                                            </p>
+                                        </div>
                                     </div>
                                 </>
                             ) : (

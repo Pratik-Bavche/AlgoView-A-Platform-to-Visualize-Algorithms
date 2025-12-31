@@ -655,18 +655,82 @@ export const generateMaxSubarraySteps = (initialArray) => {
     return steps;
 };
 
-export const generateRotateArraySteps = (arr) => {
+export const generateRotateArraySteps = (arr, k = 1, direction = 'right') => {
     const steps = [];
     const array = [...arr];
-    steps.push({ array: [...array], comparing: [], description: "Initial State. Rotating right by 1 for visualization." });
-    const last = array[array.length - 1];
-    for (let i = array.length - 1; i > 0; i--) {
-        steps.push({ array: [...array], comparing: [i, i - 1], description: `Moving ${array[i - 1]} to index ${i}` });
-        array[i] = array[i - 1];
-        steps.push({ array: [...array], comparing: [i], swapped: true, description: "Moved." });
+    const n = array.length;
+    if (n === 0) return steps;
+
+    // Normalize k (rotation count) to be within array bounds 
+    const effectiveK = k % n;
+
+    steps.push({
+        array: [...array],
+        comparing: [],
+        description: `Initial State. Preparing to rotate ${direction} ${effectiveK} time(s).`
+    });
+
+    if (effectiveK === 0) {
+        steps.push({ array: [...array], comparing: [], description: `Rotation count is 0 or multiple of length. Array remains same.` });
+        return steps;
     }
-    array[0] = last;
-    steps.push({ array: [...array], comparing: [0], swapped: true, description: `Placed last element ${last} at start.` });
+
+    for (let rotation = 1; rotation <= effectiveK; rotation++) {
+        steps.push({
+            array: [...array],
+            comparing: [],
+            description: `--- STARTING ROTATION ${rotation} of ${effectiveK} (${direction}) ---`
+        });
+
+        if (direction === 'left') {
+            const first = array[0];
+            for (let i = 0; i < n - 1; i++) {
+                steps.push({
+                    array: [...array],
+                    comparing: [i, i + 1],
+                    description: `[Rotation ${rotation}] Moving ${array[i + 1]} left to index ${i}.`
+                });
+                array[i] = array[i + 1];
+                steps.push({
+                    array: [...array],
+                    comparing: [i],
+                    swapped: true,
+                    description: `[Rotation ${rotation}] Shifted ${array[i]} to index ${i}.`
+                });
+            }
+            array[n - 1] = first;
+            steps.push({
+                array: [...array],
+                comparing: [n - 1],
+                swapped: true,
+                description: `[Rotation ${rotation}] Placed original first element ${first} at the end.`
+            });
+        } else {
+            const last = array[n - 1];
+            for (let i = n - 1; i > 0; i--) {
+                steps.push({
+                    array: [...array],
+                    comparing: [i, i - 1],
+                    description: `[Rotation ${rotation}] Moving ${array[i - 1]} right to index ${i}.`
+                });
+                array[i] = array[i - 1];
+                steps.push({
+                    array: [...array],
+                    comparing: [i],
+                    swapped: true,
+                    description: `[Rotation ${rotation}] Shifted ${array[i]} to index ${i}.`
+                });
+            }
+            array[0] = last;
+            steps.push({
+                array: [...array],
+                comparing: [0],
+                swapped: true,
+                description: `[Rotation ${rotation}] Placed original last element ${last} at the start.`
+            });
+        }
+    }
+
     return steps;
 };
 
