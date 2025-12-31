@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { Play, Pause, SkipBack, SkipForward, RotateCcw, ChevronRight, Shuffle, BarChart2, Grid, Circle, Box, MoreVertical, Palette, List, RefreshCcw } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, RotateCcw, ChevronRight, Shuffle, BarChart2, Grid, Circle, Box, MoreVertical, Palette, List, RefreshCcw, CheckCircle2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -579,6 +579,72 @@ export const Visualizer = () => {
                                 <>
                                     <p className="font-medium text-foreground mb-2">Step {currentStep + 1}</p>
                                     <p className="text-muted-foreground">{stepData.description}</p>
+
+                                    {currentStep === steps.length - 1 && steps.length > 1 && (
+                                        <div className="mt-6 pt-6 border-t border-primary/10 space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                            <div className="flex items-center gap-2 text-primary">
+                                                <CheckCircle2 className="w-5 h-5" />
+                                                <span className="font-bold uppercase tracking-wider text-xs">Final Result</span>
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <div className="bg-background/50 rounded-lg p-3 border border-border/50">
+                                                    <div className="text-[10px] uppercase text-muted-foreground font-semibold mb-1 tracking-tight">Input</div>
+                                                    <div className="font-mono text-sm break-all">
+                                                        {generator.type === 'string' ? mainString :
+                                                            generator.type === 'graph' ? rawInput :
+                                                                generator.type === 'bit' ? (id === 'single-number' ? inputArray.join(", ") : `${target}${targetString ? `, ${targetString}` : ''}`) :
+                                                                    generator.type === 'math' ? `${target}${targetString ? `, ${targetString}` : ''}` :
+                                                                        inputArray.join(", ")}
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex justify-center -my-2 opacity-30">
+                                                    <ArrowRight className="w-4 h-4 rotate-90" />
+                                                </div>
+
+                                                <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
+                                                    <div className="text-[10px] uppercase text-primary/70 font-semibold mb-1 tracking-tight">Final Output</div>
+                                                    <div className="font-bold text-sm text-primary">
+                                                        {(() => {
+                                                            const lastStep = steps[steps.length - 1];
+                                                            if (generator.type === 'sorting') return lastStep.array.join(", ");
+                                                            if (generator.type === 'searching') {
+                                                                return lastStep.found && lastStep.found.length > 0 ? `Found at index ${lastStep.found[0]}` : "Not Found";
+                                                            }
+                                                            if (id === 'find-max-min') {
+                                                                const minVal = Math.min(...inputArray);
+                                                                const maxVal = Math.max(...inputArray);
+                                                                return `Min: ${minVal} • Max: ${maxVal}`;
+                                                            }
+                                                            if (id === 'reverse-array' || id === 'rotate-array' || id === 'move-zeros') return lastStep.array.join(", ");
+                                                            if (id === 'two-sum' || id === 'two-sum-sorted' || id === 'pair-sum-sorted') {
+                                                                return lastStep.found && lastStep.found.length > 0 ? `Values found at indices [${lastStep.found.join(", ")}]` : "No pair found";
+                                                            }
+                                                            if (id === 'count-set-bits') return lastStep.description.match(/\d+$/)?.[0] || "Completed";
+                                                            if (id === 'palindrome-check') return lastStep.description.toLowerCase().includes('is a palindrome') ? "Palindrome" : "Not a Palindrome";
+                                                            if (id === 'anagram-check') return lastStep.description.toLowerCase().includes('are anagrams') ? "Anagram Match" : "Not Anagrams";
+
+                                                            // Generic fallback to description if it's short, or a "Completed" message
+                                                            const desc = lastStep.description;
+                                                            if (desc.length < 50) return desc;
+                                                            return "Algorithm Executed Successfully";
+                                                        })()}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="w-full text-[10px] h-8 gap-2 hover:bg-primary hover:text-primary-foreground transition-colors"
+                                                onClick={() => handleReset()}
+                                            >
+                                                <RotateCcw className="w-3 h-3" />
+                                                Run Again
+                                            </Button>
+                                        </div>
+                                    )}
 
                                     {stepData.comparing && stepData.comparing.length > 0 && generator.type !== 'graph' && generator.type !== 'string' && (
                                         <div className="mt-4 p-3 bg-background/50 rounded border text-xs font-mono space-y-1">
