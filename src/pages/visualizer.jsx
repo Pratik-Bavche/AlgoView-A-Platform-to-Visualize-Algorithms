@@ -109,13 +109,35 @@ const getAlgorithmDescription = (id) => {
         'detect-loop-floyd-s-': "Uses Floyd's Cycle-Finding algorithm (slow and fast pointers) to detect if a cycle exists in the list.",
         'middle-of-linked-list': "Finds the middle node of a linked list using the two-pointer technique in a single pass.",
         'remove-n-th-node': "Removes the N-th node from the end of a linked list by maintaining a specific gap between two pointers.",
-        'intersection': "Finds the node where two singly linked lists intersect by aligning their starting positions based on length difference."
+        'intersection': "Finds the node where two singly linked lists intersect by aligning their starting positions based on length difference.",
+        'connected-components': "Connected Components identifies isolated groups of nodes in a graph. Each component is colored differently to show separation.",
+        'connected-comp': "Connected Components identifies isolated groups of nodes in a graph. Each component is colored differently to show separation.",
+        'topological-sort': "Topological Sort linearly orders vertices of a directed acyclic graph (DAG) such that for every directed edge uv from vertex u to vertex v, u comes before v in the ordering.",
+        'topo-sort': "Topological Sort linearly orders vertices of a directed acyclic graph (DAG) such that for every directed edge uv from vertex u to vertex v, u comes before v in the ordering.",
+        'cycle-detection': "Cycle Detection finds loops within a graph. If the algorithm visits a node already in the current recursion stack, a cycle is identified and highlighted in Red.",
+        'cycle-detect': "Cycle Detection finds loops within a graph. If the algorithm visits a node already in the current recursion stack, a cycle is identified and highlighted in Red.",
+        'bipartite-check': "Bipartite Check determines if a graph can be colored with two colors such that no two adjacent nodes have the same color.",
+        'scc': "Strongly Connected Components (SCC) are subgraphs where every vertex is reachable from every other vertex. This uses Kosaraju's two-pass DFS algorithm.",
+        'bellman-ford': "Bellman-Ford finds the shortest path from a source to all vertices and can handle negative edge weights, unlike Dijkstra. It also detects negative cycles.",
+        'dijkstra-s-algorithm': "Dijkstra's Algorithm finds the shortest path from a starting node to all other nodes in a weighted graph by always expanding the node with the smallest known distance.",
+        'dijkstra': "Dijkstra's Algorithm finds the shortest path from a starting node to all other nodes in a weighted graph by always expanding the node with the smallest known distance.",
+        'prim-s-algorithm': "Prim's Algorithm finds the Minimum Spanning Tree (MST) for a weighted undirected graph by always adding the cheapest edge from the visited set to an unvisited node.",
+        'prim-s': "Prim's Algorithm finds the Minimum Spanning Tree (MST) for a weighted undirected graph by always adding the cheapest edge from the visited set to an unvisited node.",
+        'prims-algo': "Prim's Algorithm finds the Minimum Spanning Tree (MST) for a weighted undirected graph by always adding the cheapest edge from the visited set to an unvisited node.",
+        'kruskal-s-algorithm': "Kruskal's Algorithm finds the MST by sorting all edges by weight and adding them one by one, ensuring no cycles are formed using Union-Find.",
+        'kruskal-s': "Kruskal's Algorithm finds the MST by sorting all edges by weight and adding them one by one, ensuring no cycles are formed using Union-Find.",
+        'kruskals': "Kruskal's Algorithm finds the MST by sorting all edges by weight and adding them one by one, ensuring no cycles are formed using Union-Find.",
+        'union-find': "Union-Find is a data structure that tracks elements split into disjoint sets. It's often used in Kruskal's to detect cycles.",
+        'bfs-path': "Shortest Path using BFS finds the minimum number of edges between the source and all other nodes in an unweighted graph.",
+        'bfs': "Breadth-First Search (BFS) explores all neighbors at the current depth before moving to nodes at the next depth level.",
+        'dfs': "Depth-First Search (DFS) starts at the root node and explores as far as possible along each branch before backtracking.",
     };
     return map[id] || "Visualization logic for this algorithm is simulated or under development. It demonstrates the expected behavior.";
 };
 
 export const Visualizer = () => {
     const { id } = useParams();
+    const generator = getAlgorithmGenerator(id || "");
     const algorithmName = id ? id.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase()) : "Bubble Sort";
 
     // --- State ---
@@ -129,13 +151,11 @@ export const Visualizer = () => {
     const [playbackSpeed, setPlaybackSpeed] = useState(30);
     const [isReversed, setIsReversed] = useState(false);
     const [viewMode, setViewMode] = useState('default'); // 'bars', 'dots', 'numbers', 'block', 'list'
-    const [rawInput, setRawInput] = useState(inputArray.join(", "));
+    const [rawInput, setRawInput] = useState(generator.type === 'graph' ? "A-B, B-C, C-D, D-A, A-C" : inputArray.join(", "));
 
     // Refs
     const intervalRef = useRef(null);
     const containerRef = useRef(null);
-
-    const generator = getAlgorithmGenerator(id || "");
 
     useEffect(() => {
         // Handle String vs Array vs Bit vs Generic Inputs for Step Generation
@@ -162,14 +182,17 @@ export const Visualizer = () => {
             } else {
                 newSteps = generator.func(inputArray);
             }
+        } else if (generator.type === 'graph') {
+            newSteps = generator.func(rawInput);
         } else {
             newSteps = generator.func(inputArray, target);
         }
         setSteps(newSteps);
         setCurrentStep(0);
         setIsPlaying(false);
-        if (!['string', 'bit', 'recursion', 'real-world'].includes(generator.type)) setRawInput(inputArray.join(", "));
-    }, [id, inputArray, target, mainString, targetString]);
+        setIsReversed(false);
+        if (!['string', 'bit', 'recursion', 'real-world', 'graph'].includes(generator.type)) setRawInput(inputArray.join(", "));
+    }, [id, inputArray, target, mainString, targetString, rawInput]);
 
     // Set default view mode and inputs based on type/id
     useEffect(() => {
@@ -212,10 +235,14 @@ export const Visualizer = () => {
     }, [id, algorithmName]);
 
     // Handle Input Change / Reset
-    const handleReset = (newArray = null) => {
+    const handleReset = (newInput = null) => {
         setIsPlaying(false);
-        if (newArray) {
-            setInputArray(newArray);
+        if (newInput) {
+            if (generator.type === 'graph') {
+                setRawInput(newInput);
+            } else if (Array.isArray(newInput)) {
+                setInputArray(newInput);
+            }
         }
         setCurrentStep(0);
     };
@@ -354,6 +381,8 @@ export const Visualizer = () => {
             case 'array':
                 return <ArrayVisualizer stepData={stepData} viewMode={viewMode} />;
             case 'graph':
+                if (id?.toLowerCase().includes('floyd')) return <GridVisualizer stepData={stepData} />;
+                return <GraphVisualizer stepData={stepData} />;
             case 'tree':
                 return <GraphVisualizer stepData={stepData} />;
             case 'dp': // DP often uses tables/grids
@@ -732,6 +761,22 @@ export const Visualizer = () => {
                                         )}
                                     </div>
                                 </>
+                            ) : generator.type === 'graph' ? (
+                                <>
+                                    <div className="space-y-2">
+                                        <Label className="text-xs">Graph Edges (u-v or u-v:w)</Label>
+                                        <Input
+                                            value={rawInput}
+                                            onChange={(e) => setRawInput(e.target.value)}
+                                            onBlur={() => handleReset(rawInput)}
+                                            className="h-8 text-sm font-mono"
+                                            placeholder="e.g. A-B, B-C:5, C-A"
+                                        />
+                                        <p className="text-[10px] text-muted-foreground opacity-70 italic">
+                                            Format: Node1-Node2:Weight (Weight is optional)
+                                        </p>
+                                    </div>
+                                </>
                             ) : (
                                 <>
                                     <div className="space-y-2">
@@ -789,7 +834,7 @@ export const Visualizer = () => {
                                     <Shuffle className="w-3 h-3 mr-2" />
                                     Randomize
                                 </Button>
-                                {generator.type !== 'string' && generator.type !== 'bit' && (
+                                {['sorting', 'searching', 'array'].includes(generator.type) && (
                                     <Button
                                         variant="outline"
                                         className={`w-full text-xs ${isReversed ? "border-blue-500 bg-blue-500/10 text-blue-500" : ""}`}

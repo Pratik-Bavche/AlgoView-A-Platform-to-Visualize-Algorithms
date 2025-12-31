@@ -7,23 +7,40 @@ export const GraphVisualizer = ({ stepData }) => {
     const edges = stepData.edges || [];
     const stack = stepData.stack || []; // For Recursion Stack Visualization
 
-    // Helper to get color based on state
-    const getNodeColor = (status) => {
-        switch (status) {
-            case 'visited': return '#22c55e'; // Green (Visited)
-            case 'current': return '#eab308'; // Yellow (Current)
-            case 'queued': return '#a855f7'; // Purple (Queued) - distinct from unvisited
-            case 'cycle': return '#ef4444'; // Red (Cycle/Conflict)
-            case 'default': default: return '#3b82f6'; // Blue (Unvisited)
+    // Standardized Color Palette (Matches User Requirements)
+    const COLORS = {
+        UNVISITED: '#3b82f6', // Blue
+        ACTIVE: '#eab308',    // Yellow
+        VISITED: '#22c55e',   // Green
+        EXPLORING: '#f97316', // Orange
+        CYCLE: '#ef4444',     // Red
+        QUEUED: '#6366f1',    // Indigo (for nodes waiting in Q/Stack)
+        NEUTRAL: '#cbd5e1'    // Slate-300
+    };
+
+    const COMPONENT_COLORS = [
+        '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#f97316', '#14b8a6', '#8b5cf6'
+    ];
+
+    const getNodeColor = (node) => {
+        if (node.status === 'cycle') return COLORS.CYCLE;
+        if (node.status === 'current') return COLORS.ACTIVE;
+        if (node.status === 'visited') {
+            if (node.componentId !== undefined) {
+                return COMPONENT_COLORS[node.componentId % COMPONENT_COLORS.length];
+            }
+            return COLORS.VISITED;
         }
+        if (node.status === 'queued') return COLORS.QUEUED;
+        return COLORS.UNVISITED;
     };
 
     const getEdgeColor = (status) => {
         switch (status) {
-            case 'visited': return '#22c55e'; // Green
-            case 'current': return '#f97316'; // Orange (Exploring)
-            case 'cycle': return '#ef4444'; // Red (Cycle)
-            default: return '#cbd5e1'; // Slate-300 (Gray/Default)
+            case 'visited': return COLORS.VISITED;
+            case 'current': return COLORS.EXPLORING;
+            case 'cycle': return COLORS.CYCLE;
+            default: return COLORS.NEUTRAL;
         }
     };
 
@@ -43,17 +60,17 @@ export const GraphVisualizer = ({ stepData }) => {
                     <defs>
                         {/* Standard Arrow Marker */}
                         <marker id="arrow" markerWidth="10" markerHeight="7" refX="28" refY="3.5" orient="auto">
-                            <polygon points="0 0, 10 3.5, 0 7" fill="#cbd5e1" />
+                            <polygon points="0 0, 10 3.5, 0 7" fill={COLORS.NEUTRAL} />
                         </marker>
                         {/* Colored Markers */}
                         <marker id="arrow-visited" markerWidth="10" markerHeight="7" refX="28" refY="3.5" orient="auto">
-                            <polygon points="0 0, 10 3.5, 0 7" fill="#22c55e" />
+                            <polygon points="0 0, 10 3.5, 0 7" fill={COLORS.VISITED} />
                         </marker>
                         <marker id="arrow-current" markerWidth="10" markerHeight="7" refX="28" refY="3.5" orient="auto">
-                            <polygon points="0 0, 10 3.5, 0 7" fill="#f97316" />
+                            <polygon points="0 0, 10 3.5, 0 7" fill={COLORS.EXPLORING} />
                         </marker>
                         <marker id="arrow-cycle" markerWidth="10" markerHeight="7" refX="28" refY="3.5" orient="auto">
-                            <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444" />
+                            <polygon points="0 0, 10 3.5, 0 7" fill={COLORS.CYCLE} />
                         </marker>
                     </defs>
 
@@ -112,8 +129,8 @@ export const GraphVisualizer = ({ stepData }) => {
                         initial={{ scale: 0 }}
                         animate={{
                             scale: 1,
-                            backgroundColor: getNodeColor(node.status),
-                            borderColor: node.status === 'default' ? '#3b82f6' : getNodeColor(node.status)
+                            backgroundColor: getNodeColor(node),
+                            borderColor: node.status === 'default' ? COLORS.UNVISITED : getNodeColor(node)
                         }}
                         className={`
                             absolute w-8 h-8 sm:w-10 sm:h-10 rounded-full flex flex-col items-center justify-center border-2 shadow-sm font-bold text-[10px] sm:text-xs z-10 transition-colors duration-300

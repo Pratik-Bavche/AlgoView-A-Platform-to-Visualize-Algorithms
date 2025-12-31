@@ -722,12 +722,15 @@ const createBinaryTree = (depth = 3) => {
     return { nodes, edges };
 };
 
-export const generateBFSSteps = () => {
+export const generateBFSSteps = (inputString) => {
     const steps = [];
-    // Generate static tree using the createBinaryTree helper above
-    const { nodes, edges } = createBinaryTree(4);
+    let graphData = parseGraphInput(inputString, false);
 
-    // Reset statuses
+    // Default to tree if invalid input
+    if (!graphData) {
+        graphData = createBinaryTree(4);
+    }
+    const { nodes, edges } = graphData;
     nodes.forEach(n => n.status = 'default');
 
     // Queue for BFS logic
@@ -751,6 +754,16 @@ export const generateBFSSteps = () => {
 
     let visitCount = 0;
 
+    // Build Adjacency List (Support Undirected)
+    const adj = {};
+    nodes.forEach(n => adj[n.id] = []);
+    edges.forEach(e => {
+        adj[e.source].push(e.target);
+        if (e.type !== 'directed') {
+            adj[e.target].push(e.source);
+        }
+    });
+
     while (queue.length > 0) {
         const currId = queue.shift();
 
@@ -762,7 +775,7 @@ export const generateBFSSteps = () => {
             nodes: JSON.parse(JSON.stringify(currentNodes)),
             edges: JSON.parse(JSON.stringify(currentEdges)),
             stack: [...queue],
-            description: `Dequeued Node ${currId}. Processing...`,
+            description: `Dequeued Node ${currentNodes[currId].value}. Processing neighbors...`,
             count: visitCount
         });
 
@@ -770,8 +783,8 @@ export const generateBFSSteps = () => {
         visitCount++;
         currentNodes[currId].status = 'visited';
 
-        // Find neighbors (children)
-        const neighbors = edges.filter(e => e.source === currId).map(e => e.target);
+        // Find neighbors
+        const neighbors = adj[currId] || [];
 
         // Add to queue
         for (const neighborId of neighbors) {
@@ -779,22 +792,24 @@ export const generateBFSSteps = () => {
                 visited.add(neighborId);
                 queue.push(neighborId);
 
-                // Update node visual to Queued (Blue)
-                currentNodes[neighborId].status = 'queued';
-
                 // Highlight edge
-                const edgeIdx = currentEdges.findIndex(e => e.source === currId && e.target === neighborId);
+                const edgeIdx = currentEdges.findIndex(e =>
+                    (e.source === currId && e.target === neighborId) ||
+                    (e.type !== 'directed' && e.source === neighborId && e.target === currId)
+                );
                 if (edgeIdx !== -1) currentEdges[edgeIdx].status = 'current';
+
+                steps.push({
+                    nodes: JSON.parse(JSON.stringify(currentNodes)),
+                    edges: JSON.parse(JSON.stringify(currentEdges)),
+                    stack: [...queue],
+                    description: `Explored edge from ${currentNodes[currId].value} to ${currentNodes[neighborId].value}. Added neighbor to Queue.`,
+                    count: visitCount
+                });
+
+                if (edgeIdx !== -1) currentEdges[edgeIdx].status = 'visited';
             }
         }
-
-        steps.push({
-            nodes: JSON.parse(JSON.stringify(currentNodes)),
-            edges: JSON.parse(JSON.stringify(currentEdges)),
-            stack: [...queue],
-            description: `Processed Node ${currId}. Added neighbors to Queue.`,
-            count: visitCount
-        });
 
         // Mark edges as visited
         edges.filter(e => e.source === currId).forEach(e => {
@@ -815,77 +830,91 @@ export const generateBFSSteps = () => {
 };
 
 
-export const generateDFSSteps = () => {
+export const generateDFSSteps = (inputString) => {
     const steps = [];
-    const { nodes, edges } = createBinaryTree(4);
+    let graphData = parseGraphInput(inputString, false);
+
+    if (!graphData) {
+        graphData = createBinaryTree(4);
+    }
+    const { nodes, edges } = graphData;
+
     nodes.forEach(n => n.status = 'default');
 
     const stack = [0]; // Stack for DFS
     const visited = new Set();
+    const stackContents = [0]; // Separate array to track visuals of the stack
 
     let currentNodes = JSON.parse(JSON.stringify(nodes));
     let currentEdges = JSON.parse(JSON.stringify(edges));
 
-    currentNodes[0].status = 'queued'; // Blue = In Stack
+    // Build Adjacency List
+    const adj = {};
+    nodes.forEach(n => adj[n.id] = []);
+    edges.forEach(e => {
+        adj[e.source].push(e.target);
+        if (e.type !== 'directed') adj[e.target].push(e.source);
+    });
 
     steps.push({
         nodes: JSON.parse(JSON.stringify(currentNodes)),
         edges: JSON.parse(JSON.stringify(currentEdges)),
-        stack: [...stack],
-        description: "Initial State: Root pushed to Stack.",
+        stack: [...stackContents],
+        description: `Starting DFS traversal from root Node ${nodes[0].value}.`,
         count: 0
     });
 
     let visitCount = 0;
 
     while (stack.length > 0) {
-        const currId = stack.pop();
+        const u = stack.pop();
+        if (visited.has(u)) continue;
+        visited.add(u);
 
-        if (visited.has(currId)) continue;
-        visited.add(currId);
+        // Update stack display
+        const stackIdx = stackContents.indexOf(u);
+        if (stackIdx !== -1) stackContents.splice(stackIdx, 1);
 
-        // 1. Processing (Yellow)
         currentNodes = JSON.parse(JSON.stringify(currentNodes));
-        currentNodes[currId].status = 'current';
+        currentNodes[u].status = 'current';
 
         steps.push({
             nodes: JSON.parse(JSON.stringify(currentNodes)),
             edges: JSON.parse(JSON.stringify(currentEdges)),
-            stack: [...stack],
-            description: `Popped Node ${currId} from Stack. Visiting...`,
+            stack: [...stackContents],
+            description: `Popped Node ${currentNodes[u].value} and visiting.`,
             count: visitCount
         });
 
         visitCount++;
-        // 2. Processed (Green)
-        currentNodes[currId].status = 'visited';
+        currentNodes[u].status = 'visited';
 
-        // Get neighbors
-        const neighbors = edges.filter(e => e.source === currId).map(e => e.target);
-        neighbors.reverse(); // Reverse for right-to-left push in trees
+        // Neighbors
+        const neighbors = adj[u] || [];
+        for (const v of neighbors) {
+            if (!visited.has(v)) {
+                stack.push(v);
+                stackContents.push(v);
+                currentNodes[v].status = 'queued';
 
-        for (const neighborId of neighbors) {
-            if (!visited.has(neighborId)) {
-                stack.push(neighborId);
-                currentNodes[neighborId].status = 'queued';
-            }
-        }
+                // Find and highlight edge
+                const edgeIdx = currentEdges.findIndex(e =>
+                    (e.source === u && e.target === v) ||
+                    (e.type !== 'directed' && e.source === v && e.target === u)
+                );
+                if (edgeIdx !== -1) currentEdges[edgeIdx].status = 'current';
 
-        // Update connection edges
-        edges.forEach(e => {
-            if (visited.has(e.source) && visited.has(e.target)) {
-                const edgeIdx = currentEdges.findIndex(ed => ed.source === e.source && ed.target === e.target);
+                steps.push({
+                    nodes: JSON.parse(JSON.stringify(currentNodes)),
+                    edges: JSON.parse(JSON.stringify(currentEdges)),
+                    stack: [...stackContents],
+                    description: `Explored path ${currentNodes[u].value} -> ${currentNodes[v].value}. Pushed neighbor to stack.`,
+                    count: visitCount
+                });
+
                 if (edgeIdx !== -1) currentEdges[edgeIdx].status = 'visited';
             }
-        });
-
-        steps.push({
-            nodes: JSON.parse(JSON.stringify(currentNodes)),
-            edges: JSON.parse(JSON.stringify(currentEdges)),
-            stack: [...stack],
-            description: `Finished Node ${currId}. Pushed children to Stack.`,
-            count: visitCount
-        });
+        }
     }
 
     steps.push({
@@ -1000,40 +1029,54 @@ export const generateTreeTraversalSteps = () => {
 
 // --- Topological Sort & Cycle Detection ---
 
-export const generateTopologicalSortSteps = () => {
+export const generateTopologicalSortSteps = (inputString) => {
     const steps = [];
 
-    // Directed Graph for Topo Sort
-    // A -> B, A -> C, B -> D, B -> E, C -> F, E -> G
-    const nodes = [
-        { id: 0, x: 50, y: 10, value: 'A', status: 'default', inDegree: 0 },
-        { id: 1, x: 30, y: 35, value: 'B', status: 'default', inDegree: 1 },
-        { id: 2, x: 70, y: 35, value: 'C', status: 'default', inDegree: 1 },
-        { id: 3, x: 15, y: 60, value: 'D', status: 'default', inDegree: 1 },
-        { id: 4, x: 45, y: 60, value: 'E', status: 'default', inDegree: 1 },
-        { id: 5, x: 70, y: 60, value: 'F', status: 'default', inDegree: 1 },
-        { id: 6, x: 45, y: 85, value: 'G', status: 'default', inDegree: 1 }
-    ];
+    let graphData = parseGraphInput(inputString, true); // Directed
 
-    const edges = [
-        { source: 0, target: 1, type: 'directed', status: 'default' },
-        { source: 0, target: 2, type: 'directed', status: 'default' },
-        { source: 1, target: 3, type: 'directed', status: 'default' },
-        { source: 1, target: 4, type: 'directed', status: 'default' },
-        { source: 2, target: 5, type: 'directed', status: 'default' },
-        { source: 4, target: 6, type: 'directed', status: 'default' }
-    ];
+    if (!graphData) {
+        // Directed Graph for Topo Sort
+        // A -> B, A -> C, B -> D, B -> E, C -> F, E -> G
+        const staticNodes = [
+            { id: 0, x: 50, y: 10, value: 'A', status: 'default', inDegree: 0 },
+            { id: 1, x: 30, y: 35, value: 'B', status: 'default', inDegree: 1 },
+            { id: 2, x: 70, y: 35, value: 'C', status: 'default', inDegree: 1 },
+            { id: 3, x: 15, y: 60, value: 'D', status: 'default', inDegree: 1 },
+            { id: 4, x: 45, y: 60, value: 'E', status: 'default', inDegree: 1 },
+            { id: 5, x: 70, y: 60, value: 'F', status: 'default', inDegree: 1 },
+            { id: 6, x: 45, y: 85, value: 'G', status: 'default', inDegree: 1 }
+        ];
 
-    const adj = {
-        0: [1, 2], 1: [3, 4], 2: [5], 3: [], 4: [6], 5: [], 6: []
-    };
+        const staticEdges = [
+            { source: 0, target: 1, type: 'directed', status: 'default' },
+            { source: 0, target: 2, type: 'directed', status: 'default' },
+            { source: 1, target: 3, type: 'directed', status: 'default' },
+            { source: 1, target: 4, type: 'directed', status: 'default' },
+            { source: 2, target: 5, type: 'directed', status: 'default' },
+            { source: 4, target: 6, type: 'directed', status: 'default' }
+        ];
+        graphData = { nodes: staticNodes, edges: staticEdges };
+    }
 
-    // Initial State
+    const { nodes, edges } = graphData;
+    const adj = {};
+    nodes.forEach(n => {
+        adj[n.id] = [];
+        n.inDegree = 0;
+    });
+
+    edges.forEach(e => {
+        adj[e.source].push(e.target);
+        nodes[e.target].inDegree++;
+    });
+    let currentNodes = JSON.parse(JSON.stringify(nodes));
+    let currentEdges = JSON.parse(JSON.stringify(edges));
+
     steps.push({
-        nodes: JSON.parse(JSON.stringify(nodes)),
-        edges: JSON.parse(JSON.stringify(edges)),
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
         stack: [],
-        description: "Initial State: DAG. Calculating In-Degrees."
+        description: "Initial DAG state. In-degree counts are displayed on nodes."
     });
 
     const queue = [];
@@ -1108,24 +1151,137 @@ export const generateTopologicalSortSteps = () => {
     return steps;
 };
 
-
-export const generateCycleDetectionSteps = () => {
+export const generateConnectedComponentsSteps = (inputString) => {
     const steps = [];
+    let graphData = parseGraphInput(inputString, false);
 
-    // Graph with Cycle: A -> B -> C -> A
-    const nodes = [
-        { id: 0, x: 50, y: 15, value: 'A', status: 'default' },
-        { id: 1, x: 80, y: 50, value: 'B', status: 'default' },
-        { id: 2, x: 20, y: 50, value: 'C', status: 'default' }
-    ];
+    if (!graphData) {
+        // Disconnected Graph
+        const staticNodes = [
+            { id: 0, x: 20, y: 20, value: 'A', status: 'default' },
+            { id: 1, x: 40, y: 30, value: 'B', status: 'default' },
+            { id: 2, x: 20, y: 50, value: 'C', status: 'default' },
+            { id: 3, x: 70, y: 20, value: 'D', status: 'default' },
+            { id: 4, x: 85, y: 40, value: 'E', status: 'default' },
+            { id: 5, x: 60, y: 70, value: 'F', status: 'default' }
+        ];
 
-    const edges = [
-        { source: 0, target: 1, type: 'directed', status: 'default' },
-        { source: 1, target: 2, type: 'directed', status: 'default' },
-        { source: 2, target: 0, type: 'directed', status: 'default' }
-    ];
+        const staticEdges = [
+            { source: 0, target: 1, status: 'default' },
+            { source: 1, target: 2, status: 'default' },
+            { source: 0, target: 2, status: 'default' },
+            { source: 3, target: 4, status: 'default' }
+        ];
+        graphData = { nodes: staticNodes, edges: staticEdges };
+    }
 
-    const adj = { 0: [1], 1: [2], 2: [0] };
+    const { nodes, edges } = graphData;
+    const adj = {};
+    nodes.forEach(n => adj[n.id] = []);
+    edges.forEach(e => {
+        adj[e.source].push(e.target);
+        if (e.type !== 'directed') adj[e.target].push(e.source);
+    });
+
+    const visited = new Set();
+    let currentNodes = JSON.parse(JSON.stringify(nodes));
+    let currentEdges = JSON.parse(JSON.stringify(edges));
+    let componentCount = 0;
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
+        stack: [],
+        description: "Initial Graph with multiple components. We will find them using BFS/DFS."
+    });
+
+    for (let i = 0; i < nodes.length; i++) {
+        if (!visited.has(i)) {
+            componentCount++;
+            const q = [i];
+            visited.add(i);
+
+            steps.push({
+                nodes: JSON.parse(JSON.stringify(currentNodes)),
+                edges: JSON.parse(JSON.stringify(currentEdges)),
+                stack: [...q],
+                description: `Found new component starting at Node ${nodes[i].value}. Assigning Component ID: ${componentCount}`
+            });
+
+            while (q.length > 0) {
+                const u = q.shift();
+                currentNodes[u].status = 'visited';
+                currentNodes[u].componentId = componentCount - 1;
+
+                steps.push({
+                    nodes: JSON.parse(JSON.stringify(currentNodes)),
+                    edges: JSON.parse(JSON.stringify(currentEdges)),
+                    stack: [...q],
+                    description: `Traversing node ${nodes[u].value} in Component ${componentCount}.`
+                });
+
+                for (const v of adj[u]) {
+                    if (!visited.has(v)) {
+                        visited.add(v);
+                        q.push(v);
+                        currentNodes[v].status = 'current';
+
+                        // Highlight edge
+                        const edgeIdx = currentEdges.findIndex(e =>
+                            (e.source === u && e.target === v) || (e.source === v && e.target === u)
+                        );
+                        if (edgeIdx !== -1) currentEdges[edgeIdx].status = 'visited';
+                    }
+                }
+            }
+
+            steps.push({
+                nodes: JSON.parse(JSON.stringify(currentNodes)),
+                edges: JSON.parse(JSON.stringify(currentEdges)),
+                stack: [],
+                description: `Finished component ${componentCount}.`
+            });
+        }
+    }
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
+        stack: [],
+        description: `All components found! Total: ${componentCount}`
+    });
+
+    return steps;
+};
+
+
+export const generateCycleDetectionSteps = (inputString) => {
+    const steps = [];
+    let graphData = parseGraphInput(inputString, true); // Directed
+
+    if (!graphData) {
+        // Graph with Cycle: A -> B -> C -> A
+        const staticNodes = [
+            { id: 0, x: 50, y: 15, value: 'A', status: 'default' },
+            { id: 1, x: 80, y: 50, value: 'B', status: 'default' },
+            { id: 2, x: 20, y: 50, value: 'C', status: 'default' }
+        ];
+
+        const staticEdges = [
+            { source: 0, target: 1, type: 'directed', status: 'default' },
+            { source: 1, target: 2, type: 'directed', status: 'default' },
+            { source: 2, target: 0, type: 'directed', status: 'default' }
+        ];
+        graphData = { nodes: staticNodes, edges: staticEdges };
+    }
+
+    const { nodes, edges } = graphData;
+    const adj = {};
+    nodes.forEach(n => adj[n.id] = []);
+    edges.forEach(e => {
+        adj[e.source].push(e.target);
+        if (e.type !== 'directed') adj[e.target].push(e.source);
+    });
     const stack = [];
     const visited = new Set();
     const recursionStack = new Set();
@@ -1321,34 +1477,38 @@ export const generatePlaceholderSteps = (arr, algoName = "this algorithm") => {
 
 // --- MST Algorithms ---
 
-export const generatePrimSteps = () => {
+export const generatePrimSteps = (inputString) => {
     const steps = [];
+    let graphData = parseGraphInput(inputString, false);
 
-    // Graph for MST (Undirected)
-    const nodes = [
-        { id: 0, x: 20, y: 50, value: 'A', status: 'default' },
-        { id: 1, x: 50, y: 20, value: 'B', status: 'default' },
-        { id: 2, x: 50, y: 80, value: 'C', status: 'default' },
-        { id: 3, x: 80, y: 50, value: 'D', status: 'default' },
-        { id: 4, x: 50, y: 50, value: 'E', status: 'default' }
-    ];
+    if (!graphData) {
+        // Graph for MST (Undirected)
+        const staticNodes = [
+            { id: 0, x: 20, y: 50, value: 'A', status: 'default' },
+            { id: 1, x: 50, y: 20, value: 'B', status: 'default' },
+            { id: 2, x: 50, y: 80, value: 'C', status: 'default' },
+            { id: 3, x: 80, y: 50, value: 'D', status: 'default' },
+            { id: 4, x: 50, y: 50, value: 'E', status: 'default' }
+        ];
 
-    const edges = [
-        { source: 0, target: 1, weight: 2, status: 'default' }, // A-B
-        { source: 0, target: 2, weight: 3, status: 'default' }, // A-C
-        { source: 1, target: 3, weight: 5, status: 'default' }, // B-D
-        { source: 1, target: 4, weight: 2, status: 'default' }, // B-E
-        { source: 2, target: 4, weight: 1, status: 'default' }, // C-E (Smallest!)
-        { source: 4, target: 3, weight: 1, status: 'default' }  // E-D (Smallest!)
-    ];
+        const staticEdges = [
+            { source: 0, target: 1, weight: 2, status: 'default' }, // A-B
+            { source: 0, target: 2, weight: 3, status: 'default' }, // A-C
+            { source: 1, target: 3, weight: 5, status: 'default' }, // B-D
+            { source: 1, target: 4, weight: 2, status: 'default' }, // B-E
+            { source: 2, target: 4, weight: 1, status: 'default' }, // C-E (Smallest!)
+            { source: 4, target: 3, weight: 1, status: 'default' }  // E-D (Smallest!)
+        ];
+        graphData = { nodes: staticNodes, edges: staticEdges };
+    }
 
-    const adj = {
-        0: [{ to: 1, w: 2 }, { to: 2, w: 3 }],
-        1: [{ to: 0, w: 2 }, { to: 3, w: 5 }, { to: 4, w: 2 }],
-        2: [{ to: 0, w: 3 }, { to: 4, w: 1 }],
-        3: [{ to: 1, w: 5 }, { to: 4, w: 1 }],
-        4: [{ to: 1, w: 2 }, { to: 2, w: 1 }, { to: 3, w: 1 }]
-    };
+    const { nodes, edges } = graphData;
+    const adj = {};
+    nodes.forEach(n => adj[n.id] = []);
+    edges.forEach(e => {
+        adj[e.source].push({ to: e.target, w: e.weight });
+        adj[e.target].push({ to: e.source, w: e.weight });
+    });
 
     let totalCost = 0;
     let selectedCount = 0;
@@ -1447,26 +1607,34 @@ export const generatePrimSteps = () => {
 };
 
 
-export const generateKruskalSteps = () => {
+export const generateKruskalSteps = (inputString) => {
     const steps = [];
+    let graphData = parseGraphInput(inputString, false);
 
-    // Same Graph
-    const nodes = [
-        { id: 0, x: 20, y: 50, value: 'A', status: 'default' },
-        { id: 1, x: 50, y: 20, value: 'B', status: 'default' },
-        { id: 2, x: 50, y: 80, value: 'C', status: 'default' },
-        { id: 3, x: 80, y: 50, value: 'D', status: 'default' },
-        { id: 4, x: 50, y: 50, value: 'E', status: 'default' }
-    ];
+    if (!graphData) {
+        // Same Graph
+        const staticNodes = [
+            { id: 0, x: 20, y: 50, value: 'A', status: 'default' },
+            { id: 1, x: 50, y: 20, value: 'B', status: 'default' },
+            { id: 2, x: 50, y: 80, value: 'C', status: 'default' },
+            { id: 3, x: 80, y: 50, value: 'D', status: 'default' },
+            { id: 4, x: 50, y: 50, value: 'E', status: 'default' }
+        ];
 
-    const edges = [
-        { id: 0, source: 0, target: 1, weight: 2, status: 'default' },
-        { id: 1, source: 0, target: 2, weight: 3, status: 'default' },
-        { id: 2, source: 1, target: 3, weight: 5, status: 'default' },
-        { id: 3, source: 1, target: 4, weight: 2, status: 'default' },
-        { id: 4, source: 2, target: 4, weight: 1, status: 'default' },
-        { id: 5, source: 4, target: 3, weight: 1, status: 'default' }
-    ];
+        const staticEdges = [
+            { id: 0, source: 0, target: 1, weight: 2, status: 'default' },
+            { id: 1, source: 0, target: 2, weight: 3, status: 'default' },
+            { id: 2, source: 1, target: 3, weight: 5, status: 'default' },
+            { id: 3, source: 1, target: 4, weight: 2, status: 'default' },
+            { id: 4, source: 2, target: 4, weight: 1, status: 'default' },
+            { id: 5, source: 4, target: 3, weight: 1, status: 'default' }
+        ];
+        graphData = { nodes: staticNodes, edges: staticEdges };
+    }
+
+    const { nodes, edges } = graphData;
+    // Add IDs to edges if missing
+    edges.forEach((e, idx) => { if (e.id === undefined) e.id = idx; });
 
     let totalCost = 0;
     let selectedCount = 0;
@@ -1549,6 +1717,659 @@ export const generateKruskalSteps = () => {
         stack: [],
         mstStats: { selected: selectedCount, totalNeeds, cost: totalCost },
         description: "Kruskal's Algorithm Complete."
+    });
+
+    return steps;
+};
+
+
+export const generateDijkstraSteps = (inputString) => {
+    const steps = [];
+    let graphData = parseGraphInput(inputString, true); // Often directed
+
+    if (!graphData) {
+        // Directed Weighted Graph
+        const staticNodes = [
+            { id: 0, x: 15, y: 50, value: 'A', status: 'default', distance: 0 },
+            { id: 1, x: 40, y: 25, value: 'B', status: 'default', distance: Infinity },
+            { id: 2, x: 40, y: 75, value: 'C', status: 'default', distance: Infinity },
+            { id: 3, x: 65, y: 25, value: 'D', status: 'default', distance: Infinity },
+            { id: 4, x: 65, y: 75, value: 'E', status: 'default', distance: Infinity },
+            { id: 5, x: 90, y: 50, value: 'F', status: 'default', distance: Infinity }
+        ];
+
+        const staticEdges = [
+            { source: 0, target: 1, weight: 4, type: 'directed', status: 'default' },
+            { source: 0, target: 2, weight: 2, type: 'directed', status: 'default' },
+            { source: 1, target: 3, weight: 5, type: 'directed', status: 'default' },
+            { source: 1, target: 2, weight: 1, type: 'directed', status: 'default' },
+            { source: 2, target: 4, weight: 8, type: 'directed', status: 'default' },
+            { source: 2, target: 1, weight: 3, type: 'directed', status: 'default' },
+            { source: 3, target: 5, weight: 7, type: 'directed', status: 'default' },
+            { source: 3, target: 4, weight: 2, type: 'directed', status: 'default' },
+            { source: 4, target: 5, weight: 3, type: 'directed', status: 'default' }
+        ];
+        graphData = { nodes: staticNodes, edges: staticEdges };
+    }
+
+    const { nodes, edges } = graphData;
+    const adj = {};
+    nodes.forEach(n => {
+        adj[n.id] = [];
+        if (n.distance === undefined) n.distance = n.id === 0 ? 0 : Infinity;
+    });
+    edges.forEach(e => {
+        adj[e.source].push({ to: e.target, w: e.weight });
+        if (e.type !== 'directed') adj[e.target].push({ to: e.source, w: e.weight });
+    });
+
+    let currentNodes = JSON.parse(JSON.stringify(nodes));
+    let currentEdges = JSON.parse(JSON.stringify(edges));
+    const visited = new Set();
+    const pq = [{ id: 0, dist: 0 }];
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
+        stack: pq.map(i => `${nodes[i.id].value}: ${i.dist}`),
+        description: `Starting Dijkstra's from Node ${nodes[0].value}. Target: Shortest path to all nodes.`
+    });
+
+    while (pq.length > 0) {
+        pq.sort((a, b) => a.dist - b.dist);
+        const { id, dist } = pq.shift();
+
+        if (visited.has(id)) continue;
+        visited.add(id);
+
+        currentNodes[id].status = 'current';
+        steps.push({
+            nodes: JSON.parse(JSON.stringify(currentNodes)),
+            edges: JSON.parse(JSON.stringify(currentEdges)),
+            stack: pq.map(i => `${nodes[i.id].value}: ${i.dist}`),
+            description: `Exploring Node ${currentNodes[id].value} with smallest known distance ${dist}.`
+        });
+
+        currentNodes[id].status = 'visited';
+
+        for (const neighbor of adj[id]) {
+            if (!visited.has(neighbor.to)) {
+                const newDist = dist + neighbor.w;
+
+                // Find edge
+                const edgeIdx = currentEdges.findIndex(e =>
+                    (e.source === id && e.target === neighbor.to) ||
+                    (e.type !== 'directed' && e.source === neighbor.to && e.target === id)
+                );
+                if (edgeIdx !== -1) currentEdges[edgeIdx].status = 'current';
+
+                steps.push({
+                    nodes: JSON.parse(JSON.stringify(currentNodes)),
+                    edges: JSON.parse(JSON.stringify(currentEdges)),
+                    stack: pq.map(i => `${nodes[i.id].value}: ${i.dist}`),
+                    description: `Checking neighbor ${nodes[neighbor.to].value} via ${currentNodes[id].value}. New distance could be ${dist} + ${neighbor.w} = ${newDist}.`
+                });
+
+                if (newDist < currentNodes[neighbor.to].distance) {
+                    currentNodes[neighbor.to].distance = newDist;
+                    pq.push({ id: neighbor.to, dist: newDist });
+                    if (edgeIdx !== -1) currentEdges[edgeIdx].status = 'visited';
+
+                    steps.push({
+                        nodes: JSON.parse(JSON.stringify(currentNodes)),
+                        edges: JSON.parse(JSON.stringify(currentEdges)),
+                        stack: pq.map(i => `${nodes[i.id].value}: ${i.dist}`),
+                        description: `Updated distance for ${nodes[neighbor.to].value} to ${newDist}.`
+                    });
+                } else if (edgeIdx !== -1) {
+                    currentEdges[edgeIdx].status = 'default';
+                }
+            }
+        }
+    }
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
+        stack: [],
+        description: "Dijkstra's Algorithm Complete. Shortest paths from source are found."
+    });
+
+    return steps;
+};
+
+export const generateBellmanFordSteps = (inputString) => {
+    const steps = [];
+    let graphData = parseGraphInput(inputString, true);
+
+    if (!graphData) {
+        const staticNodes = [
+            { id: 0, x: 15, y: 50, value: 'A', status: 'default', distance: 0 },
+            { id: 1, x: 40, y: 25, value: 'B', status: 'default', distance: Infinity },
+            { id: 2, x: 40, y: 75, value: 'C', status: 'default', distance: Infinity },
+            { id: 3, x: 65, y: 50, value: 'D', status: 'default', distance: Infinity },
+            { id: 4, x: 90, y: 50, value: 'E', status: 'default', distance: Infinity }
+        ];
+
+        const staticEdges = [
+            { source: 0, target: 1, weight: 6, type: 'directed', status: 'default' },
+            { source: 0, target: 2, weight: 7, type: 'directed', status: 'default' },
+            { source: 1, target: 2, weight: 8, type: 'directed', status: 'default' },
+            { source: 1, target: 3, weight: -4, type: 'directed', status: 'default' },
+            { source: 1, target: 4, weight: 5, type: 'directed', status: 'default' },
+            { source: 2, target: 3, weight: 9, type: 'directed', status: 'default' },
+            { source: 2, target: 4, weight: -3, type: 'directed', status: 'default' },
+            { source: 3, target: 1, weight: 2, type: 'directed', status: 'default' },
+            { source: 4, target: 3, weight: 7, type: 'directed', status: 'default' }
+        ];
+        graphData = { nodes: staticNodes, edges: staticEdges };
+    }
+
+    const { nodes, edges } = graphData;
+    let currentNodes = JSON.parse(JSON.stringify(nodes));
+    let currentEdges = JSON.parse(JSON.stringify(edges));
+
+    currentNodes.forEach(n => {
+        if (n.distance === undefined) n.distance = n.id === 0 ? 0 : Infinity;
+    });
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
+        stack: [],
+        description: `Starting Bellman-Ford from Node ${nodes[0].value}. We will relax all edges |V|-1 times.`
+    });
+
+    const V = nodes.length;
+    let negativeCycle = false;
+
+    for (let i = 1; i <= V; i++) {
+        let changed = false;
+        const isLastIteration = (i === V);
+
+        for (let j = 0; j < edges.length; j++) {
+            const edge = edges[j];
+            const u = edge.source;
+            const v = edge.target;
+            const w = edge.weight;
+
+            currentEdges[j].status = 'current'; // Orange
+            currentNodes[u].status = 'current'; // Yellow
+
+            steps.push({
+                nodes: JSON.parse(JSON.stringify(currentNodes)),
+                edges: JSON.parse(JSON.stringify(currentEdges)),
+                stack: [],
+                description: isLastIteration
+                    ? `Checking for negative cycle: Relaxing edge ${nodes[u].value} -> ${nodes[v].value} (Weight: ${w}).`
+                    : `Iteration ${i}: Relaxing edge ${nodes[u].value} -> ${nodes[v].value} (Weight: ${w}).`
+            });
+
+            if (currentNodes[u].distance !== Infinity && currentNodes[u].distance + w < currentNodes[v].distance) {
+                if (isLastIteration) {
+                    negativeCycle = true;
+                    currentNodes[v].status = 'cycle';
+                    currentEdges[j].status = 'cycle';
+                } else {
+                    currentNodes[v].distance = currentNodes[u].distance + w;
+                    currentNodes[v].status = 'visited';
+                    currentEdges[j].status = 'visited';
+                    changed = true;
+                }
+
+                steps.push({
+                    nodes: JSON.parse(JSON.stringify(currentNodes)),
+                    edges: JSON.parse(JSON.stringify(currentEdges)),
+                    stack: [],
+                    description: isLastIteration
+                        ? `NEGATIVE CYCLE DETECTED! Distance to ${nodes[v].value} can still be reduced.`
+                        : `Updated distance of ${nodes[v].value} to ${currentNodes[v].distance}.`
+                });
+
+                if (negativeCycle) break;
+            }
+
+            currentEdges[j].status = currentEdges[j].status === 'cycle' ? 'cycle' : (currentEdges[j].status === 'visited' ? 'visited' : 'default');
+            currentNodes[u].status = currentNodes[u].status === 'visited' ? 'visited' : 'visited';
+            currentNodes[v].status = currentNodes[v].status === 'visited' || currentNodes[v].status === 'cycle' ? currentNodes[v].status : 'visited';
+        }
+
+        if (negativeCycle) break;
+        if (!changed && !isLastIteration) {
+            steps.push({
+                nodes: JSON.parse(JSON.stringify(currentNodes)),
+                edges: JSON.parse(JSON.stringify(currentEdges)),
+                stack: [],
+                description: `No changes in iteration ${i}. Optimization: Shortest paths found early.`
+            });
+            break;
+        }
+    }
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
+        stack: [],
+        description: negativeCycle
+            ? "Bellman-Ford Complete: Negative cycle detected! Shortest paths are undefined."
+            : "Bellman-Ford Complete: Shortest paths found for all nodes."
+    });
+
+    return steps;
+};
+
+export const generateBipartiteCheckSteps = (inputString) => {
+    const steps = [];
+    let graphData = parseGraphInput(inputString, false);
+    if (!graphData) {
+        const staticNodes = [
+            { id: 0, x: 20, y: 30, value: 'A', status: 'default' },
+            { id: 1, x: 50, y: 30, value: 'B', status: 'default' },
+            { id: 2, x: 80, y: 30, value: 'C', status: 'default' },
+            { id: 3, x: 35, y: 70, value: 'D', status: 'default' },
+            { id: 4, x: 65, y: 70, value: 'E', status: 'default' }
+        ];
+        const staticEdges = [
+            { source: 0, target: 3, type: 'undirected', status: 'default' },
+            { source: 0, target: 4, type: 'undirected', status: 'default' },
+            { source: 1, target: 3, type: 'undirected', status: 'default' },
+            { source: 1, target: 4, type: 'undirected', status: 'default' },
+            { source: 2, target: 4, type: 'undirected', status: 'default' }
+        ];
+        graphData = { nodes: staticNodes, edges: staticEdges };
+    }
+    const { nodes, edges } = graphData;
+    let currentNodes = JSON.parse(JSON.stringify(nodes));
+    let currentEdges = JSON.parse(JSON.stringify(edges));
+    const colors = {}; // 0 or 1
+    const queue = [];
+
+    const adj = {};
+    nodes.forEach(n => adj[n.id] = []);
+    edges.forEach(e => {
+        adj[e.source].push(e.target);
+        adj[e.target].push(e.source);
+    });
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
+        stack: [],
+        description: "Initial Graph. We will try to color the graph with 2 colors (Red and Purple) such that no adjacent nodes have the same color."
+    });
+
+    for (let i = 0; i < nodes.length; i++) {
+        if (colors[i] === undefined) {
+            colors[i] = 0;
+            queue.push(i);
+            currentNodes[i].componentId = 0; // Use componentId for coloring logic in visualizer if needed, or status
+            currentNodes[i].status = 'visited'; // Color A
+
+            steps.push({
+                nodes: JSON.parse(JSON.stringify(currentNodes)),
+                edges: JSON.parse(JSON.stringify(currentEdges)),
+                stack: [i],
+                description: `Starting BFS from Node ${nodes[i].value}. Coloring it with first color.`
+            });
+
+            while (queue.length > 0) {
+                const u = queue.shift();
+                for (const v of adj[u]) {
+                    if (colors[v] === undefined) {
+                        colors[v] = 1 - colors[u];
+                        queue.push(v);
+                        currentNodes[v].componentId = colors[v];
+                        currentNodes[v].status = 'visited';
+
+                        const edgeIdx = currentEdges.findIndex(e => (e.source === u && e.target === v) || (e.source === v && e.target === u));
+                        if (edgeIdx !== -1) currentEdges[edgeIdx].status = 'visited';
+
+                        steps.push({
+                            nodes: JSON.parse(JSON.stringify(currentNodes)),
+                            edges: JSON.parse(JSON.stringify(currentEdges)),
+                            stack: [...queue],
+                            description: `Coloring neighbor ${nodes[v].value} with opposite color (${colors[v] === 0 ? 'Color 1' : 'Color 2'}).`
+                        });
+                    } else if (colors[v] === colors[u]) {
+                        // Conflict!
+                        currentNodes[v].status = 'cycle';
+                        currentNodes[u].status = 'cycle';
+                        const edgeIdx = currentEdges.findIndex(e => (e.source === u && e.target === v) || (e.source === v && e.target === u));
+                        if (edgeIdx !== -1) currentEdges[edgeIdx].status = 'cycle';
+
+                        steps.push({
+                            nodes: JSON.parse(JSON.stringify(currentNodes)),
+                            edges: JSON.parse(JSON.stringify(currentEdges)),
+                            stack: [],
+                            description: `CONFLICT! Neighbor ${nodes[v].value} already has the same color as ${nodes[u].value}. The graph is NOT bipartite.`
+                        });
+                        return steps;
+                    }
+                }
+            }
+        }
+    }
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
+        stack: [],
+        description: "BFS Complete. No conflicts found. The graph IS bipartite."
+    });
+    return steps;
+};
+
+
+export const generateSCCKosarajuSteps = (inputString) => {
+    const steps = [];
+    let graphData = parseGraphInput(inputString, true);
+    if (!graphData) {
+        const staticNodes = [
+            { id: 0, x: 20, y: 30, value: 'A', status: 'default' },
+            { id: 1, x: 50, y: 30, value: 'B', status: 'default' },
+            { id: 2, x: 80, y: 30, value: 'C', status: 'default' },
+            { id: 3, x: 20, y: 70, value: 'D', status: 'default' },
+            { id: 4, x: 50, y: 70, value: 'E', status: 'default' }
+        ];
+        const staticEdges = [
+            { source: 0, target: 1, type: 'directed', status: 'default' },
+            { source: 1, target: 2, type: 'directed', status: 'default' },
+            { source: 2, target: 0, type: 'directed', status: 'default' },
+            { source: 1, target: 3, type: 'directed', status: 'default' },
+            { source: 3, target: 4, type: 'directed', status: 'default' }
+        ];
+        graphData = { nodes: staticNodes, edges: staticEdges };
+    }
+    const { nodes, edges } = graphData;
+    let currentNodes = JSON.parse(JSON.stringify(nodes));
+    let currentEdges = JSON.parse(JSON.stringify(edges));
+
+    const adj = {};
+    const revAdj = {};
+    nodes.forEach(n => { adj[n.id] = []; revAdj[n.id] = []; });
+    edges.forEach(e => {
+        adj[e.source].push(e.target);
+        revAdj[e.target].push(e.source);
+    });
+
+    const stack = [];
+    const visited = new Set();
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
+        stack: [],
+        description: "Kosaraju's Algorithm. Pass 1: Perform DFS to get nodes in order of finishing times."
+    });
+
+    const dfs1 = (u) => {
+        visited.add(u);
+        currentNodes[u].status = 'current';
+        steps.push({
+            nodes: JSON.parse(JSON.stringify(currentNodes)),
+            edges: JSON.parse(JSON.stringify(currentEdges)),
+            stack: [...stack],
+            description: `DFS Pass 1: Visiting Node ${nodes[u].value}.`
+        });
+
+        for (const v of adj[u]) {
+            if (!visited.has(v)) {
+                dfs1(v);
+            }
+        }
+        stack.push(u);
+        currentNodes[u].status = 'visited';
+        steps.push({
+            nodes: JSON.parse(JSON.stringify(currentNodes)),
+            edges: JSON.parse(JSON.stringify(currentEdges)),
+            stack: [...stack],
+            description: `DFS Pass 1: Finished Node ${nodes[u].value}. Added to finishing stack.`
+        });
+    };
+
+    for (let i = 0; i < nodes.length; i++) {
+        if (!visited.has(i)) dfs1(i);
+    }
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
+        stack: [...stack],
+        description: "Pass 1 complete. Stack now contains nodes in finishing order. Now transposing the graph."
+    });
+
+    // Reset for Step 2
+    visited.clear();
+    currentNodes.forEach(n => { n.status = 'default'; });
+    const transposedEdges = JSON.parse(JSON.stringify(currentEdges)).map(e => ({
+        ...e,
+        source: e.target,
+        target: e.source
+    }));
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: transposedEdges,
+        stack: [...stack],
+        description: "Pass 2: Graph Transposed. Processing stack in reverse to find components."
+    });
+
+    let sccCount = 0;
+    while (stack.length > 0) {
+        const u = stack.pop();
+        if (!visited.has(u)) {
+            sccCount++;
+            const comp = [];
+            const dfs2 = (curr) => {
+                visited.add(curr);
+                comp.push(curr);
+                currentNodes[curr].status = 'visited';
+                currentNodes[curr].componentId = sccCount - 1;
+                steps.push({
+                    nodes: JSON.parse(JSON.stringify(currentNodes)),
+                    edges: transposedEdges,
+                    stack: [...stack],
+                    description: `DFS Pass 2: Exploring SCC ${sccCount}. Node ${nodes[curr].value} added.`
+                });
+                for (const v of revAdj[curr]) {
+                    if (!visited.has(v)) dfs2(v);
+                }
+            };
+            dfs2(u);
+            steps.push({
+                nodes: JSON.parse(JSON.stringify(currentNodes)),
+                edges: transposedEdges,
+                stack: [...stack],
+                description: `Finished finding SCC ${sccCount}: Nodes {${comp.map(id => nodes[id].value).join(', ')}}`
+            });
+        }
+    }
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)), // Original edges
+        stack: [],
+        description: `Kosaraju's Algorithm Complete. Found ${sccCount} Strongly Connected Components.`
+    });
+
+    return steps;
+};
+
+
+export const generateFloydWarshallSteps = (inputString) => {
+    const steps = [];
+    let graphData = parseGraphInput(inputString, true);
+
+    if (!graphData) {
+        const staticNodes = [
+            { id: 0, x: 25, y: 25, value: 'A' },
+            { id: 1, x: 75, y: 25, value: 'B' },
+            { id: 2, x: 25, y: 75, value: 'C' },
+            { id: 3, x: 75, y: 75, value: 'D' }
+        ];
+        const staticEdges = [
+            { source: 0, target: 1, weight: 3, type: 'directed' },
+            { source: 1, target: 2, weight: 4, type: 'directed' },
+            { source: 2, target: 0, weight: 5, type: 'directed' },
+            { source: 0, target: 3, weight: 10, type: 'directed' },
+            { source: 2, target: 3, weight: 1, type: 'directed' }
+        ];
+        graphData = { nodes: staticNodes, edges: staticEdges };
+    }
+
+    const { nodes, edges } = graphData;
+    const n = nodes.length;
+    const dist = Array.from({ length: n }, () => Array(n).fill(Infinity));
+    for (let i = 0; i < n; i++) dist[i][i] = 0;
+    edges.forEach(e => {
+        dist[e.source][e.target] = e.weight;
+        if (e.type !== 'directed') dist[e.target][e.source] = e.weight;
+    });
+
+    const labels = nodes.map(node => node.value);
+
+    const getGrid = (matrix, k, i, j) => {
+        return matrix.map((row, r) => row.map((val, c) => ({
+            value: val === Infinity ? '∞' : val,
+            status: (r === i && c === j) ? 'current' :
+                (r === i && c === k) || (r === k && c === j) ? 'dependency' :
+                    (val !== Infinity ? 'visited' : 'default')
+        })));
+    };
+
+    steps.push({
+        grid: getGrid(dist, -1, -1, -1),
+        rowLabels: labels,
+        colLabels: labels,
+        description: "Initial Distance Matrix. Diagonals are 0, edges have weights, others are ∞."
+    });
+
+    for (let k = 0; k < n; k++) {
+        steps.push({
+            grid: getGrid(dist, k, -1, -1),
+            rowLabels: labels,
+            colLabels: labels,
+            description: `Iteration k = ${labels[k]}. Using Node ${labels[k]} as intermediate pivot.`
+        });
+
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+                if (i === k || j === k) continue;
+
+                const oldVal = dist[i][j];
+                const throughK = dist[i][k] + dist[k][j];
+
+                if (throughK < oldVal) {
+                    dist[i][j] = throughK;
+                    steps.push({
+                        grid: getGrid(dist, k, i, j),
+                        rowLabels: labels,
+                        colLabels: labels,
+                        description: `Found shorter path from ${labels[i]} to ${labels[j]} through ${labels[k]}: ${oldVal === Infinity ? '∞' : oldVal} -> ${throughK}`
+                    });
+                }
+            }
+        }
+    }
+
+    steps.push({
+        grid: getGrid(dist, -1, -1, -1),
+        rowLabels: labels,
+        colLabels: labels,
+        description: "Floyd-Warshall Complete. All-pairs shortest paths computed."
+    });
+
+    return steps;
+};
+
+
+export const generateMultiSourceBFSSteps = (inputString) => {
+    const steps = [];
+    let graphData = parseGraphInput(inputString, false);
+
+    if (!graphData) {
+        const staticNodes = [
+            { id: 0, x: 15, y: 50, value: 'A' },
+            { id: 1, x: 40, y: 30, value: 'B' },
+            { id: 2, x: 40, y: 70, value: 'C' },
+            { id: 3, x: 65, y: 50, value: 'D' },
+            { id: 4, x: 90, y: 50, value: 'E' }
+        ];
+        const staticEdges = [
+            { source: 0, target: 1, type: 'undirected' },
+            { source: 1, target: 3, type: 'undirected' },
+            { source: 4, target: 3, type: 'undirected' },
+            { source: 4, target: 2, type: 'undirected' },
+            { source: 2, target: 0, type: 'undirected' }
+        ];
+        graphData = { nodes: staticNodes, edges: staticEdges };
+    }
+
+    const { nodes, edges } = graphData;
+    let currentNodes = JSON.parse(JSON.stringify(nodes));
+    let currentEdges = JSON.parse(JSON.stringify(edges));
+
+    const adj = {};
+    nodes.forEach(n => adj[n.id] = []);
+    edges.forEach(e => {
+        adj[e.source].push(e.target);
+        if (e.type !== 'directed') adj[e.target].push(e.source);
+    });
+
+    const sourceIndices = nodes.length >= 2 ? [0, nodes.length - 1] : [nodes.length > 0 ? 0 : null].filter(x => x !== null);
+    const queue = [...sourceIndices];
+    const visited = new Set(sourceIndices);
+
+    sourceIndices.forEach(idx => {
+        if (currentNodes[idx]) currentNodes[idx].status = 'visited';
+    });
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
+        stack: [...queue],
+        description: "Multi-Source BFS: Starting from multiple nodes simultaneously (A and E)."
+    });
+
+    while (queue.length > 0) {
+        const u = queue.shift();
+        currentNodes[u].status = 'current';
+
+        steps.push({
+            nodes: JSON.parse(JSON.stringify(currentNodes)),
+            edges: JSON.parse(JSON.stringify(currentEdges)),
+            stack: [...queue],
+            description: `Exploring neighbors of Node ${nodes[u].value}.`
+        });
+
+        for (const v of adj[u]) {
+            if (!visited.has(v)) {
+                visited.add(v);
+                queue.push(v);
+                currentNodes[v].status = 'queued';
+
+                const edgeIdx = currentEdges.findIndex(e =>
+                    (e.source === u && e.target === v) ||
+                    (e.type !== 'directed' && e.source === v && e.target === u)
+                );
+                if (edgeIdx !== -1) currentEdges[edgeIdx].status = 'visited';
+
+                steps.push({
+                    nodes: JSON.parse(JSON.stringify(currentNodes)),
+                    edges: JSON.parse(JSON.stringify(currentEdges)),
+                    stack: [...queue],
+                    description: `Found unvisited neighbor ${nodes[v].value}. Adding to queue.`
+                });
+            }
+        }
+        currentNodes[u].status = 'visited';
+    }
+
+    steps.push({
+        nodes: JSON.parse(JSON.stringify(currentNodes)),
+        edges: JSON.parse(JSON.stringify(currentEdges)),
+        stack: [],
+        description: "Multi-Source BFS Complete. All reachable nodes visited."
     });
 
     return steps;
@@ -5981,6 +6802,49 @@ export const generateMatchingSteps = (n) => {
     return steps;
 };
 
+// Helper to parse graph input strings (e.g. "0-1, 1-2:5, 2-0")
+const parseGraphInput = (inputString, directed = false) => {
+    if (!inputString || typeof inputString !== 'string' || inputString.trim() === "") return null;
+
+    const nodesMap = new Map();
+    const edges = [];
+    const pairs = inputString.split(',').map(s => s.trim());
+
+    pairs.forEach((pair, idx) => {
+        // Handle "source-target:weight" or "source-target"
+        const [connection, weightStr] = pair.split(':');
+        const parts = connection.split('-').map(s => s.trim());
+        if (parts.length < 2) return;
+
+        const [u, v] = parts;
+        const w = weightStr ? parseInt(weightStr) : 1;
+
+        if (!nodesMap.has(u)) nodesMap.set(u, { id: nodesMap.size, value: u });
+        if (!nodesMap.has(v)) nodesMap.set(v, { id: nodesMap.size, value: v });
+
+        edges.push({
+            source: nodesMap.get(u).id,
+            target: nodesMap.get(v).id,
+            weight: w,
+            type: directed ? 'directed' : 'undirected',
+            status: 'default'
+        });
+    });
+
+    const nodes = Array.from(nodesMap.values()).map(n => {
+        // Auto-position nodes in a circle if no positions provided
+        const angle = (n.id / nodesMap.size) * 2 * Math.PI;
+        return {
+            ...n,
+            x: 50 + 35 * Math.cos(angle),
+            y: 50 + 35 * Math.sin(angle),
+            status: 'default'
+        };
+    });
+
+    return nodesMap.size > 0 ? { nodes, edges } : null;
+};
+
 export const getAlgorithmGenerator = (id) => {
     // Normalize ID
     const key = id.toLowerCase()
@@ -6033,6 +6897,35 @@ export const getAlgorithmGenerator = (id) => {
         'subsets': { type: 'backtracking', func: generateSubsetsSteps },
         'combinations': { type: 'backtracking', func: generateCombinationsSteps },
         'word-search': { type: 'backtracking', func: generateWordSearchSteps },
+
+        // Graph
+        'bfs': { type: 'graph', func: generateBFSSteps },
+        'dfs': { type: 'graph', func: generateDFSSteps },
+        'topological-sort': { type: 'graph', func: generateTopologicalSortSteps },
+        'topo-sort': { type: 'graph', func: generateTopologicalSortSteps },
+        'cycle-detection': { type: 'graph', func: generateCycleDetectionSteps },
+        'cycle-detect': { type: 'graph', func: generateCycleDetectionSteps },
+        'connected-components': { type: 'graph', func: generateConnectedComponentsSteps },
+        'connected-comp.': { type: 'graph', func: generateConnectedComponentsSteps },
+        'connected-comp': { type: 'graph', func: generateConnectedComponentsSteps },
+        'bipartite-check': { type: 'graph', func: generateBipartiteCheckSteps },
+        'scc': { type: 'graph', func: generateSCCKosarajuSteps },
+        'bfs-path': { type: 'graph', func: generateBFSSteps },
+        'dijkstra': { type: 'graph', func: generateDijkstraSteps },
+        'dijkstra-s-algorithm': { type: 'graph', func: generateDijkstraSteps },
+        'bellman-ford': { type: 'graph', func: generateBellmanFordSteps },
+        'floyd-warshall': { type: 'graph', func: generateFloydWarshallSteps },
+        'floyd–warshall': { type: 'graph', func: generateFloydWarshallSteps },
+        'multi-source': { type: 'graph', func: generateMultiSourceBFSSteps },
+        'prim-s-algorithm': { type: 'graph', func: generatePrimSteps },
+        'prim-s': { type: 'graph', func: generatePrimSteps },
+        'prims-algo': { type: 'graph', func: generatePrimSteps },
+        'kruskal-s-algorithm': { type: 'graph', func: generateKruskalSteps },
+        'kruskal-s': { type: 'graph', func: generateKruskalSteps },
+        'kruskals': { type: 'graph', func: generateKruskalSteps },
+        'union-find': { type: 'graph', func: generateKruskalSteps },
+        'shortest-path': { type: 'graph', func: generateDijkstraSteps },
+        'mst-constraints': { type: 'graph', func: generateKruskalSteps },
 
         // Greedy
         'activity-selection': { type: 'greedy', func: generateActivitySelectionSteps },
