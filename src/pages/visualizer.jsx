@@ -123,6 +123,7 @@ const getAlgorithmDescription = (id) => {
         'dijkstra': "Dijkstra's Algorithm finds the shortest path from a starting node to all other nodes in a weighted graph by always expanding the node with the smallest known distance.",
         'prim-s-algorithm': "Prim's Algorithm finds the Minimum Spanning Tree (MST) for a weighted undirected graph by always adding the cheapest edge from the visited set to an unvisited node.",
         'prim-s': "Prim's Algorithm finds the Minimum Spanning Tree (MST) for a weighted undirected graph by always adding the cheapest edge from the visited set to an unvisited node.",
+        'prim-s-algo': "Prim's Algorithm finds the Minimum Spanning Tree (MST) for a weighted undirected graph by always adding the cheapest edge from the visited set to an unvisited node.",
         'prims-algo': "Prim's Algorithm finds the Minimum Spanning Tree (MST) for a weighted undirected graph by always adding the cheapest edge from the visited set to an unvisited node.",
         'kruskal-s-algorithm': "Kruskal's Algorithm finds the MST by sorting all edges by weight and adding them one by one, ensuring no cycles are formed using Union-Find.",
         'kruskal-s': "Kruskal's Algorithm finds the MST by sorting all edges by weight and adding them one by one, ensuring no cycles are formed using Union-Find.",

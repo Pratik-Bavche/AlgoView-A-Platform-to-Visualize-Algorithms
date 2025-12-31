@@ -1600,7 +1600,9 @@ export const generatePrimSteps = (inputString) => {
         edges: JSON.parse(JSON.stringify(edges)),
         stack: [],
         mstStats: { selected: selectedCount, totalNeeds, cost: totalCost },
-        description: "Prim's Algorithm Complete. Minimum Spanning Tree formed."
+        description: selectedCount === totalNeeds
+            ? `Prim's Algorithm Complete! Minimum Spanning Tree formed with total cost: ${totalCost}.`
+            : `Prim's Algorithm Finished. Graph is disconnected; formed MST for the reachable component only.`
     });
 
     return steps;
@@ -6919,6 +6921,7 @@ export const getAlgorithmGenerator = (id) => {
         'multi-source': { type: 'graph', func: generateMultiSourceBFSSteps },
         'prim-s-algorithm': { type: 'graph', func: generatePrimSteps },
         'prim-s': { type: 'graph', func: generatePrimSteps },
+        'prim-s-algo': { type: 'graph', func: generatePrimSteps },
         'prims-algo': { type: 'graph', func: generatePrimSteps },
         'kruskal-s-algorithm': { type: 'graph', func: generateKruskalSteps },
         'kruskal-s': { type: 'graph', func: generateKruskalSteps },
