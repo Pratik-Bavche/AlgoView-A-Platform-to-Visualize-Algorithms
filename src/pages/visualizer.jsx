@@ -472,10 +472,10 @@ export const Visualizer = () => {
                                     <DropdownMenuItem onClick={() => setViewMode('bars')} className="cursor-pointer">
                                         <BarChart2 className="w-4 h-4 mr-2" /> Bars
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => setViewMode('rainbow')} className="cursor-pointer">
+                                    <DropdownMenuItem onClick={() => setViewMode('rainbow')} className="cursor-pointer hidden sm:flex">
                                         <Palette className="w-4 h-4 mr-2" /> Rainbow
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => setViewMode('dots')} className="cursor-pointer">
+                                    <DropdownMenuItem onClick={() => setViewMode('dots')} className="cursor-pointer hidden sm:flex">
                                         <Circle className="w-4 h-4 mr-2" /> Dots
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={() => setViewMode('numbers')} className="cursor-pointer">
