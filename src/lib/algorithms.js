@@ -39,6 +39,8 @@ export const generateBubbleSortSteps = (initialArray) => {
             });
 
             if (array[j] > array[j + 1]) {
+                const leftValue = array[j];
+                const rightValue = array[j + 1];
                 swap(array, j, j + 1);
                 hasSwapped = true;
                 steps.push({
@@ -47,8 +49,8 @@ export const generateBubbleSortSteps = (initialArray) => {
                     swapped: true,
                     sorted: [...sortedIndices],
                     description: {
-                        en: `${array[j]} is greater than ${array[j + 1]}, so we swap them to move the larger value to the right.`,
-                        hi: `${array[j]}, ${array[j + 1]} से बड़ा है, इसलिए हम इन्हें आपस में बदल रहे हैं ताकि बड़ी संख्या दाईं ओर जा सके।`
+                        en: `${leftValue} is greater than ${rightValue}, so we swap them to move the larger value to the right.`,
+                        hi: `${leftValue}, ${rightValue} से बड़ा है, इसलिए हम इन्हें आपस में बदल रहे हैं ताकि बड़ी संख्या दाईं ओर जा सके।`
                     },
                     extraData: { pass: i + 1, totalPasses: n }
                 });
@@ -138,8 +140,8 @@ export const generateSelectionSortSteps = (initialArray) => {
                     pivot: minIdx, // New Yellow
                     sorted: [...sortedIndices],
                     description: {
-                        en: `Found a new minimum: ${array[minIdx]} is smaller than our current candidate. Updating the minimum.`,
-                        hi: `एक नई छोटी संख्या मिली: ${array[minIdx]} अभी के कैंडिडेट से छोटी है। न्यूनतम वैल्यू को अपडेट कर रहे हैं।`
+                        en: `Found a smaller value: ${array[minIdx]} is less than our current candidate. Updating the minimum.`,
+                        hi: `एक छोटी संख्या मिली: ${array[minIdx]} वर्तमान संख्या से कम है। न्यूनतम वैल्यू को अपडेट कर रहे हैं।`
                     },
                     extraData: { pass: i + 1, totalPasses: n }
                 });
@@ -153,8 +155,8 @@ export const generateSelectionSortSteps = (initialArray) => {
                 pivot: minIdx,
                 sorted: [...sortedIndices],
                 description: {
-                    en: `All elements checked. Now swapping the minimum value ${array[minIdx]} into its final position at index ${i}.`,
-                    hi: `सभी तत्वों की जांच हो गई। अब सबसे छोटी संख्या ${array[minIdx]} को उसके सही स्थान (index ${i}) पर रख रहे हैं।`
+                    en: `Finished checking. The smallest element found was ${array[minIdx]}. Swapping it to index ${i}.`,
+                    hi: `जांच पूरी हुई। सबसे छोटी संख्या ${array[minIdx]} मिली। इसे इंडेक्स ${i} पर रख रहे हैं।`
                 },
                 extraData: { pass: i + 1, totalPasses: n },
                 swapped: true
@@ -229,8 +231,8 @@ export const generateInsertionSortSteps = (initialArray) => {
                 // Actually in visualization we often swap to simulate shifting.
                 sorted: [...sortedIndices],
                 description: {
-                    en: `Comparing our key ${key} with ${array[j]} to see where it fits.`,
-                    hi: `हमारी की (key) ${key} की तुलना ${array[j]} से कर रहे हैं यह देखने के लिए कि यह कहाँ फिट होगी।`
+                    en: `Is our key ${key} smaller than ${array[j]}? If so, we must shift ${array[j]} to the right.`,
+                    hi: `क्या हमारी की (key) ${key}, ${array[j]} से छोटी है? यदि हाँ, तो हमें ${array[j]} को दाईं ओर खिसकाना होगा।`
                 },
                 extraData: { pass: i, totalPasses: n - 1 }
             });
@@ -329,8 +331,8 @@ export const generateMergeSortSteps = (initialArray) => {
                 comparing: [l + i, m + 1 + j], // Visual approximation of comparison indices (not perfect as new arr overwrites)
                 range: range,
                 description: {
-                    en: `Comparing ${L[i]} vs ${R[j]}.`,
-                    hi: `${L[i]} aur ${R[j]} ki tulna.`
+                    en: `Comparing ${L[i]} from the left subarray with ${R[j]} from the right.`,
+                    hi: `बाएं सब-ऐरे के ${L[i]} की तुलना दाएं के ${R[j]} से कर रहे हैं।`
                 }
             });
 
@@ -342,8 +344,8 @@ export const generateMergeSortSteps = (initialArray) => {
                     range: range,
                     swapped: true,
                     description: {
-                        en: `Taking smaller element ${L[i]}.`,
-                        hi: `Chhota element ${L[i]} le rahe hain.`
+                        en: `${L[i]} is smaller, so we place it into the merged array first.`,
+                        hi: `${L[i]} छोटा है, इसलिए हम इसे पहले मर्ज किए गए ऐरे में रख रहे हैं।`
                     }
                 });
                 i++;
@@ -355,8 +357,8 @@ export const generateMergeSortSteps = (initialArray) => {
                     range: range,
                     swapped: true,
                     description: {
-                        en: `Taking smaller element ${R[j]}.`,
-                        hi: `Chhota element ${R[j]} le rahe hain.`
+                        en: `${R[j]} is smaller, so we place it into the merged array first.`,
+                        hi: `${R[j]} छोटा है, इसलिए हम इसे पहले मर्ज किए गए ऐरे में रख रहे हैं।`
                     }
                 });
                 j++;
@@ -454,8 +456,8 @@ export const generateQuickSortSteps = (initialArray) => {
                 sorted: Array.from(sortedSet),
                 checkIndex: i, // Show where smaller elements go
                 description: {
-                    en: `Comparing ${arr[j]} with pivot ${pivot}.`,
-                    hi: `${arr[j]} ki pivot ${pivot} se tulna.`
+                    en: `Is ${arr[j]} smaller than our pivot ${pivot}?`,
+                    hi: `क्या ${arr[j]} हमारे पिवट ${pivot} से छोटा है?`
                 }
             });
 
@@ -470,8 +472,8 @@ export const generateQuickSortSteps = (initialArray) => {
                         swapped: true,
                         sorted: Array.from(sortedSet),
                         description: {
-                            en: `${arr[i]} < pivot. Swapping.`,
-                            hi: `${arr[i]} < pivot. Swap kar rahe hain.`
+                            en: `Yes, ${arr[i]} is smaller than the pivot. Moving it to the left side by swapping.`,
+                            hi: `हाँ, ${arr[i]} पिवट से छोटा है। इसे स्वैप करके बाईं ओर ले जा रहे हैं।`
                         }
                     });
                 }
