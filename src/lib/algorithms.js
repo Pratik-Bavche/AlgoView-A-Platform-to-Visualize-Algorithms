@@ -17,7 +17,10 @@ export const generateBubbleSortSteps = (initialArray) => {
         array: [...array],
         comparing: [],
         sorted: [],
-        description: "Initial State: All bars Blue.",
+        description: {
+            en: "Initial State: All bars Blue.",
+            hi: "Shuruaati sthiti: Sabhi bars neele hain."
+        },
         extraData: { pass: 0, totalPasses: n }
     });
 
@@ -28,7 +31,10 @@ export const generateBubbleSortSteps = (initialArray) => {
                 array: [...array],
                 comparing: [j, j + 1], // Red
                 sorted: [...sortedIndices], // Green
-                description: `Comparing ${array[j]} and ${array[j + 1]} to check order.`,
+                description: {
+                    en: `Checking if ${array[j]} and ${array[j + 1]} are in the right order.`,
+                    hi: `क्या ${array[j]} और ${array[j + 1]} सही क्रम में हैं? इसकी जांच कर रहे हैं।`
+                },
                 extraData: { pass: i + 1, totalPasses: n }
             });
 
@@ -40,7 +46,10 @@ export const generateBubbleSortSteps = (initialArray) => {
                     comparing: [j, j + 1],
                     swapped: true,
                     sorted: [...sortedIndices],
-                    description: `Since ${array[j + 1]} > ${array[j]} (was ${array[j]} > ${array[j + 1]}), swapping positions.`,
+                    description: {
+                        en: `${array[j]} is greater than ${array[j + 1]}, so we swap them to move the larger value to the right.`,
+                        hi: `${array[j]}, ${array[j + 1]} से बड़ा है, इसलिए हम इन्हें आपस में बदल रहे हैं ताकि बड़ी संख्या दाईं ओर जा सके।`
+                    },
                     extraData: { pass: i + 1, totalPasses: n }
                 });
             }
@@ -50,7 +59,10 @@ export const generateBubbleSortSteps = (initialArray) => {
             array: [...array],
             comparing: [],
             sorted: [...sortedIndices],
-            description: `${array[n - i - 1]} is now in its correct sorted position (Green).`,
+            description: {
+                en: `${array[n - i - 1]} is now in its correct sorted position (Green).`,
+                hi: `${array[n - i - 1]} ab apni sahi jagah par hai (Hara).`
+            },
             extraData: { pass: i + 1, totalPasses: n }
         });
         if (!hasSwapped) {
@@ -65,7 +77,10 @@ export const generateBubbleSortSteps = (initialArray) => {
         array: [...array],
         comparing: [],
         sorted: [...Array(n).keys()],
-        description: "Sorting Complete! All bars are Green.",
+        description: {
+            en: "Sorting Complete! All bars are Green.",
+            hi: "Sorting poora hua! Sabhi bars hare ho gaye hain."
+        },
         extraData: { pass: n, totalPasses: n }
     });
     return steps;
@@ -81,7 +96,10 @@ export const generateSelectionSortSteps = (initialArray) => {
         array: [...array],
         comparing: [],
         sorted: [],
-        description: "Initial State: All bars Blue.",
+        description: {
+            en: "Initial State: All bars Blue.",
+            hi: "Shuruaati sthiti: Sabhi bars neele hain."
+        },
         extraData: { pass: 0, totalPasses: n }
     });
 
@@ -92,7 +110,10 @@ export const generateSelectionSortSteps = (initialArray) => {
             comparing: [minIdx],
             pivot: minIdx, // Yellow for current min
             sorted: [...sortedIndices],
-            description: `Starting pass ${i + 1}. Highlighting current minimum candidate (Yellow).`,
+            description: {
+                en: `Starting pass ${i + 1}. Highlighting current minimum candidate (Yellow).`,
+                hi: `Pass ${i + 1} shuru. Minimum value (Peela) ko highlight kar rahe hain.`
+            },
             extraData: { pass: i + 1, totalPasses: n }
         });
 
@@ -102,7 +123,10 @@ export const generateSelectionSortSteps = (initialArray) => {
                 comparing: [minIdx, j], // Red for comparison
                 pivot: minIdx,
                 sorted: [...sortedIndices],
-                description: `Comparing current minimum ${array[minIdx]} with ${array[j]}.`,
+                description: {
+                    en: `Comparing current minimum ${array[minIdx]} with ${array[j]}.`,
+                    hi: `Abhi ke minimum ${array[minIdx]} ki ${array[j]} se tulna kar rahe hain.`
+                },
                 extraData: { pass: i + 1, totalPasses: n }
             });
 
@@ -113,7 +137,10 @@ export const generateSelectionSortSteps = (initialArray) => {
                     comparing: [j],
                     pivot: minIdx, // New Yellow
                     sorted: [...sortedIndices],
-                    description: `Found new smaller value: ${array[minIdx]}. Updating minimum.`,
+                    description: {
+                        en: `Found a new minimum: ${array[minIdx]} is smaller than our current candidate. Updating the minimum.`,
+                        hi: `एक नई छोटी संख्या मिली: ${array[minIdx]} अभी के कैंडिडेट से छोटी है। न्यूनतम वैल्यू को अपडेट कर रहे हैं।`
+                    },
                     extraData: { pass: i + 1, totalPasses: n }
                 });
             }
@@ -125,7 +152,10 @@ export const generateSelectionSortSteps = (initialArray) => {
                 comparing: [i, minIdx],
                 pivot: minIdx,
                 sorted: [...sortedIndices],
-                description: `Swapping found minimum ${array[minIdx]} with position ${i}.`,
+                description: {
+                    en: `All elements checked. Now swapping the minimum value ${array[minIdx]} into its final position at index ${i}.`,
+                    hi: `सभी तत्वों की जांच हो गई। अब सबसे छोटी संख्या ${array[minIdx]} को उसके सही स्थान (index ${i}) पर रख रहे हैं।`
+                },
                 extraData: { pass: i + 1, totalPasses: n },
                 swapped: true
             });
@@ -137,7 +167,10 @@ export const generateSelectionSortSteps = (initialArray) => {
             array: [...array],
             comparing: [],
             sorted: [...sortedIndices],
-            description: `${array[i]} is now sorted (Green).`,
+            description: {
+                en: `${array[i]} is now sorted (Green).`,
+                hi: `${array[i]} ab sort ho gaya hai (Hara).`
+            },
             extraData: { pass: i + 1, totalPasses: n }
         });
     }
@@ -145,7 +178,10 @@ export const generateSelectionSortSteps = (initialArray) => {
         array: [...array],
         comparing: [],
         sorted: [...Array(n).keys()],
-        description: "Sorted! All elements are Green.",
+        description: {
+            en: "Sorted! All elements are Green.",
+            hi: "Sort hua! Sabhi elements hare hain."
+        },
         extraData: { pass: n, totalPasses: n }
     });
     return steps;
@@ -162,7 +198,10 @@ export const generateInsertionSortSteps = (initialArray) => {
         array: [...array],
         comparing: [],
         sorted: [0],
-        description: "Initial State. Element at 0 is trivially sorted (Green).",
+        description: {
+            en: "Initial State. Element at 0 is trivially sorted (Green).",
+            hi: "Shuruaati sthiti. Position 0 wala element pehle se sorted hai (Hara)."
+        },
         extraData: { pass: 1, totalPasses: n - 1 }
     });
 
@@ -175,7 +214,10 @@ export const generateInsertionSortSteps = (initialArray) => {
             comparing: [i],
             keyIndex: i, // Yellow (Conceptually key is separated, but here we highlight its index)
             sorted: [...sortedIndices],
-            description: `Took key value ${key} (Yellow) to insert into sorted portion.`,
+            description: {
+                en: `Took key value ${key} (Yellow) to insert into sorted portion.`,
+                hi: `Sorted hisse mein daalne ke liye key value ${key} (Peela) liya.`
+            },
             extraData: { pass: i, totalPasses: n - 1 }
         });
 
@@ -186,7 +228,10 @@ export const generateInsertionSortSteps = (initialArray) => {
                 keyIndex: i, // We might lose track of 'key' visual pos if we don't track shifting. 
                 // Actually in visualization we often swap to simulate shifting.
                 sorted: [...sortedIndices],
-                description: `Comparing ${key} with ${array[j]}...`,
+                description: {
+                    en: `Comparing our key ${key} with ${array[j]} to see where it fits.`,
+                    hi: `हमारी की (key) ${key} की तुलना ${array[j]} से कर रहे हैं यह देखने के लिए कि यह कहाँ फिट होगी।`
+                },
                 extraData: { pass: i, totalPasses: n - 1 }
             });
 
@@ -202,7 +247,10 @@ export const generateInsertionSortSteps = (initialArray) => {
                 swapped: true,
                 keyIndex: j, // Key moved to j
                 sorted: [...sortedIndices],
-                description: `${array[j + 1]} > ${key}, shifting ${array[j + 1]} right.`,
+                description: {
+                    en: `${array[j + 1]} > ${key}, shifting ${array[j + 1]} right.`,
+                    hi: `${array[j + 1]}, ${key} se bada hai, isliye usse right khiska rahe hain.`
+                },
                 extraData: { pass: i, totalPasses: n - 1 }
             });
 
@@ -216,16 +264,274 @@ export const generateInsertionSortSteps = (initialArray) => {
             array: [...array],
             comparing: [],
             sorted: currentSorted,
-            description: `Inserted ${key} at correct position. Portion 0-${i} is sorted.`,
+            description: {
+                en: `Inserted ${key} at correct position. Portion 0-${i} is sorted.`,
+                hi: `${key} ko sahi jagah par daal diya. 0-${i} tak ka hissa sorted hai.`
+            },
             extraData: { pass: i, totalPasses: n - 1 }
         });
     }
     steps.push({
         array: [...array],
         sorted: [...Array(n).keys()],
-        description: "Sorted!",
+        description: {
+            en: "Sorted!",
+            hi: "Sort ho gaya!"
+        },
         extraData: { pass: n - 1, totalPasses: n - 1 }
     });
+    return steps;
+};
+
+export const generateMergeSortSteps = (initialArray) => {
+    const steps = [];
+    let array = [...initialArray];
+    const n = array.length;
+
+    steps.push({
+        array: [...array],
+        comparing: [],
+        sorted: [],
+        description: {
+            en: "Initial State: Ready to Merge Sort.",
+            hi: "Shuruaati Sthiti: Merge Sort ke liye taiyar."
+        }
+    });
+
+    const merge = (arr, l, m, r) => {
+        const n1 = m - l + 1;
+        const n2 = r - m;
+        const L = new Array(n1);
+        const R = new Array(n2);
+
+        for (let i = 0; i < n1; i++) L[i] = arr[l + i];
+        for (let j = 0; j < n2; j++) R[j] = arr[m + 1 + j];
+
+        let i = 0, j = 0, k = l;
+
+        let range = [];
+        for (let z = l; z <= r; z++) range.push(z);
+
+        steps.push({
+            array: [...arr],
+            comparing: [],
+            sorted: [],
+            range: range,
+            description: {
+                en: `Merging subarrays [${l}...${m}] and [${m + 1}...${r}].`,
+                hi: `Subarrays [${l}...${m}] aur [${m + 1}...${r}] ko merge kar rahe hain.`
+            }
+        });
+
+        while (i < n1 && j < n2) {
+            steps.push({
+                array: [...arr],
+                comparing: [l + i, m + 1 + j], // Visual approximation of comparison indices (not perfect as new arr overwrites)
+                range: range,
+                description: {
+                    en: `Comparing ${L[i]} vs ${R[j]}.`,
+                    hi: `${L[i]} aur ${R[j]} ki tulna.`
+                }
+            });
+
+            if (L[i] <= R[j]) {
+                arr[k] = L[i];
+                steps.push({
+                    array: [...arr],
+                    comparing: [k],
+                    range: range,
+                    swapped: true,
+                    description: {
+                        en: `Taking smaller element ${L[i]}.`,
+                        hi: `Chhota element ${L[i]} le rahe hain.`
+                    }
+                });
+                i++;
+            } else {
+                arr[k] = R[j];
+                steps.push({
+                    array: [...arr],
+                    comparing: [k],
+                    range: range,
+                    swapped: true,
+                    description: {
+                        en: `Taking smaller element ${R[j]}.`,
+                        hi: `Chhota element ${R[j]} le rahe hain.`
+                    }
+                });
+                j++;
+            }
+            k++;
+        }
+
+        while (i < n1) {
+            arr[k] = L[i];
+            steps.push({
+                array: [...arr],
+                comparing: [k],
+                range: range,
+                description: {
+                    en: `Copying remaining element ${L[i]}.`,
+                    hi: `Bacha hua element ${L[i]} copy kar rahe hain.`
+                }
+            });
+            i++;
+            k++;
+        }
+        while (j < n2) {
+            arr[k] = R[j];
+            steps.push({
+                array: [...arr],
+                comparing: [k],
+                range: range,
+                description: {
+                    en: `Copying remaining element ${R[j]}.`,
+                    hi: `Bacha hua element ${R[j]} copy kar rahe hain.`
+                }
+            });
+            j++;
+            k++;
+        }
+    };
+
+    const mergeSort = (arr, l, r) => {
+        if (l >= r) return;
+        const m = l + parseInt((r - l) / 2);
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    };
+
+    mergeSort(array, 0, n - 1);
+
+    steps.push({
+        array: [...array],
+        sorted: [...Array(n).keys()],
+        description: {
+            en: "Sorting Complete!",
+            hi: "Sorting poora hua!"
+        }
+    });
+
+    return steps;
+};
+
+export const generateQuickSortSteps = (initialArray) => {
+    const steps = [];
+    const array = [...initialArray];
+    const n = array.length;
+    let sortedSet = new Set();
+
+    steps.push({
+        array: [...array],
+        comparing: [],
+        sorted: [],
+        description: {
+            en: "Initial State: Ready to Quick Sort.",
+            hi: "Shuruaati Sthiti: Quick Sort ke liye taiyar."
+        }
+    });
+
+    const partition = (arr, low, high) => {
+        const pivot = arr[high];
+        let i = (low - 1);
+
+        steps.push({
+            array: [...arr],
+            pivot: high,
+            sorted: Array.from(sortedSet),
+            description: {
+                en: `Pivot selected: ${pivot} at index ${high}.`,
+                hi: `Pivot chuna: ${pivot}, index ${high} par.`
+            }
+        });
+
+        for (let j = low; j <= high - 1; j++) {
+            steps.push({
+                array: [...arr],
+                comparing: [j],
+                pivot: high,
+                sorted: Array.from(sortedSet),
+                checkIndex: i, // Show where smaller elements go
+                description: {
+                    en: `Comparing ${arr[j]} with pivot ${pivot}.`,
+                    hi: `${arr[j]} ki pivot ${pivot} se tulna.`
+                }
+            });
+
+            if (arr[j] < pivot) {
+                i++;
+                if (i !== j) {
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                    steps.push({
+                        array: [...arr],
+                        comparing: [i, j],
+                        pivot: high,
+                        swapped: true,
+                        sorted: Array.from(sortedSet),
+                        description: {
+                            en: `${arr[i]} < pivot. Swapping.`,
+                            hi: `${arr[i]} < pivot. Swap kar rahe hain.`
+                        }
+                    });
+                }
+            }
+        }
+        if (i + 1 !== high) {
+            [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+            steps.push({
+                array: [...arr],
+                comparing: [i + 1, high],
+                swapped: true,
+                sorted: Array.from(sortedSet),
+                description: {
+                    en: `Placing pivot ${pivot} at correct position ${i + 1}.`,
+                    hi: `Pivot ${pivot} ko sahi jagah ${i + 1} par rakh rahe hain.`
+                }
+            });
+        }
+        return i + 1;
+    };
+
+    const quickSort = (arr, low, high) => {
+        if (low < high) {
+            const pi = partition(arr, low, high);
+            sortedSet.add(pi);
+            steps.push({
+                array: [...arr],
+                sorted: Array.from(sortedSet),
+                description: {
+                    en: `Element ${arr[pi]} sorted.`,
+                    hi: `${arr[pi]} sort ho gaya.`
+                }
+            });
+
+            quickSort(arr, low, pi - 1);
+            quickSort(arr, pi + 1, high);
+        } else if (low === high) {
+            sortedSet.add(low);
+            steps.push({
+                array: [...arr],
+                sorted: Array.from(sortedSet),
+                description: {
+                    en: `Element ${arr[low]} is sorted.`,
+                    hi: `${arr[low]} sort ho gaya.`
+                }
+            });
+        }
+    };
+
+    quickSort(array, 0, n - 1);
+
+    steps.push({
+        array: [...array],
+        sorted: [...Array(n).keys()],
+        description: {
+            en: "Sorting Complete!",
+            hi: "Sorting poora hua!"
+        }
+    });
+
     return steps;
 };
 
@@ -239,7 +545,10 @@ export const generateLinearSearchSteps = (array, target) => {
         array: [...array],
         comparing: [],
         range: Array.from({ length: n }, (_, i) => i), // Initial Range: All Blue
-        description: `Starting Linear Search for target ${target}.`
+        description: {
+            en: `Starting Linear Search for target ${target}.`,
+            hi: `Target ${target} ke liye Linear Search shuru kar rahe hain.`
+        }
     });
 
     for (let i = 0; i < n; i++) {
@@ -249,7 +558,10 @@ export const generateLinearSearchSteps = (array, target) => {
             range: Array.from({ length: n - i }, (_, k) => k + i), // i to end is active
             extraData: { target },
             checkIndex: i, // Explicit prop for Yellow
-            description: `Checking index ${i}: Is ${array[i]} equal to ${target}?`
+            description: {
+                en: `Checking index ${i}: Is ${array[i]} equal to ${target}?`,
+                hi: `Index ${i} check kar rahe hain: Kya ${array[i]}, ${target} ke barabar hai?`
+            }
         });
 
         if (array[i] === target) {
@@ -259,7 +571,10 @@ export const generateLinearSearchSteps = (array, target) => {
                 range: [], // Found, so no "search range" needed or keep current?
                 extraData: { target },
                 checkIndex: i, // Keep highlighted
-                description: `Found target ${target} at index ${i}!`
+                description: {
+                    en: `Found target ${target} at index ${i}!`,
+                    hi: `Target ${target}, index ${i} par mil gaya!`
+                }
             });
             return steps;
         }
@@ -268,7 +583,10 @@ export const generateLinearSearchSteps = (array, target) => {
         array: [...array],
         range: [],
         extraData: { target },
-        description: `Target ${target} not found in the array.`
+        description: {
+            en: `Target ${target} not found in the array.`,
+            hi: `Target ${target} array mein nahi mila.`
+        }
     });
     return steps;
 };
@@ -297,7 +615,10 @@ export const generateBinarySearchSteps = (array, target) => {
             { index: right, label: 'R', color: '#3b82f6' }
         ],
         extraData: { target },
-        description: `Starting Binary Search. Range: [${left}, ${right}]`
+        description: {
+            en: `Starting Binary Search. Range: [${left}, ${right}]`,
+            hi: `Binary Search shuru kar rahe hain. Range: [${left}, ${right}]`
+        }
     });
 
     while (left <= right) {
@@ -317,7 +638,10 @@ export const generateBinarySearchSteps = (array, target) => {
                 { index: mid, label: 'MID', color: '#eab308' } // Yellow
             ],
             extraData: { target, midValue: array[mid] },
-            description: `Calculating Mid: (${left} + ${right}) / 2 = ${mid}. Checking value ${array[mid]}.`
+            description: {
+                en: `Calculating Mid: (${left} + ${right}) / 2 = ${mid}. Checking value ${array[mid]}.`,
+                hi: `Mid nikaal rahe hain: (${left} + ${right}) / 2 = ${mid}. Value ${array[mid]} check kar rahe hain.`
+            }
         });
 
         if (array[mid] === target) {
@@ -329,7 +653,10 @@ export const generateBinarySearchSteps = (array, target) => {
                     { index: mid, label: 'Found', color: '#22c55e' }
                 ],
                 extraData: { target },
-                description: `Target ${target} found at index ${mid}!`
+                description: {
+                    en: `Target ${target} found at index ${mid}!`,
+                    hi: `Target ${target}, index ${mid} par mil gaya!`
+                }
             });
             return steps;
         } else if (array[mid] < target) {
@@ -343,7 +670,10 @@ export const generateBinarySearchSteps = (array, target) => {
                     { index: mid, label: 'MID', color: '#eab308' }
                 ],
                 extraData: { target, comparison: `${array[mid]} < ${target}` },
-                description: `${array[mid]} is smaller than ${target}. Exclude left half.`
+                description: {
+                    en: `${array[mid]} is smaller than ${target}. Exclude left half.`,
+                    hi: `${array[mid]}, ${target} se chhota hai. Left aadha hissa chhod rahe hain.`
+                }
             });
             left = mid + 1;
         } else {
@@ -357,7 +687,10 @@ export const generateBinarySearchSteps = (array, target) => {
                     { index: mid, label: 'MID', color: '#eab308' }
                 ],
                 extraData: { target, comparison: `${array[mid]} > ${target}` },
-                description: `${array[mid]} is larger than ${target}. Exclude right half.`
+                description: {
+                    en: `${array[mid]} is larger than ${target}. Exclude right half.`,
+                    hi: `${array[mid]}, ${target} se bada hai. Right aadha hissa chhod rahe hain.`
+                }
             });
             right = mid - 1;
         }
@@ -367,7 +700,10 @@ export const generateBinarySearchSteps = (array, target) => {
         range: [],
         pointers: [],
         extraData: { target },
-        description: `Target ${target} not found.`
+        description: {
+            en: `Target ${target} not found.`,
+            hi: `Target ${target} nahi mila.`
+        }
     });
     return steps;
 };
@@ -381,22 +717,49 @@ export const generateFindMaxMinSteps = (initialArray) => {
     let minIdx = 0;
     let maxIdx = 0;
 
-    steps.push({ array: [...array], comparing: [], found: [], description: "Initial State" });
+    steps.push({
+        array: [...array],
+        comparing: [],
+        found: [],
+        description: {
+            en: "Initial State: Assuming first element is both min and max.",
+            hi: "शुरुआती स्थिति: मान लेते हैं कि पहला तत्व ही न्यूनतम और अधिकतम दोनों है।"
+        }
+    });
 
     for (let i = 1; i < n; i++) {
         steps.push({
             array: [...array],
             comparing: [i, minIdx, maxIdx],
-            description: `Comparing element at ${i} (${array[i]}) with current min (${array[minIdx]}) and max (${array[maxIdx]})`
+            description: {
+                en: `Comparing ${array[i]} at index ${i} with current minimum ${array[minIdx]} and maximum ${array[maxIdx]}.`,
+                hi: `इंडेक्स ${i} पर स्थित ${array[i]} की तुलना अभी के न्यूनतम ${array[minIdx]} और अधिकतम ${array[maxIdx]} से कर रहे हैं।`
+            }
         });
 
         if (array[i] < array[minIdx]) {
             minIdx = i;
-            steps.push({ array: [...array], comparing: [i], found: [minIdx, maxIdx], description: `New Minimum found at index ${i}` });
+            steps.push({
+                array: [...array],
+                comparing: [i],
+                found: [minIdx, maxIdx],
+                description: {
+                    en: `Found a new minimum: ${array[i]} at index ${i}.`,
+                    hi: `नया न्यूनतम मिला: इंडेक्स ${i} पर ${array[i]}।`
+                }
+            });
         }
         if (array[i] > array[maxIdx]) {
             maxIdx = i;
-            steps.push({ array: [...array], comparing: [i], found: [minIdx, maxIdx], description: `New Maximum found at index ${i}` });
+            steps.push({
+                array: [...array],
+                comparing: [i],
+                found: [minIdx, maxIdx],
+                description: {
+                    en: `Found a new maximum: ${array[i]} at index ${i}.`,
+                    hi: `नया अधिकतम मिला: इंडेक्स ${i} पर ${array[i]}।`
+                }
+            });
         }
     }
 
@@ -404,7 +767,10 @@ export const generateFindMaxMinSteps = (initialArray) => {
         array: [...array],
         comparing: [],
         found: [minIdx, maxIdx],
-        description: `Done! Min: ${array[minIdx]} (index ${minIdx}), Max: ${array[maxIdx]} (index ${maxIdx})`
+        description: {
+            en: `Process complete. The minimum value is ${array[minIdx]} and the maximum value is ${array[maxIdx]}.`,
+            hi: `प्रक्रिया पूरी हुई। न्यूनतम मान ${array[minIdx]} है और अधिकतम मान ${array[maxIdx]} है।`
+        }
     });
     return steps;
 };
@@ -418,7 +784,10 @@ export const generateReverseArraySteps = (initialArray) => {
     steps.push({
         array: [...array],
         comparing: [],
-        description: "Initial State",
+        description: {
+            en: "Initial State: Ready to reverse the array using two pointers.",
+            hi: "शुरुआती स्थिति: दो पॉइंटर्स का उपयोग करके ऐरे को उलटने के लिए तैयार।"
+        },
         pointers: [
             { index: start, label: 'L', color: '#2563eb' },
             { index: end, label: 'R', color: '#2563eb' }
@@ -433,7 +802,10 @@ export const generateReverseArraySteps = (initialArray) => {
                 { index: start, label: 'L', color: '#2563eb', position: 'top' },
                 { index: end, label: 'R', color: '#2563eb', position: 'top' }
             ],
-            description: `Swapping elements at indices ${start} and ${end}`
+            description: {
+                en: `Swapping elements ${array[start]} and ${array[end]} at indices ${start} and ${end}.`,
+                hi: `इंडेक्स ${start} और ${end} पर स्थित ${array[start]} और ${array[end]} को आपस में बदल रहे हैं।`
+            }
         });
 
         swap(array, start, end);
@@ -446,7 +818,10 @@ export const generateReverseArraySteps = (initialArray) => {
                 { index: start, label: 'L', color: '#2563eb', position: 'top' },
                 { index: end, label: 'R', color: '#2563eb', position: 'top' }
             ],
-            description: `Swapped ${array[start]} and ${array[end]}. Moving pointers inward.`
+            description: {
+                en: `Swapped successfully. Now moving the left pointer right and the right pointer left.`,
+                hi: `सफलतापूर्वक बदल दिया गया। अब बाएं पॉइंटर को दाएं और दाएं पॉइंटर को बाएं खिसका रहे हैं।`
+            }
         });
 
         start++;
@@ -456,7 +831,10 @@ export const generateReverseArraySteps = (initialArray) => {
         array: [...array],
         comparing: [],
         sorted: [...Array(array.length).keys()],
-        description: "Array Reversed!",
+        description: {
+            en: "Array Reversed! Every element has been flipped.",
+            hi: "ऐरे उलट गया! हर तत्व का स्थान बदल दिया गया है।"
+        },
         pointers: []
     });
     return steps;
@@ -472,7 +850,10 @@ export const generateTwoSumSteps = (initialArray, target = 9) => {
     steps.push({
         array: [...array],
         comparing: [],
-        description: `Finding pair with sum ${target}`,
+        description: {
+            en: `Finding a pair of elements that sum up to ${target}.`,
+            hi: `${target} का योग बनाने वाली दो संख्याओं की जोड़ी खोज रहे हैं।`
+        },
         extraData: { target: target }
     });
 
@@ -486,7 +867,10 @@ export const generateTwoSumSteps = (initialArray, target = 9) => {
                     { index: i, label: 'i', color: '#3b82f6', position: 'top' }, // Blue
                     { index: j, label: 'j', color: '#10b981', position: 'bottom' } // Green
                 ],
-                description: `Checking indices ${i} & ${j}: ${array[i]} + ${array[j]} = ${sum}`,
+                description: {
+                    en: `Checking indices ${i} and ${j}: ${array[i]} + ${array[j]} = ${sum}.`,
+                    hi: `इंडेक्स ${i} और ${j} की जांच कर रहे हैं: ${array[i]} + ${array[j]} = ${sum}।`
+                },
                 extraData: { target: target, currentSum: sum }
             });
 
@@ -499,14 +883,25 @@ export const generateTwoSumSteps = (initialArray, target = 9) => {
                         { index: i, label: 'Match', color: '#eab308' }, // Yellow-ish
                         { index: j, label: 'Match', color: '#eab308' }
                     ],
-                    description: `Found Pair! ${array[i]} + ${array[j]} = ${target}`,
+                    description: {
+                        en: `Found the pair! ${array[i]} and ${array[j]} add up to ${target}.`,
+                        hi: `जोड़ी मिल गई! ${array[i]} और ${array[j]} का योग ${target} है।`
+                    },
                     extraData: { target: target, currentSum: sum, result: [i, j] }
                 });
                 return steps;
             }
         }
     }
-    steps.push({ array: [...array], comparing: [], description: "No pair found.", extraData: { target: target } });
+    steps.push({
+        array: [...array],
+        comparing: [],
+        description: {
+            en: `No pair was found that sums up to ${target}.`,
+            hi: `${target} योग वाली कोई जोड़ी नहीं मिली।`
+        },
+        extraData: { target: target }
+    });
     return steps;
 };
 
@@ -518,7 +913,10 @@ export const generateMoveZerosSteps = (initialArray) => {
     steps.push({
         array: [...array],
         comparing: [],
-        description: "Initial State. Pointer 'Insert' tracks where next non-zero goes.",
+        description: {
+            en: "Initial State: Pointer 'Insert' (Red) will track where to move the next non-zero element.",
+            hi: "शुरुआती स्थिति: 'Insert' पॉइंटर (लाल) यह ट्रैक करेगा कि अगला गैर-शून्य (non-zero) तत्व कहां रखना है।"
+        },
         pointers: [{ index: 0, label: 'Insert', color: '#ef4444' }]
     });
 
@@ -530,7 +928,10 @@ export const generateMoveZerosSteps = (initialArray) => {
                 { index: i, label: 'i', color: '#3b82f6' },
                 { index: lastNonZero, label: 'Insert', color: '#ef4444' }
             ],
-            description: `Checking element at ${i}: ${array[i]}`
+            description: {
+                en: `Checking element ${array[i]} at index ${i}.`,
+                hi: `इंडेक्स ${i} पर स्थित तत्व ${array[i]} की जांच कर रहे हैं।`
+            }
         });
 
         if (array[i] !== 0) {
@@ -542,7 +943,10 @@ export const generateMoveZerosSteps = (initialArray) => {
                     { index: i, label: 'i', color: '#3b82f6' },
                     { index: lastNonZero, label: 'Insert', color: '#ef4444' }
                 ],
-                description: `${array[i]} is non-zero. ${isSwap ? 'Swapping with Insert pos.' : 'Already at Insert pos.'}`
+                description: {
+                    en: `${array[i]} is not zero. ${isSwap ? `Swapping it with index ${lastNonZero}.` : 'It is already in the correct position.'}`,
+                    hi: `${array[i]} शून्य नहीं है। ${isSwap ? `इसे इंडेक्स ${lastNonZero} के साथ बदल रहे हैं।` : 'यह पहले से ही सही स्थान पर है।'}`
+                }
             });
 
             if (isSwap) {
@@ -555,7 +959,10 @@ export const generateMoveZerosSteps = (initialArray) => {
                         { index: i, label: 'i', color: '#3b82f6' },
                         { index: lastNonZero, label: 'Insert', color: '#ef4444' }
                     ],
-                    description: `Moved ${array[lastNonZero]} to position ${lastNonZero}`
+                    description: {
+                        en: `Moved ${array[lastNonZero]} to current insertion position.`,
+                        hi: `${array[lastNonZero]} को अभी के 'Insert' स्थान पर रख दिया।`
+                    }
                 });
             }
             lastNonZero++;
@@ -565,7 +972,10 @@ export const generateMoveZerosSteps = (initialArray) => {
         array: [...array],
         sorted: [...Array(array.length).keys()],
         pointers: [],
-        description: "Zeros moved to end!"
+        description: {
+            en: "Success! All non-zero elements are at the front, and zeros are moved to the end.",
+            hi: "सफल! सभी गैर-शून्य तत्व आगे आ गए हैं और शून्य अंत में चले गए हैं।"
+        }
     });
     return steps;
 };
@@ -582,7 +992,10 @@ export const generateMaxSubarraySteps = (initialArray) => {
         comparing: [0],
         window: { start: 0, end: 0 },
         extraData: { maxSoFar: maxSoFar, currentSum: maxEndingHere },
-        description: "Initial State: Assuming first element is max."
+        description: {
+            en: "Initial State: Assuming the first element is the maximum subarray.",
+            hi: "शुरुआती स्थिति: मान लेते हैं कि पहला तत्व ही अधिकतम सब-ऐरे है।"
+        }
     });
 
     for (let i = 1; i < array.length; i++) {
@@ -595,7 +1008,10 @@ export const generateMaxSubarraySteps = (initialArray) => {
             window: { start: s, end: i - 1 }, // Show previous window
             pointers: [{ index: i, label: 'i', color: '#3b82f6' }],
             extraData: { maxSoFar, currentSum: maxEndingHere, nextVal: val },
-            description: `Processing ${val}. Add to current sum (${maxEndingHere + val}) or start new (${val})?`
+            description: {
+                en: `Processing ${val}. Should we add it to the current sum (${maxEndingHere + val}) or start a new subarray with ${val}?`,
+                hi: `${val} की जांच कर रहे हैं। क्या हमें इसे वर्तमान योग (${maxEndingHere + val}) में जोड़ना चाहिए या ${val} के साथ एक नया सब-ऐरे शुरू करना चाहिए?`
+            }
         });
 
         if (maxEndingHere + val < val) {
@@ -608,7 +1024,10 @@ export const generateMaxSubarraySteps = (initialArray) => {
                 window: { start: i, end: i },
                 pointers: [{ index: i, label: 'Start New', color: '#ef4444' }],
                 extraData: { maxSoFar, currentSum: maxEndingHere },
-                description: `Previous sum was negative (or smaller). Starting new subarray at ${i}.`
+                description: {
+                    en: `The previous sum was smaller than this element alone. Starting a new subarray at index ${i} with value ${val}.`,
+                    hi: `पिछला योग इस अकेले तत्व से छोटा था। इंडेक्स ${i} से ${val} के साथ नया सब-ऐरे शुरू कर रहे हैं।`
+                }
             });
         } else {
             // Extend
@@ -619,7 +1038,10 @@ export const generateMaxSubarraySteps = (initialArray) => {
                 window: { start: s, end: i },
                 pointers: [{ index: i, label: 'Extend', color: '#22c55e' }],
                 extraData: { maxSoFar, currentSum: maxEndingHere },
-                description: `Extended subarray. Current sum is now ${maxEndingHere}.`
+                description: {
+                    en: `Extended the subarray. The current sum is now ${maxEndingHere}.`,
+                    hi: `सब-ऐरे का विस्तार किया। वर्तमान योग अब ${maxEndingHere} है।`
+                }
             });
         }
 
@@ -634,7 +1056,10 @@ export const generateMaxSubarraySteps = (initialArray) => {
                 window: { start: s, end: i },
                 found: [i], // Flash or something
                 extraData: { maxSoFar, currentSum: maxEndingHere },
-                description: `New Maximum Found: ${maxSoFar}!`
+                description: {
+                    en: `New Maximum subarray sum found: ${maxSoFar}!`,
+                    hi: `नया अधिकतम सब-ऐरे योग मिला: ${maxSoFar}!`
+                }
             });
         }
     }
@@ -649,7 +1074,10 @@ export const generateMaxSubarraySteps = (initialArray) => {
         found: resultRange,
         window: { start, end },
         extraData: { maxSoFar },
-        description: `Max Subarray Sum is ${maxSoFar}`
+        description: {
+            en: `Completed! The maximum subarray sum found is ${maxSoFar}.`,
+            hi: `पूरा हुआ! अधिकतम सब-ऐरे योग ${maxSoFar} मिला।`
+        }
     });
 
     return steps;
@@ -812,7 +1240,10 @@ export const generateBFSSteps = (inputString) => {
         nodes: JSON.parse(JSON.stringify(currentNodes)),
         edges: JSON.parse(JSON.stringify(currentEdges)),
         stack: [...queue], // Display Queue
-        description: "Initial State: Root node added to Queue (Blue).",
+        description: {
+            en: "Initial State: We start at the root node and add it to the queue.",
+            hi: "शुरुआती स्थिति: हम रूट नोड से शुरू करते हैं और इसे कतार (queue) में जोड़ते हैं।"
+        },
         count: 0
     });
 
@@ -839,7 +1270,10 @@ export const generateBFSSteps = (inputString) => {
             nodes: JSON.parse(JSON.stringify(currentNodes)),
             edges: JSON.parse(JSON.stringify(currentEdges)),
             stack: [...queue],
-            description: `Dequeued Node ${currentNodes[currId].value}. Processing neighbors...`,
+            description: {
+                en: `Removed node ${currentNodes[currId].value} from the queue. Now checking its neighbors.`,
+                hi: `कतार से नोड ${currentNodes[currId].value} को निकाला। अब इसके पड़ोसियों की जांच कर रहे हैं।`
+            },
             count: visitCount
         });
 
@@ -867,7 +1301,10 @@ export const generateBFSSteps = (inputString) => {
                     nodes: JSON.parse(JSON.stringify(currentNodes)),
                     edges: JSON.parse(JSON.stringify(currentEdges)),
                     stack: [...queue],
-                    description: `Explored edge from ${currentNodes[currId].value} to ${currentNodes[neighborId].value}. Added neighbor to Queue.`,
+                    description: {
+                        en: `Explored the path from ${currentNodes[currId].value} to ${currentNodes[neighborId].value}. Adding the neighbor to the queue.`,
+                        hi: `${currentNodes[currId].value} से ${currentNodes[neighborId].value} तक के रास्ते की खोज की। पड़ोसी को कतार में जोड़ रहे हैं।`
+                    },
                     count: visitCount
                 });
 
@@ -886,7 +1323,10 @@ export const generateBFSSteps = (inputString) => {
         nodes: JSON.parse(JSON.stringify(currentNodes)),
         edges: JSON.parse(JSON.stringify(currentEdges)),
         stack: [],
-        description: "BFS Traversal Complete.",
+        description: {
+            en: "Breadth-First Search traversal is complete! All reachable nodes have been visited.",
+            hi: "Breadth-First Search पूरा हुआ! सभी सुलभ नोड्स का दौरा किया जा चुका है।"
+        },
         count: visitCount
     });
 
@@ -924,7 +1364,10 @@ export const generateDFSSteps = (inputString) => {
         nodes: JSON.parse(JSON.stringify(currentNodes)),
         edges: JSON.parse(JSON.stringify(currentEdges)),
         stack: [...stackContents],
-        description: `Starting DFS traversal from root Node ${nodes[0].value}.`,
+        description: {
+            en: `Starting Depth-First Search from root node ${nodes[0].value}.`,
+            hi: `रूट नोड ${nodes[0].value} से Depth-First Search शुरू कर रहे हैं।`
+        },
         count: 0
     });
 
@@ -946,7 +1389,10 @@ export const generateDFSSteps = (inputString) => {
             nodes: JSON.parse(JSON.stringify(currentNodes)),
             edges: JSON.parse(JSON.stringify(currentEdges)),
             stack: [...stackContents],
-            description: `Popped Node ${currentNodes[u].value} and visiting.`,
+            description: {
+                en: `Popped node ${currentNodes[u].value} from the stack and marked it as visited.`,
+                hi: `स्टैक से नोड ${currentNodes[u].value} को निकाला और इसे 'visited' घोषित किया।`
+            },
             count: visitCount
         });
 
@@ -972,7 +1418,10 @@ export const generateDFSSteps = (inputString) => {
                     nodes: JSON.parse(JSON.stringify(currentNodes)),
                     edges: JSON.parse(JSON.stringify(currentEdges)),
                     stack: [...stackContents],
-                    description: `Explored path ${currentNodes[u].value} -> ${currentNodes[v].value}. Pushed neighbor to stack.`,
+                    description: {
+                        en: `Explored the path from node ${currentNodes[u].value} to ${currentNodes[v].value} and added the neighbor to the stack.`,
+                        hi: `नोड ${currentNodes[u].value} से ${currentNodes[v].value} तक के रास्ते की खोज की और पड़ोसी को स्टैक (stack) में जोड़ दिया।`
+                    },
                     count: visitCount
                 });
 
@@ -985,7 +1434,10 @@ export const generateDFSSteps = (inputString) => {
         nodes: JSON.parse(JSON.stringify(currentNodes)),
         edges: JSON.parse(JSON.stringify(currentEdges)),
         stack: [],
-        description: "DFS Traversal Complete.",
+        description: {
+            en: "Depth-First Search traversal is complete! All reachable nodes have been explored.",
+            hi: "Depth-First Search पूरा हुआ! सभी सुलभ नोड्स की खोज की जा चुकी है।"
+        },
         count: visitCount
     });
 
@@ -6924,8 +7376,8 @@ export const getAlgorithmGenerator = (id) => {
         'bubble-sort': { type: 'sorting', func: generateBubbleSortSteps },
         'selection-sort': { type: 'sorting', func: generateSelectionSortSteps },
         'insertion-sort': { type: 'sorting', func: generateInsertionSortSteps },
-        'merge-sort': { type: 'sorting', func: (arr) => generatePlaceholderSteps(arr, 'Merge Sort') },
-        'quick-sort': { type: 'sorting', func: (arr) => generatePlaceholderSteps(arr, 'Quick Sort') },
+        'merge-sort': { type: 'sorting', func: generateMergeSortSteps },
+        'quick-sort': { type: 'sorting', func: generateQuickSortSteps },
         'heap-sort': { type: 'sorting', func: (arr) => generatePlaceholderSteps(arr, 'Heap Sort') },
         'counting-sort': { type: 'sorting', func: (arr) => generatePlaceholderSteps(arr, 'Counting Sort') },
         'radix-sort': { type: 'sorting', func: (arr) => generatePlaceholderSteps(arr, 'Radix Sort') },

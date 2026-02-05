@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { Play, Pause, SkipBack, SkipForward, RotateCcw, ChevronRight, Shuffle, BarChart2, Grid, Circle, Box, MoreVertical, Palette, List, RefreshCcw, CheckCircle2, ArrowRight } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, RotateCcw, ChevronRight, Shuffle, BarChart2, Grid, Circle, Box, MoreVertical, Palette, List, RefreshCcw, CheckCircle2, ArrowRight, Volume2, VolumeX, Languages } from "lucide-react"; // Added Volume icons
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -12,6 +12,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    DropdownMenuSeparator, // Added Separator
 } from "@/components/ui/dropdown-menu";
 import { getAlgorithmGenerator } from "@/lib/algorithms";
 
@@ -37,101 +38,57 @@ import { RealWorldVisualizer } from "@/components/visualizers/RealWorldVisualize
 
 const getAlgorithmDescription = (id) => {
     const map = {
-        'bubble-sort': "Bubble Sort repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order. This pass through the list is repeated until the list is sorted.",
-        'selection-sort': "Selection Sort divides the input list into two parts: the sublist of items already sorted and the sublist of items remaining to be sorted. It repeatedly finds the minimum element and moves it to the sorted list.",
-        'insertion-sort': "Insertion Sort builds the final sorted array one item at a time. It iterates through an input element and finds the location it belongs within the sorted list.",
-        'merge-sort': "Merge Sort is a divide-and-conquer algorithm that divides the input array into two halves, calls itself for the two halves, and then merges the two sorted halves.",
-        'quick-sort': "Quick Sort is a divide-and-conquer algorithm. It picks an element as a pivot and partitions the given array around the picked pivot.",
-        'linear-search': "Linear Search sequentially checks each element of the list until a match is found or the whole list has been searched.",
-        'binary-search': "Binary Search locates a target value within a sorted array. It compares the target value to the middle element of the array.",
-        'find-max-min': "This algorithm iterates through the array to find the maximum and minimum values by comparing each element with the current max and min.",
-        'reverse-array': "Reversing an array involves swapping the first and last elements, then the second and second-to-last, and so on, until the middle is reached.",
-        'rotate-array': "Array Rotation involves shifting the elements of the array by a specified number of positions (k).",
-        'two-sum': "Two Sum finds two numbers in the array that add up to a specific target number.",
-        'move-zeros': "Move Zeros involves moving all zeros in the array to the end while maintaining the relative order of the non-zero elements.",
-        'n-queens': "The N-Queens puzzle is the problem of placing N chess queens on an N×N chessboard so that no two queens threaten each other.",
-        'activity-selection': "Activity Selection Problem uses a greedy strategy to find the maximum number of non-overlapping activities.",
-        'coin-change-greedy': "Greedy Coin Change tries to find the minimum number of coins by always picking the largest possible coin denomination.",
-        'frac-knapsack': "Fractional Knapsack problem determines which items to include in a collection so that the total weight is less than or equal to a given limit and the total value is as large as possible.",
-        'matrix-chain': "Matrix Chain Multiplication is an optimization problem that finds the most efficient way to multiply a given sequence of matrices.",
-        'dp-on-trees': "DP on Trees techniques are used to solve problems on tree structures, such as finding the Maximum Independent Set or Diameter, by using post-order traversal.",
-        'sudoku-solver': "Backtracking algorithm to fill a 9x9 grid so that each column, each row, and each of the nine 3x3 subgrids contain all digits from 1 to 9.",
-        'rat-in-a-maze': "Finds a path from the start to the destination in a maze with walls using backtracking to explore all possible routes.",
-        'permutations': "Generates all possible arrangements of a set of items where the order matters.",
-        'subsets': "Generates all possible subsets (the power set) of a given set of items.",
-        'combinations': "Generates all possible groups of size k from a set of n items where order does not matter.",
-        'word-search': "Determines if a target word exists in a grid of characters by moving horizontally or vertically.",
-        'palindrome': "A palindrome is a word, phrase, or sequence that reads the same backward as forward. This algorithm checks for palindromic symmetry.",
-        'palindrome-check': "A palindrome is a word, phrase, or sequence that reads the same backward as forward. This algorithm checks for palindromic symmetry.",
-        'anagram': "An anagram is a word or phrase formed by rearranging the letters of a different word or phrase. We use a frequency map to verify this efficiently.",
-        'anagram-check': "An anagram is a word or phrase formed by rearranging the letters of a different word or phrase. We use a frequency map to verify this efficiently.",
-        'naive-search': "Naive String Searching aligns the pattern with all possible positions in the text and checks for matches character by character.",
-        'kmp-algo': "The Knuth-Morris-Pratt (KMP) algorithm improves on naive search by using information about partial matches to avoid unnecessary re-checks.",
-        'kmp-search': "The Knuth-Morris-Pratt (KMP) algorithm improves on naive search by using information about partial matches to avoid unnecessary re-checks.",
-        'rabin-karp': "Rabin-Karp uses rolling hashes to find a pattern in a text. If hashes match, it performs a character-by-character check.",
-        'count-set-bits': "Algorithm to count the number of 1s (set bits) in the binary representation of a number. Also known as population count or Hamming weight.",
-        'power-of-two': "A number is a power of two if it has exactly one bit set to 1 in its binary representation. We can check this efficiently using 'n & (n-1)'.",
-        'bitwise-and': "Commonly used to check if a bit is set or to mask certain bits. Result is 1 only if both corresponding bits are 1.",
-        'bitwise-or': "Commonly used to set specific bits. Result is 1 if at least one corresponding bit is 1.",
-        'bitwise-xor': "Exclusive OR is used in various tricks, like swapping numbers without a temp variable or finding the unique number in a pair-filled array.",
-        'bitwise-not': "Flips all bits of a number. In our 8-bit visualization, 0 becomes 1 and 1 becomes 0.",
-        'left-shift': "Shifting bits to the left effectively multiplies the number by 2 for each position shifted. Vacant spots on the right are filled with 0.",
-        'right-shift': "Shifting bits to the right effectively divides the number by 2 (floor) for each position shifted.",
-        'single-number': "Find the element that appears only once in an array where every other element appears twice, using XOR properties (x ^ x = 0).",
-        'prime-check': "A prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself. We use trial division to verify this.",
-        'prime-number-check': "A prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself. We use trial division up to the square root.",
-        'sieve-of-eratosthenes': "The Sieve of Eratosthenes is an ancient algorithm for finding all prime numbers up to any given limit by iteratively marking the multiples of each prime.",
-        'gcd': "The Greatest Common Divisor (GCD) of two numbers is the largest positive integer that divides both numbers. We use the efficient Euclidean algorithm.",
-        'lcm': "The Least Common Multiple (LCM) is the smallest positive integer that is divisible by both a and b. It's calculated using the GCD formula.",
-        'modular-exponentiation': "Modular exponentiation is a type of exponentiation performed over a modulus. It's efficiently computed using binary exponentiation.",
-        'modular-exp-': "Modular exponentiation is a type of exponentiation performed over a modulus. It's efficiently computed using binary exponentiation.",
-        'valid-parentheses': "Checks if a string of brackets is valid by matching opening and closing symbols using a LIFO stack.",
-        'next-greater-element': "Finds the first greater element to the right for every array element using a monotonic stack.",
-        'next-greater': "Finds the first greater element to the right for every array element using a monotonic stack.",
-        'min-stack': "A stack that supports push, pop, top, and retrieving the minimum element in constant time.",
-        'stack-implementation': "Basic stack operations demonstrating PUSH (adding to top) and POP (removing from top) behavior.",
-        'implementation': "Basic stack operations demonstrating PUSH (adding to top) and POP (removing from top) behavior.",
-        'sieve': "The Sieve of Eratosthenes is an ancient algorithm for finding all prime numbers up to any given limit by iteratively marking the multiples of each prime.",
-        'gcd---lcm': "The Greatest Common Divisor (GCD) of two numbers is the largest positive integer that divides both numbers. We use the efficient Euclidean algorithm.",
-        'queue-implementation': "Basic Queue operations demonstrating FIFO (First In, First Out) behavior with ENQUEUE and DEQUEUE.",
-        'circular-queue': "A circular buffer that connects the end back to the beginning to efficiently reuse space. Uses modulo arithmetic.",
-        'queue-using-stack': "Implementing a Queue using two Stacks. One stack for incoming elements and another for outgoing elements to maintain FIFO order.",
-        'max-heap-implementation': "Visualizes the construction of a Max-Heap where हर parent node is greater than its children.",
-        'min-heap-implementation': "Visualizes the construction of a Min-Heap where every parent node is smaller than its children.",
-        'k-largest-smallest': "Finding the K largest or smallest elements using a heap of size K.",
-        'heap-sort-algo': "An efficient comparison-based sorting algorithm that uses a heap data structure to sort elements.",
-        'median-stream': "Maintains a min-heap and a max-heap to find the median of a continuous stream of numbers in O(1).",
-        'merge-k-lists': "Merge K sorted linked lists efficiently using a Min-Heap of size K.",
-        'top-k-frequent': "Find the K most frequent elements in an array using a frequency map and a heap.",
-        'reverse-linked-list': "Reverses the direction of pointers in a singly linked list so that the tail becomes the head.",
-        'detect-loop-floyd-s-': "Uses Floyd's Cycle-Finding algorithm (slow and fast pointers) to detect if a cycle exists in the list.",
-        'middle-of-linked-list': "Finds the middle node of a linked list using the two-pointer technique in a single pass.",
-        'remove-n-th-node': "Removes the N-th node from the end of a linked list by maintaining a specific gap between two pointers.",
-        'intersection': "Finds the node where two singly linked lists intersect by aligning their starting positions based on length difference.",
-        'connected-components': "Connected Components identifies isolated groups of nodes in a graph. Each component is colored differently to show separation.",
-        'connected-comp': "Connected Components identifies isolated groups of nodes in a graph. Each component is colored differently to show separation.",
-        'topological-sort': "Topological Sort linearly orders vertices of a directed acyclic graph (DAG) such that for every directed edge uv from vertex u to vertex v, u comes before v in the ordering.",
-        'topo-sort': "Topological Sort linearly orders vertices of a directed acyclic graph (DAG) such that for every directed edge uv from vertex u to vertex v, u comes before v in the ordering.",
-        'cycle-detection': "Cycle Detection finds loops within a graph. If the algorithm visits a node already in the current recursion stack, a cycle is identified and highlighted in Red.",
-        'cycle-detect': "Cycle Detection finds loops within a graph. If the algorithm visits a node already in the current recursion stack, a cycle is identified and highlighted in Red.",
-        'bipartite-check': "Bipartite Check determines if a graph can be colored with two colors such that no two adjacent nodes have the same color.",
-        'scc': "Strongly Connected Components (SCC) are subgraphs where every vertex is reachable from every other vertex. This uses Kosaraju's two-pass DFS algorithm.",
-        'bellman-ford': "Bellman-Ford finds the shortest path from a source to all vertices and can handle negative edge weights, unlike Dijkstra. It also detects negative cycles.",
-        'dijkstra-s-algorithm': "Dijkstra's Algorithm finds the shortest path from a starting node to all other nodes in a weighted graph by always expanding the node with the smallest known distance.",
-        'dijkstra': "Dijkstra's Algorithm finds the shortest path from a starting node to all other nodes in a weighted graph by always expanding the node with the smallest known distance.",
-        'prim-s-algorithm': "Prim's Algorithm finds the Minimum Spanning Tree (MST) for a weighted undirected graph by always adding the cheapest edge from the visited set to an unvisited node.",
-        'prim-s': "Prim's Algorithm finds the Minimum Spanning Tree (MST) for a weighted undirected graph by always adding the cheapest edge from the visited set to an unvisited node.",
-        'prim-s-algo': "Prim's Algorithm finds the Minimum Spanning Tree (MST) for a weighted undirected graph by always adding the cheapest edge from the visited set to an unvisited node.",
-        'prims-algo': "Prim's Algorithm finds the Minimum Spanning Tree (MST) for a weighted undirected graph by always adding the cheapest edge from the visited set to an unvisited node.",
-        'kruskal-s-algorithm': "Kruskal's Algorithm finds the MST by sorting all edges by weight and adding them one by one, ensuring no cycles are formed using Union-Find.",
-        'kruskal-s': "Kruskal's Algorithm finds the MST by sorting all edges by weight and adding them one by one, ensuring no cycles are formed using Union-Find.",
-        'kruskals': "Kruskal's Algorithm finds the MST by sorting all edges by weight and adding them one by one, ensuring no cycles are formed using Union-Find.",
-        'union-find': "Union-Find is a data structure that tracks elements split into disjoint sets. It's often used in Kruskal's to detect cycles.",
-        'bfs-path': "Shortest Path using BFS finds the minimum number of edges between the source and all other nodes in an unweighted graph.",
-        'bfs': "Breadth-First Search (BFS) explores all neighbors at the current depth before moving to nodes at the next depth level.",
-        'dfs': "Depth-First Search (DFS) starts at the root node and explores as far as possible along each branch before backtracking.",
+        'bubble-sort': {
+            en: "Bubble Sort repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order. This pass through the list is repeated until the list is sorted.",
+            hi: "बबल सॉर्ट बार-बार लिस्ट से गुजरता है, साथ वाले तत्वों की तुलना करता है और अगर वे गलत क्रम में हैं तो उन्हें बदल देता है। यह तब तक किया जाता है जब तक लिस्ट पूरी तरह सॉर्ट न हो जाए।"
+        },
+        'selection-sort': {
+            en: "Selection Sort divides the input list into two parts: the sublist of items already sorted and the sublist of items remaining to be sorted. It repeatedly finds the minimum element and moves it to the sorted list.",
+            hi: "सिलेक्शन सॉर्ट लिस्ट को दो भागों में बांटता है: सॉर्ट किया हुआ और बिना सॉर्ट किया हुआ। यह बार-बार बिना सॉर्ट किए हुए हिस्से से सबसे छोटा तत्व ढूंढता है और उसे सॉर्ट किए हुए हिस्से में ले आता है।"
+        },
+        'insertion-sort': {
+            en: "Insertion Sort builds the final sorted array one item at a time. It iterates through an input element and finds the location it belongs within the sorted list.",
+            hi: "इंसर्शन सॉर्ट एक-एक करके तत्वों को उनके सही स्थान पर रखते हुए सॉर्टेड ऐरे बनाता है।"
+        },
+        'merge-sort': {
+            en: "Merge Sort is a divide-and-conquer algorithm that divides the input array into two halves, calls itself for the two halves, and then merges the two sorted halves.",
+            hi: "मर्ज सॉर्ट एक 'डिवाइड और कॉन्कर' एल्गोरिदम है जो पहले ऐरे को दो बराबर हिस्सों में बांटता है, और फिर उन्हें सॉर्ट करके वापस मिला देता है।"
+        },
+        'quick-sort': {
+            en: "Quick Sort is a divide-and-conquer algorithm. It picks an element as a pivot and partitions the given array around the picked pivot.",
+            hi: "क्विक सॉर्ट एक 'डिवाइड और कॉन्कर' एल्गोरिदम है। यह एक तत्व को 'पिवट' चुनता है और बाकी ऐरे को उसके इर्द-गिर्द बांट देता है।"
+        },
+        'linear-search': {
+            en: "Linear Search sequentially checks each element of the list until a match is found or the whole list has been searched.",
+            hi: "लीनियर सर्च लिस्ट के हर तत्व को एक-एक करके तब तक चेक करता है जब तक कि टारगेट वैल्यू मिल न जाए।"
+        },
+        'binary-search': {
+            en: "Binary Search locates a target value within a sorted array. It compares the target value to the middle element of the array.",
+            hi: "बाइनरी सर्च सॉर्ट किए हुए ऐरे में टारगेट वैल्यू ढूंढता है। यह बार-बार ऐरे को आधा करके बीच के तत्व से तुलना करता है।"
+        },
+        'bfs': {
+            en: "Breadth-First Search (BFS) explores all neighbors at the current depth before moving to nodes at the next depth level.",
+            hi: "ब्रैड्थ-फर्स्ट सर्च (BFS) अगले स्तर पर जाने से पहले अभी के स्तर के सभी पड़ोसियों की जांच करता है।"
+        },
+        'dfs': {
+            en: "Depth-First Search (DFS) starts at the root node and explores as far as possible along each branch before backtracking.",
+            hi: "डेप्थ-फर्स्ट सर्च (DFS) एक शाखा में जितना संभव हो उतना गहरा जाता है और फिर वापस आकर दूसरी शाखा की जांच करता है।"
+        },
+        'reverse-array': {
+            en: "Reversing an array involves swapping elements from outside in.",
+            hi: "ऐरे पलटना मतलब बाहर से अंदर की ओर तत्वों को आपस में बदलना।"
+        },
+        'two-sum': {
+            en: "Finds two numbers that sum up to a target value.",
+            hi: "दो ऐसी संख्याएं ढूंढता है जिनका योग टारगेट वैल्यू के बराबर हो।"
+        }
     };
-    return map[id] || "Visualization logic for this algorithm is simulated or under development. It demonstrates the expected behavior.";
+
+    const desc = map[id] || {
+        en: "Visualization logic for this algorithm is simulated or under development. It demonstrates the expected behavior.",
+        hi: "इस एल्गोरिदम के लिए विज़ुअलाइज़ेशन अभी विकास के चरण में है। यह अपेक्षित व्यवहार को दर्शाता है।"
+    };
+    return desc;
 };
 
 export const Visualizer = () => {
@@ -153,6 +110,10 @@ export const Visualizer = () => {
     const [rawInput, setRawInput] = useState(generator.type === 'graph' ? "A-B, B-C, C-D, D-A, A-C" : inputArray.join(", "));
     const [rotationDirection, setRotationDirection] = useState('right');
     const [rotationK, setRotationK] = useState(1);
+
+    // --- Voice & Language State ---
+    const [isSpeechEnabled, setIsSpeechEnabled] = useState(false);
+    const [language, setLanguage] = useState('en'); // 'en' or 'hi'
 
     // Refs
     const intervalRef = useRef(null);
@@ -235,6 +196,49 @@ export const Visualizer = () => {
         }
     }, [id, algorithmName]);
 
+    // --- Voice Logic ---
+    useEffect(() => {
+        // Stop speech if disabled OR if not playing (only if we want it to stop on pause)
+        if (!isSpeechEnabled || !isPlaying || !steps[currentStep]) {
+            window.speechSynthesis.cancel();
+            return;
+        }
+
+        const step = steps[currentStep];
+        let textToSpeak = "";
+
+        if (typeof step.description === 'object') {
+            textToSpeak = step.description[language] || step.description['en'];
+        } else {
+            textToSpeak = step.description;
+        }
+
+        if (textToSpeak) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.lang = language === 'hi' ? 'hi-IN' : 'en-US';
+            utterance.rate = 0.9;
+
+            utterance.onend = () => {
+                if (isPlaying && isSpeechEnabled) {
+                    setTimeout(() => {
+                        setCurrentStep(prev => {
+                            if (prev < steps.length - 1) return prev + 1;
+                            setIsPlaying(false);
+                            return prev;
+                        });
+                    }, 800);
+                }
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        return () => {
+            window.speechSynthesis.cancel();
+        };
+    }, [currentStep, isSpeechEnabled, language, steps, isPlaying]);
+
     // Handle Input Change / Reset
     const handleReset = (newInput = null) => {
         setIsPlaying(false);
@@ -314,7 +318,9 @@ export const Visualizer = () => {
 
     // --- Playback Control ---
     useEffect(() => {
-        if (isPlaying) {
+        // If speech is enabled and playing, we don't use the interval
+        // because the 'onend' event of SpeechSynthesisUtterance handles the next step.
+        if (isPlaying && !isSpeechEnabled) {
             const delay = 1000 - (playbackSpeed * 9);
             intervalRef.current = setInterval(() => {
                 setCurrentStep((prev) => {
@@ -330,7 +336,7 @@ export const Visualizer = () => {
             clearInterval(intervalRef.current);
         }
         return () => clearInterval(intervalRef.current);
-    }, [isPlaying, steps.length, playbackSpeed]);
+    }, [isPlaying, steps.length, playbackSpeed, isSpeechEnabled]);
 
     const saveProgress = (data, step) => {
         localStorage.setItem(`algoView_${id}`, JSON.stringify({
@@ -372,6 +378,11 @@ export const Visualizer = () => {
         n: 0,
         description: "Loading..."
     };
+
+    // Helper to get current description based on language
+    const currentDescription = typeof stepData.description === 'object'
+        ? (stepData.description[language] || stepData.description['en'])
+        : stepData.description;
 
     // Determine which visualizer to use
     const renderVisualizer = () => {
@@ -450,49 +461,79 @@ export const Visualizer = () => {
                     </p>
                 </div>
 
-                {/* View Mode Selector */}
-                {(generator.type === 'sorting' || generator.type === 'array' || generator.type === 'searching') && (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className="gap-2">
-                                {viewMode === 'bars' && <BarChart2 className="w-4 h-4" />}
-                                {viewMode === 'rainbow' && <Palette className="w-4 h-4" />}
-                                {viewMode === 'dots' && <Circle className="w-4 h-4" />}
-                                {viewMode === 'numbers' && <Box className="w-4 h-4" />}
-                                {viewMode === 'block' && <Grid className="w-4 h-4" />}
-                                {viewMode === 'list' && <List className="w-4 h-4" />}
-                                {viewMode === 'circular' && <RefreshCcw className="w-4 h-4" />}
-                                <span className="capitalize">{viewMode} View</span>
-                                <MoreVertical className="w-3 h-3 text-muted-foreground ml-1" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            {generator.type === 'sorting' && (
-                                <>
-                                    <DropdownMenuItem onClick={() => setViewMode('bars')} className="cursor-pointer">
-                                        <BarChart2 className="w-4 h-4 mr-2" /> Bars
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => setViewMode('rainbow')} className="cursor-pointer hidden sm:flex">
-                                        <Palette className="w-4 h-4 mr-2" /> Rainbow
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => setViewMode('dots')} className="cursor-pointer hidden sm:flex">
-                                        <Circle className="w-4 h-4 mr-2" /> Dots
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => setViewMode('numbers')} className="cursor-pointer">
-                                        <Box className="w-4 h-4 mr-2" /> Numbers
-                                    </DropdownMenuItem>
-                                </>
-                            )}
-                            {(generator.type === 'array' || generator.type === 'searching') && (
-                                <>
-                                    <DropdownMenuItem onClick={() => setViewMode('block')} className="cursor-pointer">
-                                        <Grid className="w-4 h-4 mr-2" /> Blocks
-                                    </DropdownMenuItem>
-                                </>
-                            )}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                )}
+                <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+                    {/* Voice & Lang Controls */}
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 gap-2 min-w-[100px] justify-between transition-all"
+                        onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+                    >
+                        <div className="flex items-center gap-2">
+                            <Languages className="w-3 h-3 text-primary" />
+                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+                                {language === 'en' ? 'English' : 'हिंदी'}
+                            </span>
+                        </div>
+                        <div className={`w-2 h-2 rounded-full ${language === 'en' ? 'bg-primary' : 'bg-orange-500'} animate-pulse`} />
+                    </Button>
+                    <div className="flex items-center bg-muted/50 rounded-md p-1 border shrink-0 ml-1">
+                        <div className="w-[1px] h-4 bg-border mx-1" />
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className={`h-8 w-8 hover:bg-transparent shrink-0 ${isSpeechEnabled ? 'text-primary' : 'text-muted-foreground'}`}
+                            onClick={() => setIsSpeechEnabled(!isSpeechEnabled)}
+                            title={isSpeechEnabled ? "Mute Voice" : "Enable Voice Explanation"}
+                        >
+                            {isSpeechEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                        </Button>
+                    </div>
+
+                    {/* View Mode Selector */}
+                    {(generator.type === 'sorting' || generator.type === 'array' || generator.type === 'searching') && (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm" className="gap-2">
+                                    {viewMode === 'bars' && <BarChart2 className="w-4 h-4" />}
+                                    {viewMode === 'rainbow' && <Palette className="w-4 h-4" />}
+                                    {viewMode === 'dots' && <Circle className="w-4 h-4" />}
+                                    {viewMode === 'numbers' && <Box className="w-4 h-4" />}
+                                    {viewMode === 'block' && <Grid className="w-4 h-4" />}
+                                    {viewMode === 'list' && <List className="w-4 h-4" />}
+                                    {viewMode === 'circular' && <RefreshCcw className="w-4 h-4" />}
+                                    <span className="capitalize">{viewMode} View</span>
+                                    <MoreVertical className="w-3 h-3 text-muted-foreground ml-1" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                {generator.type === 'sorting' && (
+                                    <>
+                                        <DropdownMenuItem onClick={() => setViewMode('bars')} className="cursor-pointer">
+                                            <BarChart2 className="w-4 h-4 mr-2" /> Bars
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setViewMode('rainbow')} className="cursor-pointer hidden sm:flex">
+                                            <Palette className="w-4 h-4 mr-2" /> Rainbow
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setViewMode('dots')} className="cursor-pointer hidden sm:flex">
+                                            <Circle className="w-4 h-4 mr-2" /> Dots
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setViewMode('numbers')} className="cursor-pointer">
+                                            <Box className="w-4 h-4 mr-2" /> Numbers
+                                        </DropdownMenuItem>
+                                    </>
+                                )}
+                                {(generator.type === 'array' || generator.type === 'searching') && (
+                                    <>
+                                        <DropdownMenuItem onClick={() => setViewMode('block')} className="cursor-pointer">
+                                            <Grid className="w-4 h-4 mr-2" /> Blocks
+                                        </DropdownMenuItem>
+                                    </>
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    )}
+                </div>
             </div>
 
             <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 flex-1 min-h-0">
@@ -535,13 +576,16 @@ export const Visualizer = () => {
                                 </Button>
                             </div>
 
-                            <div className="flex items-center gap-4 flex-1 w-full sm:max-w-xs px-4 sm:px-0">
-                                <span className="text-xs font-medium text-muted-foreground w-12">Speed</span>
+                            <div className="flex items-center gap-3 flex-1 w-full sm:max-w-xs px-2 sm:px-0">
+                                <span className={`text-[10px] sm:text-xs font-medium uppercase tracking-wider w-14 shrink-0 ${isSpeechEnabled ? 'text-primary animate-pulse' : 'text-muted-foreground'}`}>
+                                    {isSpeechEnabled ? 'Voice sync' : 'Speed'}
+                                </span>
                                 <Slider
-                                    value={[playbackSpeed]}
+                                    value={[isSpeechEnabled ? 15 : playbackSpeed]}
                                     max={100}
                                     step={1}
-                                    className="w-full cursor-pointer"
+                                    disabled={isSpeechEnabled}
+                                    className={`w-full ${isSpeechEnabled ? 'opacity-40' : 'cursor-pointer'}`}
                                     onValueChange={(val) => setPlaybackSpeed(val[0])}
                                 />
                             </div>
@@ -571,16 +615,47 @@ export const Visualizer = () => {
                                 <div className="space-y-3">
                                     <p className="font-medium text-foreground">{algorithmName}</p>
                                     <p className="text-muted-foreground">
-                                        {getAlgorithmDescription(id)}
+                                        {getAlgorithmDescription(id)[language] || getAlgorithmDescription(id)['en']}
                                     </p>
-                                    <div className="text-xs text-muted-foreground mt-4 pt-4 border-t">
-                                        Click <span className="font-bold text-primary">Play</span> to start the visualization.
+                                    <div className="text-xs text-muted-foreground mt-4 pt-4 border-t flex flex-col gap-3">
+                                        <div className="flex items-center justify-between bg-muted/50 p-2 rounded-md border">
+                                            <div className="flex items-center gap-2">
+                                                <Volume2 className="w-3.5 h-3.5 text-primary" />
+                                                <span className="font-semibold text-[10px] uppercase">Voice Explanation</span>
+                                            </div>
+                                            <Button
+                                                variant={isSpeechEnabled ? "primary" : "outline"}
+                                                size="sm"
+                                                className="h-7 px-3 text-[10px]"
+                                                onClick={() => setIsSpeechEnabled(!isSpeechEnabled)}
+                                            >
+                                                {isSpeechEnabled ? "Enabled" : "Disabled"}
+                                            </Button>
+                                        </div>
+                                        <div className="flex items-center justify-between bg-muted/50 p-2 rounded-md border">
+                                            <div className="flex items-center gap-2">
+                                                <Languages className="w-3.5 h-3.5 text-primary" />
+                                                <span className="font-semibold text-[10px] uppercase text-muted-foreground">Select Language</span>
+                                            </div>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="h-7 px-3 text-[10px] gap-2 font-bold min-w-[80px]"
+                                                onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+                                            >
+                                                {language === 'en' ? 'English' : 'हिंदी'}
+                                                <div className={`w-1.5 h-1.5 rounded-full ${language === 'en' ? 'bg-primary' : 'bg-orange-500'}`} />
+                                            </Button>
+                                        </div>
+                                        <p className="mt-2 text-[11px]">
+                                            Click <span className="font-bold text-primary">Play</span> to start the visualization and hear the explanation.
+                                        </p>
                                     </div>
                                 </div>
                             ) : (
                                 <>
                                     <p className="font-medium text-foreground mb-2">Step {currentStep + 1}</p>
-                                    <p className="text-muted-foreground">{stepData.description}</p>
+                                    <p className="text-muted-foreground">{currentDescription}</p>
 
                                     {currentStep === steps.length - 1 && steps.length > 1 && (
                                         <div className="mt-6 pt-6 border-t border-primary/10 space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
