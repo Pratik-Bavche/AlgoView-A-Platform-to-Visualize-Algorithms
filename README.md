@@ -1,4 +1,4 @@
-
+ 
 # 🚀 AlgoView – A Platform to Visualize Algorithms
 
 AlgoView is an interactive algorithm visualization platform designed to help students and learners understand how algorithms work internally through clear, step-by-step visual representations. Instead of focusing on writing or executing code, AlgoView visually demonstrates algorithm logic, flow, and decision-making to improve conceptual understanding.
