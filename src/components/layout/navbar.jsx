@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const titles = [
     "Visualize complex algorithms with ease",
@@ -71,6 +72,8 @@ export const Navbar = () => {
                         <Home className="h-5 w-5" />
                     </Link>
                 </Button>
+
+                <ThemeToggle />
 
                 {/* Profile */}
                 <Avatar className="h-8 w-8 border border-primary/20 cursor-pointer">

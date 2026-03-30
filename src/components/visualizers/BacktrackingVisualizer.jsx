@@ -120,14 +120,14 @@ const MazeBoard = ({ grid }) => {
         >
             {grid.map((row, r) => (
                 row.map((cell, c) => {
-                    let bg = "bg-white";
+                    let bg = "bg-white dark:bg-slate-800";
                     let icon = null;
 
-                    if (cell.value === 1) bg = "bg-slate-800"; // Wall
-                    if (cell.status === 'path') bg = "bg-green-400";
-                    if (cell.status === 'trying') bg = "bg-yellow-400";
-                    if (cell.status === 'dead') bg = "bg-red-400";
-                    if (cell.status === 'backtrack') bg = "bg-gray-300";
+                    if (cell.value === 1) bg = "bg-slate-800 dark:bg-slate-950"; // Wall
+                    if (cell.status === 'path') bg = "bg-green-400 dark:bg-green-600";
+                    if (cell.status === 'trying') bg = "bg-yellow-400 dark:bg-yellow-600";
+                    if (cell.status === 'dead') bg = "bg-red-400 dark:bg-red-600";
+                    if (cell.status === 'backtrack') bg = "bg-gray-300 dark:bg-gray-700";
 
                     // Rat Icon
                     if (cell.isRat) icon = <Rat className="w-4 h-4 sm:w-6 sm:h-6 text-slate-800 animate-bounce" />;
@@ -176,9 +176,9 @@ const ListRecursion = ({ currentPath, options, problemType, history }) => {
                             key={idx}
                             className={`
                                 w-8 h-8 flex items-center justify-center rounded border text-sm font-bold transition-all
-                                ${opt.status === 'selected' ? 'bg-green-100 border-green-500 text-green-700 ring-2 ring-green-200' : ''}
-                                ${opt.status === 'rejected' ? 'bg-gray-100 text-gray-400 decoration-line-through' : ''}
-                                ${opt.status === 'available' ? 'bg-white border-slate-300 hover:border-blue-400' : ''}
+                                ${opt.status === 'selected' ? 'bg-green-100 dark:bg-green-900/30 border-green-500 text-green-700 dark:text-green-400 ring-2 ring-green-200 dark:ring-green-900/20' : ''}
+                                ${opt.status === 'rejected' ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 decoration-line-through border-transparent' : ''}
+                                ${opt.status === 'available' ? 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500' : ''}
                             `}
                         >
                             {opt.value}
@@ -202,12 +202,12 @@ const WordSearchBoard = ({ grid }) => {
             }}>
             {grid.map((row, r) => (
                 row.map((cell, c) => {
-                    let bg = "bg-white";
-                    let text = "text-slate-700";
+                    let bg = "bg-white dark:bg-slate-800";
+                    let text = "text-slate-700 dark:text-slate-200";
 
-                    if (cell.status === 'trying') { bg = "bg-yellow-200"; text = "text-yellow-700 font-bold"; }
+                    if (cell.status === 'trying') { bg = "bg-yellow-200 dark:bg-yellow-900/50"; text = "text-yellow-700 dark:text-yellow-300 font-bold"; }
                     if (cell.status === 'found') { bg = "bg-green-500 scale-105"; text = "text-white font-bold"; }
-                    if (cell.status === 'backtrack') { bg = "bg-red-200"; text = "text-red-700"; }
+                    if (cell.status === 'backtrack') { bg = "bg-red-200 dark:bg-red-900/50"; text = "text-red-700 dark:text-red-300"; }
 
                     return (
                         <div key={`${r}-${c}`} className={`${bg} ${text} w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded shadow-sm text-lg sm:text-xl transition-all duration-300`}>

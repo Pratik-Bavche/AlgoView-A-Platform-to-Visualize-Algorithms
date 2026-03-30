@@ -543,16 +543,18 @@ export const Dashboard = () => {
                     {/* Show/Hide Advanced Toggle Card */}
                     <Card
                         className={`group cursor-pointer hover:shadow-md transition-all border-dashed flex flex-col items-center justify-center text-center p-6 min-h-[140px] ${showAdvanced
-                            ? "border-red-200 hover:border-red-400 hover:bg-red-50"
-                            : "border-purple-200 hover:border-purple-400 hover:bg-purple-50"
+                            ? "border-red-200 dark:border-red-900/50 hover:border-red-400 dark:hover:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                            : "border-purple-200 dark:border-purple-900/50 hover:border-purple-400 dark:hover:border-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/20"
                             }`}
                         onClick={() => setShowAdvanced(!showAdvanced)}
                     >
-                        <div className={`p-3 rounded-full mb-3 transition-colors ${showAdvanced ? "bg-red-100 text-red-500" : "bg-purple-100 text-purple-600"
+                        <div className={`p-3 rounded-full mb-3 transition-colors ${showAdvanced 
+                            ? "bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400" 
+                            : "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
                             }`}>
                             {showAdvanced ? <Zap className="h-6 w-6 rotate-180" /> : <Zap className="h-6 w-6" />}
                         </div>
-                        <h3 className={`font-semibold ${showAdvanced ? "text-red-700" : "text-purple-700"}`}>
+                        <h3 className={`font-semibold ${showAdvanced ? "text-red-700 dark:text-red-300" : "text-purple-700 dark:text-purple-300"}`}>
                             {showAdvanced ? "Hide Advanced" : "View Advanced"}
                         </h3>
                         <p className="text-xs text-muted-foreground mt-1">

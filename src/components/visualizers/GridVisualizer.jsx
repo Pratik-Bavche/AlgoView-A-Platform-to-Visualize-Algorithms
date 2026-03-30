@@ -15,7 +15,7 @@ export const GridVisualizer = ({ stepData }) => {
             case 'current': return '#fde047'; // Yellow
             case 'visited': return '#86efac'; // Green
             case 'dependency': return '#93c5fd'; // Blue
-            default: return 'white'; // Default/Gray
+            default: return 'transparent'; // Standard theme background
         }
     };
 
@@ -65,12 +65,12 @@ export const GridVisualizer = ({ stepData }) => {
                                         scale: 1,
                                         opacity: 1,
                                         backgroundColor: getCellColor(cell.status, cell.color, cell.active),
-                                        borderColor: cell.status === 'current' ? '#ca8a04' : '#e5e7eb'
+                                        borderColor: cell.status === 'current' ? '#ca8a04' : 'hsl(var(--border))'
                                     }}
                                     transition={{ duration: 0.2 }}
                                     className={`
                                         w-6 h-6 sm:w-10 sm:h-10 lg:w-12 lg:h-12 border rounded flex items-center justify-center font-bold text-[8px] sm:text-xs lg:text-sm shadow-sm
-                                        ${cell.status === 'default' ? 'text-gray-400' : 'text-gray-900'}
+                                        ${cell.status === 'default' ? 'text-muted-foreground' : 'text-foreground'}
                                     `}
                                 >
                                     {cell.value}
