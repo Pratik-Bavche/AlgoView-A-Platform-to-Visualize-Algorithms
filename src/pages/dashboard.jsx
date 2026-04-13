@@ -70,18 +70,41 @@ export const Dashboard = () => {
                 { name: "Product Array", desc: "Product of array except self", complexity: "O(n)" },
             ]
         },
-        "Sorting": {
+        "String": {
             common: [
-                { name: "Bubble Sort", desc: "Simple comparison-based sorting", complexity: "O(n²)" },
-                { name: "Selection Sort", desc: "Selects smallest element repeatedly", complexity: "O(n²)" },
-                { name: "Insertion Sort", desc: "Builds sorted array one item at a time", complexity: "O(n²)" },
+                { name: "Reverse String", desc: "In-place reversal", complexity: "O(n)" },
+                { name: "Palindrome", desc: "Check if palindrome", complexity: "O(n)" },
+                { name: "Anagram", desc: "Check if anagrams", complexity: "O(n)" },
             ],
             advanced: [
-                { name: "Merge Sort", desc: "Stable, divide-and-conquer sorting", complexity: "O(n log n)" },
-                { name: "Quick Sort", desc: "Efficient divide-and-conquer sorting", complexity: "O(n log n)" },
-                { name: "Heap Sort", desc: "Binary heap-based sorting", complexity: "O(n log n)" },
-                { name: "Counting Sort", desc: "Integer sorting within range", complexity: "O(n+k)" },
-                { name: "Radix Sort", desc: "Digit-based sorting algorithm", complexity: "O(nk)" },
+                { name: "Longest Palin.", desc: "Longest Palindromic Substring", complexity: "O(n²)" },
+                { name: "KMP Algo", desc: "Pattern search (Prefix)", complexity: "O(n+m)" },
+                { name: "Rabin-Karp", desc: "Rolling hash search", complexity: "O(n+m)" },
+                { name: "Z-Algorithm", desc: "Pattern matching improvement", complexity: "O(n+m)" },
+            ]
+        },
+        "Two Pointer": {
+            common: [
+                { name: "Two Sum Sorted", desc: "Find pair with target sum", complexity: "O(n)" },
+                { name: "Remove Duplicates Sorted Array", desc: "Remove duplicates sorted", complexity: "O(n)" },
+                { name: "Sort Colors", desc: "Sort 0s, 1s, and 2s", complexity: "O(n)" },
+                { name: "Remove Element", desc: "Remove target elements in-place", complexity: "O(n)" },
+            ],
+            advanced: [
+                { name: "Container With Most Water", desc: "Most water container", complexity: "O(n)" },
+                { name: "Sum 3Sum", desc: "Find triplets summing to 0", complexity: "O(n²)" },
+                { name: "Squares Sorted Array", desc: "Square and sort array", complexity: "O(n)" },
+                { name: "Rain Water Two Pointer", desc: "Trapping rain water problem", complexity: "O(n)" },
+            ]
+        },
+        "Sliding Window": {
+            common: [
+                { name: "Max Sum Sub.", desc: "Max sum of subarray size K", complexity: "O(n)" },
+            ],
+            advanced: [
+                { name: "Max Sum Subarray of Size K", desc: "Sliding window of size k", complexity: "O(n)" },
+                { name: "Longest Substring Without Repeating Characters", desc: "Longest unique substring", complexity: "O(n)" },
+                { name: "Minimum Window Substring", desc: "Smallest window with all chars", complexity: "O(n)" },
             ]
         },
         "Searching": {
@@ -96,18 +119,121 @@ export const Dashboard = () => {
                 { name: "Infinite Search", desc: "Search in infinite sorted array", complexity: "O(log n)" },
             ]
         },
-        "Tree": {
+        "Sorting": {
             common: [
-                { name: "Traversals", desc: "Inorder, Preorder, Postorder", complexity: "O(n)" },
-                { name: "Height", desc: "Maximum depth of tree", complexity: "O(n)" },
-                { name: "Count Nodes", desc: "Count total nodes / leaves", complexity: "O(n)" },
+                { name: "Bubble Sort", desc: "Simple comparison-based sorting", complexity: "O(n²)" },
+                { name: "Selection Sort", desc: "Selects smallest element repeatedly", complexity: "O(n²)" },
+                { name: "Insertion Sort", desc: "Builds sorted array one item at a time", complexity: "O(n²)" },
             ],
             advanced: [
+                { name: "Merge Sort", desc: "Stable, divide-and-conquer sorting", complexity: "O(n log n)" },
+                { name: "Quick Sort", desc: "Efficient divide-and-conquer sorting", complexity: "O(n log n)" },
+                { name: "Heap Sort", desc: "Binary heap-based sorting", complexity: "O(n log n)" },
+                { name: "Counting Sort", desc: "Integer sorting within range", complexity: "O(n+k)" },
+                { name: "Radix Sort", desc: "Digit-based sorting algorithm", complexity: "O(nk)" },
+            ]
+        },
+        "Stack": {
+            common: [
+                { name: "Valid Parentheses", desc: "Check balanced brackets", complexity: "O(n)" },
+                { name: "Stack Implementation", desc: "Basic stack operations", complexity: "O(1)" },
+            ],
+            advanced: [
+                { name: "Next Greater", desc: "Find next greater element", complexity: "O(n)" },
+                { name: "Histogram Area", desc: "Largest rectangle in histogram", complexity: "O(n)" },
+                { name: "Min Stack", desc: "Stack with O(1) getMin", complexity: "O(1)" },
+            ]
+        },
+        "Queue": {
+            common: [
+                { name: "Queue Implementation", desc: "Basic queue operations", complexity: "O(1)" },
+                { name: "Circular Queue", desc: "Ring buffer implementation", complexity: "O(1)" },
+            ],
+            advanced: [
+                { name: "Sliding Window Max", desc: "Maximum in sliding window", complexity: "O(n)" },
+                { name: "Deque Applications", desc: "Double-ended queue problems", complexity: "O(1)" },
+            ]
+        },
+        "Linked List": {
+            common: [
+                { name: "Reverse Linked List", desc: "Reverse linked list", complexity: "O(n)" },
+                { name: "Detect Loop Floyd s", desc: "Cycle detection (Floyd's)", complexity: "O(n)" },
+                { name: "Middle of Linked List", desc: "Middle of linked list", complexity: "O(n)" },
+            ],
+            advanced: [
+                { name: "Merge Two", desc: "Merge sorted lists", complexity: "O(n)" },
+                { name: "Intersection", desc: "Find intersection point", complexity: "O(n)" },
+                { name: "LRU Cache", desc: "Least Recently Used Cache", complexity: "O(1)" },
+                { name: "Clone List", desc: "Deep copy with random ptrs", complexity: "O(n)" },
+            ]
+        },
+        "Bit Manip.": {
+            common: [
+                { name: "Count Set Bits", desc: "Number of 1s", complexity: "O(log n)" },
+                { name: "Power of Two", desc: "Check if power of 2", complexity: "O(1)" },
+                { name: "Bitwise Ops", desc: "AND, OR, XOR basics", complexity: "O(1)" },
+            ],
+            advanced: [
+                { name: "Single Number", desc: "Find element appearing once", complexity: "O(n)" },
+                { name: "Bit Masking", desc: "Subset generation using masks", complexity: "O(1)" },
+                { name: "Subsets via Bits", desc: "Generate power set", complexity: "O(2^n)" },
+            ]
+        },
+        "Math": {
+            common: [
+                { name: "Prime Check", desc: "Check primality", complexity: "O(√n)" },
+                { name: "GCD / LCM", desc: "Euclidean algorithm", complexity: "O(log(min(a,b)))" },
+            ],
+            advanced: [
+                { name: "Sieve", desc: "Find primes up to n", complexity: "O(n log log n)" },
+                { name: "Modular Exp.", desc: "Compute (a^b)%c", complexity: "O(log b)" },
+                { name: "Chinese Remainder", desc: "Solve modular equations", complexity: "O(k log n)" },
+            ]
+        },
+        "Matrix": {
+            common: [
+                { name: "Spiral Matrix", desc: "Clockwise spiral traversal", complexity: "O(nm)" },
+                { name: "Rotate Matrix", desc: "Rotate image 90 degrees", complexity: "O(nm)" },
+            ],
+            advanced: [
+                { name: "Flood Fill", desc: "Color filling algorithm", complexity: "O(nm)" },
+                { name: "Island Count", desc: "Number of islands in grid", complexity: "O(nm)" },
+                { name: "Word Search Matrix", desc: "Find word in matrix", complexity: "Exponential" },
+            ]
+        },
+        "Recursion": {
+            common: [
+                { name: "Factorial", desc: "Recursive factorial", complexity: "O(n)" },
+                { name: "Fibonacci Recursive", desc: "Recursive fibonacci", complexity: "O(2ⁿ)" },
+            ],
+            advanced: [
+                { name: "Tower of Hanoi", desc: "Classic recursive puzzle", complexity: "O(2ⁿ)" },
+            ]
+        },
+        "Tree": {
+            common: [
+                { name: "Preorder Traversal", desc: "Root -> Left -> Right", complexity: "O(n)" },
+                { name: "Inorder Traversal", desc: "Left -> Root -> Right", complexity: "O(n)" },
+                { name: "Postorder Traversal", desc: "Left -> Right -> Root", complexity: "O(n)" },
+                { name: "Tree BFS", desc: "Level-by-level traversal", complexity: "O(n)" },
+                { name: "Tree DFS", desc: "Depth-first exploration", complexity: "O(n)" },
+            ],
+            advanced: [
+                { name: "Height", desc: "Maximum depth of tree", complexity: "O(n)" },
+                { name: "Diameter", desc: "Longest path between siblings", complexity: "O(n)" },
                 { name: "LCA", desc: "Lowest Common Ancestor", complexity: "O(n)" },
-                { name: "Diameter", desc: "Longest path between two nodes", complexity: "O(n²)" },
                 { name: "Balanced Check", desc: "Check if tree is balanced", complexity: "O(n)" },
-                { name: "Tree to DLL", desc: "Flatten binary tree to list", complexity: "O(n)" },
-                { name: "AVL Rotations", desc: "Self-balancing operations", complexity: "O(1)" },
+            ]
+        },
+        "Heap": {
+            common: [
+                { name: "K Largest Smallest", desc: "Find top k elements", complexity: "O(n log k)" },
+                { name: "Heap Sort Algo", desc: "Sort using heap", complexity: "O(n log n)" },
+            ],
+            advanced: [
+                { name: "Median Stream", desc: "Find median in data stream", complexity: "O(log n)" },
+                { name: "Merge K Lists", desc: "Merge k sorted lists", complexity: "O(N log k)" },
+                { name: "Top K Frequent", desc: "Find most frequent elements", complexity: "O(n log k)" },
             ]
         },
         "Graph": {
@@ -144,6 +270,17 @@ export const Dashboard = () => {
                 { name: "MST Constraints", desc: "MST with edge inclusions", complexity: "O(E log E)" },
             ]
         },
+        "Greedy": {
+            common: [
+                { name: "Activity Selection", desc: "Max non-overlapping activities", complexity: "O(n log n)" },
+                { name: "Coin Change Greedy", desc: "Min coins for value (Greedy)", complexity: "O(V)" },
+            ],
+            advanced: [
+                { name: "Job Sequencing", desc: "Max profit with deadlines", complexity: "O(n²)" },
+                { name: "Huffman Coding", desc: "Lossless compression", complexity: "O(n log n)" },
+                { name: "Frac. Knapsack", desc: "Maximize value (fractional)", complexity: "O(n log n)" },
+            ]
+        },
         "Dynamic Prog.": {
             common: [
                 { name: "Fibonacci (DP)", desc: "Calculates Fib numbers", complexity: "O(n)" },
@@ -158,17 +295,6 @@ export const Dashboard = () => {
                 { name: "DP on Trees", desc: "Optimization on tree structures", complexity: "O(n)" },
             ]
         },
-        "Greedy": {
-            common: [
-                { name: "Activity Selection", desc: "Max non-overlapping activities", complexity: "O(n log n)" },
-                { name: "Coin Change", desc: "Greedy approach", complexity: "O(V)" },
-            ],
-            advanced: [
-                { name: "Job Sequencing", desc: "Max profit with deadlines", complexity: "O(n²)" },
-                { name: "Huffman Coding", desc: "Lossless compression", complexity: "O(n log n)" },
-                { name: "Frac. Knapsack", desc: "Maximize value (fractional)", complexity: "O(n log n)" },
-            ]
-        },
         "Backtracking": {
             common: [
                 { name: "Permutations", desc: "Generate all permutations", complexity: "O(n!)" },
@@ -180,127 +306,6 @@ export const Dashboard = () => {
                 { name: "Sudoku Solver", desc: "Fill 9x9 grid", complexity: "Exponential" },
                 { name: "Rat in a Maze", desc: "Find path in maze", complexity: "O(2^N²)" },
                 { name: "Word Search", desc: "Find word in grid", complexity: "Exponential" },
-            ]
-        },
-        "String": {
-            common: [
-                { name: "Reverse String", desc: "In-place reversal", complexity: "O(n)" },
-                { name: "Palindrome", desc: "Check if palindrome", complexity: "O(n)" },
-                { name: "Anagram", desc: "Check if anagrams", complexity: "O(n)" },
-            ],
-            advanced: [
-                { name: "Longest Palin.", desc: "Longest Palindromic Substring", complexity: "O(n²)" },
-                { name: "KMP Algo", desc: "Pattern search (Prefix)", complexity: "O(n+m)" },
-                { name: "Rabin-Karp", desc: "Rolling hash search", complexity: "O(n+m)" },
-                { name: "Z-Algorithm", desc: "Pattern matching improvement", complexity: "O(n+m)" },
-            ]
-        },
-        "Bit Manip.": {
-            common: [
-                { name: "Count Set Bits", desc: "Number of 1s", complexity: "O(log n)" },
-                { name: "Power of Two", desc: "Check if power of 2", complexity: "O(1)" },
-                { name: "Bitwise Ops", desc: "AND, OR, XOR basics", complexity: "O(1)" },
-            ],
-            advanced: [
-                { name: "Single Number", desc: "Find element appearing once", complexity: "O(n)" },
-                { name: "Bit Masking", desc: "Subset generation using masks", complexity: "O(1)" },
-                { name: "Subsets via Bits", desc: "Generate power set", complexity: "O(2^n)" },
-            ]
-        },
-        "Math": {
-            common: [
-                { name: "Prime Check", desc: "Check primality", complexity: "O(√n)" },
-                { name: "GCD / LCM", desc: "Euclidean algorithm", complexity: "O(log(min(a,b)))" },
-            ],
-            advanced: [
-                { name: "Sieve", desc: "Find primes up to n", complexity: "O(n log log n)" },
-                { name: "Modular Exp.", desc: "Compute (a^b)%c", complexity: "O(log b)" },
-                { name: "Chinese Remainder", desc: "Solve modular equations", complexity: "O(k log n)" },
-            ]
-        },
-        "Stack": {
-            common: [
-                { name: "Valid Parentheses", desc: "Check balanced brackets", complexity: "O(n)" },
-                { name: "Stack Implementation", desc: "Basic stack operations", complexity: "O(1)" },
-            ],
-            advanced: [
-                { name: "Next Greater", desc: "Find next greater element", complexity: "O(n)" },
-                { name: "Histogram Area", desc: "Largest rectangle in histogram", complexity: "O(n)" },
-                { name: "Min Stack", desc: "Stack with O(1) getMin", complexity: "O(1)" },
-            ]
-        },
-        "Queue": {
-            common: [
-                { name: "Queue Implementation", desc: "Basic queue operations", complexity: "O(1)" },
-                { name: "Circular Queue", desc: "Ring buffer implementation", complexity: "O(1)" },
-            ],
-            advanced: [
-                { name: "Sliding Window Max", desc: "Maximum in sliding window", complexity: "O(n)" },
-                { name: "Deque Applications", desc: "Double-ended queue problems", complexity: "O(1)" },
-            ]
-        },
-        "Heap": {
-            common: [
-                { name: "K Largest Smallest", desc: "Find top k elements", complexity: "O(n log k)" },
-                { name: "Heap Sort Algo", desc: "Sort using heap", complexity: "O(n log n)" },
-            ],
-            advanced: [
-                { name: "Median Stream", desc: "Find median in data stream", complexity: "O(log n)" },
-                { name: "Merge K Lists", desc: "Merge k sorted lists", complexity: "O(N log k)" },
-                { name: "Top K Frequent", desc: "Find most frequent elements", complexity: "O(n log k)" },
-            ]
-        },
-        "Linked List": {
-            common: [
-                { name: "Reverse Linked List", desc: "Reverse linked list", complexity: "O(n)" },
-                { name: "Detect Loop Floyd s", desc: "Cycle detection (Floyd's)", complexity: "O(n)" },
-                { name: "Middle of Linked List", desc: "Middle of linked list", complexity: "O(n)" },
-            ],
-            advanced: [
-                { name: "Merge Two", desc: "Merge sorted lists", complexity: "O(n)" },
-                { name: "Intersection", desc: "Find intersection point", complexity: "O(n)" },
-                { name: "LRU Cache", desc: "Least Recently Used Cache", complexity: "O(1)" },
-                { name: "Clone List", desc: "Deep copy with random ptrs", complexity: "O(n)" },
-            ]
-        },
-        "Sliding Window": {
-            common: [
-                { name: "Max Sum Sub.", desc: "Max sum of subarray size K", complexity: "O(n)" },
-            ],
-            advanced: [
-                { name: "Max Sum Subarray of Size K", desc: "Sliding window of size k", complexity: "O(n)" },
-                { name: "Longest Substring Without Repeating Characters", desc: "Longest unique substring", complexity: "O(n)" },
-                { name: "Minimum Window Substring", desc: "Smallest window with all chars", complexity: "O(n)" },
-            ]
-        },
-        "Two Pointer": {
-            common: [
-                { name: "Two Sum Sorted", desc: "Find pair with target sum", complexity: "O(n)" },
-                { name: "Remove Duplicates from Sorted Array", desc: "Remove duplicates sorted", complexity: "O(n)" },
-            ],
-            advanced: [
-                { name: "Container With Most Water", desc: "Most water container", complexity: "O(n)" },
-                { name: "Sum 3Sum", desc: "Find triplets summing to 0", complexity: "O(n²)" },
-            ]
-        },
-        "Matrix": {
-            common: [
-                { name: "Spiral Matrix", desc: "Clockwise spiral traversal", complexity: "O(nm)" },
-                { name: "Rotate Matrix", desc: "Rotate image 90 degrees", complexity: "O(nm)" },
-            ],
-            advanced: [
-                { name: "Flood Fill", desc: "Color filling algorithm", complexity: "O(nm)" },
-                { name: "Island Count", desc: "Number of islands in grid", complexity: "O(nm)" },
-                { name: "Word Search Matrix", desc: "Find word in matrix", complexity: "Exponential" },
-            ]
-        },
-        "Recursion": {
-            common: [
-                { name: "Factorial", desc: "Recursive factorial", complexity: "O(n)" },
-                { name: "Fibonacci Recursive", desc: "Recursive fibonacci", complexity: "O(2ⁿ)" },
-            ],
-            advanced: [
-                { name: "Tower of Hanoi", desc: "Classic recursive puzzle", complexity: "O(2ⁿ)" },
             ]
         },
         "Real-World": {

@@ -107,7 +107,7 @@ export const HeapVisualizer = ({ stepData }) => {
     }, [heap.length]);
 
     return (
-        <div className="w-full h-full flex flex-col items-center justify-between p-6 overflow-hidden">
+        <div className="w-full min-h-full flex flex-col items-center gap-4 p-4">
             {/* Tree Area */}
             <div className="relative flex-1 w-full max-w-4xl bg-muted/5 rounded-3xl border border-primary/5 overflow-visible flex items-center justify-center">
                 <div className="relative w-full h-[350px]">
@@ -137,8 +137,8 @@ export const HeapVisualizer = ({ stepData }) => {
             </div>
 
             {/* Array Mapping Area */}
-            <div className="w-full mt-12 bg-card border rounded-2xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
+            <div className="w-full mt-4 bg-card border rounded-2xl p-4 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">Array Representation</span>
                     <Badge variant="outline" className="text-[10px] bg-primary/5 capitalize">{type}-Heap</Badge>
                 </div>

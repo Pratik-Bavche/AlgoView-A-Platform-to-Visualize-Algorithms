@@ -155,8 +155,8 @@ export const Visualizer = () => {
             } else {
                 newSteps = generator.func(inputArray);
             }
-        } else if (generator.type === 'graph') {
-            newSteps = generator.func(rawInput);
+        } else if (generator.type === 'graph' || generator.type === 'tree') {
+            newSteps = generator.func(generator.type === 'graph' ? rawInput : undefined);
         } else {
             newSteps = generator.func(inputArray, id === 'rotate-array' ? rotationK : target, id === 'rotate-array' ? rotationDirection : undefined);
         }
@@ -472,7 +472,7 @@ export const Visualizer = () => {
     };
 
     return (
-        <div className="min-h-full lg:h-[calc(100vh-8rem)] flex flex-col gap-4">
+        <div className="min-h-full lg:h-[calc(100vh-6rem)] flex flex-col gap-4">
             {/* Header Section */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
@@ -584,7 +584,7 @@ export const Visualizer = () => {
                     </div>
 
                     {/* Canvas Area */}
-                    <div ref={containerRef} className="flex-1 flex px-4 pb-4 pt-16 relative min-h-0 overflow-hidden items-center justify-center">
+                    <div ref={containerRef} className="flex-1 flex px-4 pb-32 pt-16 relative min-h-0 overflow-y-auto items-center justify-center">
                         {renderVisualizer()}
                     </div>
 

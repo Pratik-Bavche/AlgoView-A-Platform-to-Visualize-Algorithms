@@ -2,6 +2,7 @@ import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, CheckCircle2, XCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 // Color Constants
 const COLORS = {
@@ -26,7 +27,6 @@ const ActivityItem = ({ start, end, id, status, value }) => {
         <div className="flex items-center gap-2 mb-2 h-8 relative">
             <div className="w-8 text-xs font-mono text-muted-foreground z-10">#{id}</div>
             <div className="flex-1 relative h-full bg-slate-100 dark:bg-slate-800 rounded overflow-hidden">
-                {/* Background grid lines could go here */}
                 <div
                     className={`absolute top-1 bottom-1 rounded-md flex items-center justify-center text-[10px] text-white font-bold shadow-sm transition-all duration-300 ${colorClass}`}
                     style={{
@@ -90,16 +90,22 @@ const KnapsackItem = ({ weight, value, ratio, status, fraction }) => {
     );
 };
 
-
 export const GreedyVisualizer = ({ stepData }) => {
     const {
-        type, // 'activity', 'coin', 'knapsack', 'huffman'
+        type, 
+        huffmanNodes,
+        schedule,
+        activeJob,
+        profit,
+        jobs = [],
         items = [],
         coins = [],
         activities = [],
         currentCapacity,
         maxCapacity,
-        totalValue
+        totalValue,
+        remainingAmount,
+        result: coinResult
     } = stepData;
 
     return (
@@ -112,7 +118,6 @@ export const GreedyVisualizer = ({ stepData }) => {
                         <div className="flex items-center gap-2"><div className={`w-3 h-3 rounded-full ${COLORS.SELECTED}`}></div><span className="text-xs">Selected</span></div>
                         <div className="flex items-center gap-2"><div className={`w-3 h-3 rounded-full ${COLORS.REJECTED}`}></div><span className="text-xs">Rejected</span></div>
                     </div>
-
                     <div className="relative border-l-2 border-slate-300 pl-4 space-y-2">
                         {activities.map((act, idx) => (
                             <ActivityItem key={idx} {...act} />
@@ -121,24 +126,47 @@ export const GreedyVisualizer = ({ stepData }) => {
                 </div>
             )}
 
+            {(type === 'huffman' || huffmanNodes) && (
+                <div className="flex flex-col gap-8 items-center py-4">
+                    <h4 className="text-sm font-bold text-muted-foreground uppercase">Huffman Frequency Nodes</h4>
+                    <div className="flex flex-wrap justify-center gap-4">
+                        {huffmanNodes?.map((node, idx) => (
+                            <motion.div
+                                key={idx}
+                                layout
+                                className={`
+                                    min-w-[60px] p-3 rounded-xl border-2 flex flex-col items-center 
+                                    ${node.char ? 'bg-green-500/10 border-green-500 text-green-700' : 'bg-blue-500/10 border-blue-500 text-blue-700'}
+                                `}
+                            >
+                                <span className="text-xl font-bold">{node.freq}</span>
+                                <span className="text-xs font-mono">{node.char || 'node'}</span>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {type === 'coin' && (
                 <div className="flex flex-col items-center gap-8 py-8">
                     <div className="text-2xl font-bold font-mono">
-                        Remaining Amount: <span className="text-primary">{stepData.remainingAmount}</span>
+                        Remaining Amount: <span className="text-primary">{remainingAmount}</span>
                     </div>
                     <div className="flex flex-wrap justify-center gap-4">
                         {coins.map((coin, idx) => (
                             <CoinItem key={idx} {...coin} />
                         ))}
                     </div>
-                    <div className="w-full max-w-md p-4 bg-muted/30 rounded-lg">
-                        <h4 className="text-sm font-semibold mb-2">Collected Coins</h4>
-                        <div className="flex flex-wrap gap-2">
-                            {stepData.result && stepData.result.map((c, i) => (
-                                <Badge key={i} variant="secondary" className="text-lg px-3 py-1">{c}</Badge>
-                            ))}
+                    {coinResult && (
+                        <div className="w-full max-w-md p-4 bg-muted/30 rounded-lg">
+                            <h4 className="text-sm font-semibold mb-2">Collected Coins</h4>
+                            <div className="flex flex-wrap gap-2">
+                                {coinResult.map((c, i) => (
+                                    <Badge key={i} variant="secondary" className="text-lg px-3 py-1">{c}</Badge>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             )}
 
@@ -154,7 +182,6 @@ export const GreedyVisualizer = ({ stepData }) => {
                             <span className="text-2xl font-bold text-green-600">{totalValue?.toFixed(2)}</span>
                         </div>
                     </div>
-
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                         {items.map((item, idx) => (
                             <KnapsackItem key={idx} {...item} />
@@ -163,7 +190,56 @@ export const GreedyVisualizer = ({ stepData }) => {
                 </div>
             )}
 
-            {!type && (
+            {(type === 'greedy' || schedule) && schedule && (
+                <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
+                    <div className="flex justify-between items-center p-4 bg-muted/30 rounded-xl border">
+                        <span className="text-sm font-medium">Accumulated Profit</span>
+                        <span className="text-2xl font-bold text-green-600">${profit}</span>
+                    </div>
+                    <div className="space-y-4">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Schedule Timeline</h4>
+                        <div className="flex gap-2">
+                            {schedule.map((jobId, idx) => (
+                                <motion.div
+                                    key={idx}
+                                    layout
+                                    className={`
+                                        flex-1 h-11 rounded-lg border-2 flex flex-col items-center justify-center
+                                        ${jobId ? 'bg-green-500/20 border-green-500 text-green-700 shadow-sm' : 'bg-muted/10 border-dashed border-muted-foreground/30 text-muted-foreground/30'}
+                                    `}
+                                >
+                                    <span className="text-xs font-bold">{jobId || '-'}</span>
+                                </motion.div>
+                            ))}
+                        </div>
+                        <div className="flex justify-between px-2 text-[10px] text-muted-foreground font-mono">
+                            {schedule.map((_, i) => <span key={i}>T{i+1}</span>)}
+                        </div>
+                    </div>
+                    <div className="space-y-3">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Available Jobs</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            {jobs?.map((job, idx) => (
+                                <div 
+                                    key={idx} 
+                                    className={`
+                                        p-2 rounded-lg border text-xs flex flex-col gap-0.5
+                                        ${activeJob === job.id ? 'ring-2 ring-yellow-400 bg-yellow-400/10' : 'bg-muted/5'}
+                                    `}
+                                >
+                                    <div className="flex justify-between font-bold">
+                                        <span>{job.id}</span>
+                                        <span className="text-green-600">${job.profit}</span>
+                                    </div>
+                                    <div className="text-muted-foreground">Deadline: {job.deadline}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {(!type || (type !== 'activity' && type !== 'coin' && type !== 'knapsack' && type !== 'huffman' && !huffmanNodes && !schedule)) && (
                 <div className="flex items-center justify-center h-full text-muted-foreground">
                     Select a Greedy Algorithm to visualize.
                 </div>

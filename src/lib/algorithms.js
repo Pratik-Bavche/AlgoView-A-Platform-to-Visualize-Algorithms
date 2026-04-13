@@ -1220,20 +1220,20 @@ export const generateBFSSteps = (inputString) => {
     const steps = [];
     let graphData = parseGraphInput(inputString, false);
 
-    // Default to tree if invalid input
     if (!graphData) {
-        graphData = createBinaryTree(4);
+        graphData = createBinaryTree(3);
     }
     const { nodes, edges } = graphData;
-    nodes.forEach(n => n.status = 'default');
+    
+    // Initialize nodes with distance tracking
+    const initialNodes = nodes.map(n => ({ ...n, status: 'default', distance: undefined }));
+    const initialEdges = edges.map(e => ({ ...e, status: 'default' }));
 
-    // Queue for BFS logic
-    const queue = [0]; // storing IDs
+    const queue = [0];
     const visited = new Set();
+    const distances = { 0: 0 };
     visited.add(0);
 
-    // Initial Step
-    let currentNodes = JSON.parse(JSON.stringify(nodes));
     let currentEdges = JSON.parse(JSON.stringify(edges));
 
     currentNodes[0].status = 'queued'; // Blue
@@ -1471,7 +1471,7 @@ const defineTreeStructure = () => {
     return { nodes, edges };
 };
 
-export const generateTreeTraversalSteps = () => {
+export const generateTreeTraversalSteps = (type = 'preorder') => {
     const steps = [];
     const { nodes: initialNodes, edges: initialEdges } = defineTreeStructure();
 
@@ -1497,50 +1497,102 @@ export const generateTreeTraversalSteps = () => {
         };
     };
 
-    // Preorder Traversal Simulation
-    const visited = new Set();
-    const stack = [0]; // Start with root
+    const visitedList = [];
+    const visitedSet = new Set();
+    const stack = [];
 
-    steps.push({
-        ...getTreeState(null, visited, stack),
-        count: 0,
-        description: "Initial Tree Structure. Starting Preorder Traversal (Root -> Left -> Right)."
-    });
+    const traverse = (u) => {
+        if (u === undefined || u === null) return;
 
-    while (stack.length > 0) {
-        const curr = stack.pop();
-
-        // Step: Visiting Node
-        steps.push({
-            ...getTreeState(curr, visited, stack),
-            count: visited.size,
-            description: `Visiting Node ${initialNodes[curr].value}`
-        });
-
-        visited.add(curr);
-
-        // Valid children
-        const children = adj[curr] || [];
-        // Push right then left so left is popped first (LIFO)
-        for (let i = children.length - 1; i >= 0; i--) {
-            const child = children[i];
-            if (!visited.has(child)) {
-                stack.push(child);
-            }
+        // PREORDER or generic Tree DFS
+        if (type === 'preorder' || type === 'tree-dfs') {
+            visitedSet.add(u);
+            visitedList.push(initialNodes[u].value);
+            steps.push({
+                ...getTreeState(u, visitedSet, []),
+                description: `${type === 'preorder' ? 'Preorder' : 'DFS'}: Visiting current node ${initialNodes[u].value}.`
+            });
         }
 
+        const children = adj[u] || [];
+        
+        // LEFT
+        if (children[0] !== undefined) {
+            traverse(children[0]);
+        }
+
+        // INORDER
+        if (type === 'inorder') {
+            visitedSet.add(u);
+            visitedList.push(initialNodes[u].value);
+            steps.push({
+                ...getTreeState(u, visitedSet, []),
+                description: `Inorder: Visiting current node ${initialNodes[u].value}.`
+            });
+        }
+
+        // RIGHT
+        if (children[1] !== undefined) {
+            traverse(children[1]);
+        }
+
+        // POSTORDER
+        if (type === 'postorder') {
+            visitedSet.add(u);
+            visitedList.push(initialNodes[u].value);
+            steps.push({
+                ...getTreeState(u, visitedSet, []),
+                description: `Postorder: Visiting current node ${initialNodes[u].value}.`
+            });
+        }
+    };
+
+    if (type === 'level-order' || type === 'tree-bfs') {
+        const queue = [0];
+        const visitedSet = new Set();
+        const levelVisited = [];
+
         steps.push({
-            ...getTreeState(curr, visited, stack),
-            count: visited.size,
-            description: `Processed Node ${initialNodes[curr].value}. Count: ${visited.size}`
+            ...getTreeState(null, new Set(), queue),
+            description: "Starting Level Order Traversal (BFS) using a Queue."
+        });
+
+        while (queue.length > 0) {
+            const u = queue.shift();
+            visitedSet.add(u);
+            levelVisited.push(initialNodes[u].value);
+
+            steps.push({
+                ...getTreeState(u, visitedSet, queue),
+                description: `Popped ${initialNodes[u].value} from queue and visiting it.`
+            });
+
+            const children = adj[u] || [];
+            for (const child of children) {
+                if (child !== undefined && child !== null) {
+                    queue.push(child);
+                    steps.push({
+                        ...getTreeState(u, visitedSet, queue),
+                        description: `Adding child ${initialNodes[child].value} to the queue.`
+                    });
+                }
+            }
+        }
+        steps.push({
+            ...getTreeState(null, visitedSet, []),
+            description: `BFS Complete! Sequence: ${levelVisited.join(' -> ')}`
+        });
+    } else {
+        steps.push({
+            ...getTreeState(null, new Set(), []),
+            description: `Starting ${type.toUpperCase()} Traversal.`
+        });
+        traverse(0);
+        steps.push({
+            ...getTreeState(null, visitedSet, []),
+            description: `Traversal Complete! Sequence: ${visitedList.join(' -> ')}`
         });
     }
-
-    steps.push({
-        ...getTreeState(null, visited, []),
-        count: visited.size,
-        description: "Traversal Complete! All nodes visited."
-    });
 
     return steps;
 };
@@ -3546,6 +3598,321 @@ export const generateFractionalKnapsackSteps = (inputArray, capacity = 50) => {
         maxCapacity: capacity,
         totalValue: curV,
         description: `Knapsack filled! Total Value: ${curV.toFixed(2)}.`
+    });
+
+    return steps;
+};
+
+export const generateJobSequencingSteps = (inputArray) => {
+    const steps = [];
+    const jobs = [
+        { id: 'J1', deadline: 2, profit: 100 },
+        { id: 'J2', deadline: 1, profit: 19 },
+        { id: 'J3', deadline: 2, profit: 27 },
+        { id: 'J4', deadline: 1, profit: 25 },
+        { id: 'J5', deadline: 3, profit: 15 }
+    ].sort((a, b) => b.profit - a.profit);
+
+    const n = jobs.length;
+    let maxDeadline = Math.max(...jobs.map(j => j.deadline));
+    let schedule = new Array(maxDeadline).fill(null);
+    let totalProfit = 0;
+
+    steps.push({
+        type: 'greedy',
+        jobs: [...jobs],
+        schedule: [...schedule],
+        profit: 0,
+        description: "Initial State: Jobs sorted by profit descending."
+    });
+
+    for (let i = 0; i < n; i++) {
+        const job = jobs[i];
+        let placed = false;
+        
+        steps.push({
+            type: 'greedy',
+            activeJob: job.id,
+            jobs: [...jobs],
+            schedule: [...schedule],
+            profit: totalProfit,
+            description: `Considering Job ${job.id} (Profit: ${job.profit}, Deadline: ${job.deadline})`
+        });
+
+        for (let j = Math.min(maxDeadline, job.deadline) - 1; j >= 0; j--) {
+            if (schedule[j] === null) {
+                schedule[j] = job.id;
+                totalProfit += job.profit;
+                placed = true;
+                
+                steps.push({
+                    type: 'greedy',
+                    activeJob: job.id,
+                    jobs: [...jobs],
+                    schedule: [...schedule],
+                    profit: totalProfit,
+                    description: `Placed Job ${job.id} at slot ${j + 1}.`,
+                    status: 'success'
+                });
+                break;
+            }
+        }
+        
+        if (!placed) {
+            steps.push({
+                type: 'greedy',
+                activeJob: job.id,
+                jobs: [...jobs],
+                schedule: [...schedule],
+                profit: totalProfit,
+                description: `Could not place Job ${job.id}. All slots before deadline are full.`
+            });
+        }
+    }
+
+    steps.push({
+        type: 'greedy',
+        schedule: [...schedule],
+        profit: totalProfit,
+        description: `Job Sequencing complete! Total Profit: ${totalProfit}`
+    });
+
+    return steps;
+};
+
+export const generateHuffmanCodingSteps = (inputString) => {
+    const steps = [];
+    const chars = ['a', 'b', 'c', 'd', 'e', 'f'];
+    const freqs = [5, 9, 12, 13, 16, 45];
+    
+    let nodes = chars.map((c, i) => ({ char: c, freq: freqs[i], left: null, right: null }));
+    
+    steps.push({
+        type: 'greedy',
+        huffmanNodes: [...nodes].sort((a, b) => a.freq - b.freq),
+        description: "Initial frequencies of characters."
+    });
+
+    while (nodes.length > 1) {
+        nodes.sort((a, b) => a.freq - b.freq);
+        
+        const left = nodes.shift();
+        const right = nodes.shift();
+        
+        const newNode = {
+            char: null,
+            freq: left.freq + right.freq,
+            left: left,
+            right: right
+        };
+        
+        nodes.push(newNode);
+        
+        steps.push({
+            type: 'greedy',
+            huffmanNodes: [...nodes].sort((a, b) => a.freq - b.freq),
+            description: `Merged two nodes with lowest frequencies: ${left.freq} and ${right.freq} -> ${newNode.freq}`
+        });
+    }
+
+    steps.push({
+        type: 'greedy',
+        huffmanNodes: [...nodes],
+        description: "Huffman Tree construction complete!"
+    });
+
+    return steps;
+};
+
+export const generateRemoveElementSteps = (initialArray, target = 3) => {
+    const steps = [];
+    const array = [...initialArray];
+    const n = array.length;
+    
+    steps.push({
+        type: 'two-pointer',
+        array: [...array],
+        description: `Goal: Remove all occurrences of ${target} in-place.`
+    });
+
+    let k = 0;
+    for (let i = 0; i < n; i++) {
+        steps.push({
+            type: 'two-pointer',
+            array: [...array],
+            pointers: { i, k },
+            description: `Checking array[${i}] = ${array[i]}.`
+        });
+
+        if (array[i] !== target) {
+            array[k] = array[i];
+            steps.push({
+                type: 'two-pointer',
+                array: [...array],
+                pointers: { i, k },
+                swapped: true,
+                description: `${array[i]} is not ${target}. Moving it to index k=${k}.`
+            });
+            k++;
+        } else {
+            steps.push({
+                type: 'two-pointer',
+                array: [...array],
+                pointers: { i, k },
+                description: `${array[i]} is target ${target}. Skipping.`
+            });
+        }
+    }
+
+    steps.push({
+        type: 'two-pointer',
+        array: [...array],
+        k,
+        description: `Finished. First ${k} elements are the result.`
+    });
+
+    return steps;
+};
+
+export const generateSortColorsSteps = (initialArray) => {
+    const steps = [];
+    const array = [...initialArray];
+    const n = array.length;
+    
+    let low = 0, mid = 0, high = n - 1;
+
+    steps.push({
+        type: 'two-pointer',
+        array: [...array],
+        pointers: { low, mid, high },
+        description: "Initial State: Dutch National Flag algorithm."
+    });
+
+    while (mid <= high) {
+        steps.push({
+            type: 'two-pointer',
+            array: [...array],
+            pointers: { low, mid, high },
+            description: `Checking mid element ${array[mid]}.`
+        });
+
+        if (array[mid] === 0) {
+            [array[low], array[mid]] = [array[mid], array[low]];
+            steps.push({
+                type: 'two-pointer',
+                array: [...array],
+                pointers: { low, mid, high },
+                swapped: true,
+                description: `Found 0. Swapping with low (${low}).`
+            });
+            low++;
+            mid++;
+        } else if (array[mid] === 1) {
+            mid++;
+            steps.push({
+                type: 'two-pointer',
+                array: [...array],
+                pointers: { low, mid, high },
+                description: "Found 1. Just move mid forward."
+            });
+        } else {
+            [array[mid], array[high]] = [array[high], array[mid]];
+            steps.push({
+                type: 'two-pointer',
+                array: [...array],
+                pointers: { low, mid, high },
+                swapped: true,
+                description: `Found 2. Swapping with high (${high}).`
+            });
+            high--;
+        }
+    }
+
+    return steps;
+};
+
+export const generateSquaresSortedArraySteps = (initialArray) => {
+    const steps = [];
+    const array = [...initialArray].sort((a,b) => a-b);
+    const n = array.length;
+    let result = new Array(n).fill(0);
+    let left = 0, right = n - 1;
+    let p = n - 1;
+
+    while (left <= right) {
+        const leftSq = array[left] * array[left];
+        const rightSq = array[right] * array[right];
+
+        steps.push({
+            type: 'two-pointer',
+            array: [...array],
+            result: [...result],
+            pointers: { left, right },
+            description: `Comparing absolute values of ${array[left]} and ${array[right]}.`
+        });
+
+        if (leftSq > rightSq) {
+            result[p] = leftSq;
+            left++;
+        } else {
+            result[p] = rightSq;
+            right--;
+        }
+        p--;
+
+        steps.push({
+            type: 'two-pointer',
+            array: [...array],
+            result: [...result],
+            description: `Placed larger square into result array.`
+        });
+    }
+
+    return steps;
+};
+
+export const generateTrappingRainWaterSteps = (height) => {
+    const steps = [];
+    const n = height.length;
+    if (n === 0) return steps;
+
+    let left = 0, right = n - 1;
+    let leftMax = 0, rightMax = 0;
+    let water = 0;
+
+    while (left < right) {
+        steps.push({
+            type: 'two-pointer',
+            heights: [...height],
+            pointers: { left, right },
+            water,
+            leftMax,
+            rightMax,
+            description: `Current pointers at ${left} and ${right}.`
+        });
+
+        if (height[left] < height[right]) {
+            if (height[left] >= leftMax) {
+                leftMax = height[left];
+            } else {
+                water += leftMax - height[left];
+            }
+            left++;
+        } else {
+            if (height[right] >= rightMax) {
+                rightMax = height[right];
+            } else {
+                water += rightMax - height[right];
+            }
+            right--;
+        }
+    }
+
+    steps.push({
+        type: 'two-pointer',
+        heights: [...height],
+        water,
+        description: `Total water trapped: ${water}`
     });
 
     return steps;
@@ -7496,14 +7863,19 @@ export const getAlgorithmGenerator = (id) => {
         // Greedy
         'activity-selection': { type: 'greedy', func: generateActivitySelectionSteps },
         'coin-change-greedy': { type: 'greedy', func: generateCoinChangeGreedySteps },
-        'job-sequencing': { type: 'greedy', func: (arr) => generatePlaceholderSteps(arr, 'Job Sequencing') },
-        'huffman-coding': { type: 'greedy', func: (arr) => generatePlaceholderSteps(arr, 'Huffman Coding') },
+        'job-sequencing': { type: 'greedy', func: (arr) => generateJobSequencingSteps(arr) },
+        'huffman-coding': { type: 'greedy', func: (s) => generateHuffmanCodingSteps(s) },
         'frac-knapsack': { type: 'greedy', func: generateFractionalKnapsackSteps },
 
         // Tree (Fallbacks)
+        'tree-bfs': { type: 'tree', func: () => generateTreeTraversalSteps('level-order') },
+        'tree-dfs': { type: 'tree', func: () => generateTreeTraversalSteps('preorder') },
+        'preorder-traversal': { type: 'tree', func: () => generateTreeTraversalSteps('preorder') },
+        'inorder-traversal': { type: 'tree', func: () => generateTreeTraversalSteps('inorder') },
+        'postorder-traversal': { type: 'tree', func: () => generateTreeTraversalSteps('postorder') },
         'traversals': { type: 'tree', func: generateTreeTraversalSteps },
-        'lca': { type: 'tree', func: generateTreeTraversalSteps }, // Reuse for now to show tree
-        'diameter': { type: 'tree', func: generateTreeTraversalSteps }, // Reuse for now
+        'lca': { type: 'tree', func: generateTreeTraversalSteps }, 
+        'diameter': { type: 'tree', func: generateTreeTraversalSteps }, 
         'height': { type: 'tree', func: generateTreeTraversalSteps },
         'max-depth': { type: 'tree', func: generateTreeTraversalSteps },
         'count-nodes': { type: 'tree', func: generateTreeTraversalSteps },
@@ -7514,7 +7886,7 @@ export const getAlgorithmGenerator = (id) => {
         'serialize-deserialize': { type: 'tree', func: generateTreeTraversalSteps },
         'bst-validation': { type: 'tree', func: generateTreeTraversalSteps },
         'tree-to-dll': { type: 'tree', func: generateTreeTraversalSteps },
-        'balanced-check': { type: 'tree', func: generateTreeTraversalSteps }, // Map other tree algos too
+        'balanced-check': { type: 'tree', func: generateTreeTraversalSteps }, 
         'avl-rotations': { type: 'tree', func: generateAVLRotationSteps },
 
         // Stack/Queue
@@ -7624,13 +7996,10 @@ export const getAlgorithmGenerator = (id) => {
         'bit-masking': { type: 'bit', func: (n) => generateCountSetBitsSteps(n) }, // Fallback for now
         'bitwise-ops': { type: 'bit', func: (a, b) => generateBitwiseSteps(a, b, 'and') },
 
-        // Two Pointer
-        'pair-sum-sorted': { type: 'two-pointer', func: (arr) => generateTwoSumSortedSteps(arr, 15) },
-        'two-sum-sorted': { type: 'two-pointer', func: (arr) => generateTwoSumSortedSteps(arr, 15) },
-        'remove-duplicates-from-sorted-array': { type: 'two-pointer', func: (arr) => generateRemoveDuplicatesSteps(arr) },
-        'container-with-most-water': { type: 'two-pointer', func: (arr) => generateContainerWaterSteps(arr) },
-        'reverse-array-two-pointer': { type: 'two-pointer', func: (arr) => generateReverseArraySteps(arr) },
-        'sum-3sum': { type: 'two-pointer', func: (arr) => generate3SumSteps(arr, 0) },
+        'sort-colors': { type: 'two-pointer', func: (arr) => generateSortColorsSteps(arr) },
+        'remove-element': { type: 'two-pointer', func: (arr, t) => generateRemoveElementSteps(arr, t) },
+        'squares-sorted-array': { type: 'two-pointer', func: (arr) => generateSquaresSortedArraySteps(arr) },
+        'rain-water-two-pointer': { type: 'two-pointer', func: (arr) => generateTrappingRainWaterSteps(arr) },
 
         // Recursion
         'factorial': { type: 'recursion', func: (n) => generateFactorialSteps(n) },
