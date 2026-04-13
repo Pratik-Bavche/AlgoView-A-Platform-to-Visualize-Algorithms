@@ -115,6 +115,17 @@ export const Visualizer = () => {
     const [isSpeechEnabled, setIsSpeechEnabled] = useState(false);
     const [language, setLanguage] = useState('en'); // 'en' or 'hi'
 
+    // --- Pre-fetch voices ---
+    useEffect(() => {
+        const loadVoices = () => {
+            window.speechSynthesis.getVoices();
+        };
+        loadVoices();
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+    }, []);
+
     // Refs
     const intervalRef = useRef(null);
     const containerRef = useRef(null);
@@ -215,23 +226,50 @@ export const Visualizer = () => {
 
         if (textToSpeak) {
             window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            utterance.lang = language === 'hi' ? 'hi-IN' : 'en-US';
-            utterance.rate = 0.9;
+            
+            // Short timeout to allow cancel() to take effect and ensure stability
+            setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                const voices = window.speechSynthesis.getVoices();
+                
+                // --- Intelligent Voice & Lang Selection ---
+                // Detect if text actually contains Devanagari (Hindi) characters
+                const hasHindiCharacters = /[\u0900-\u097F]/.test(textToSpeak);
+                
+                // Even if global language state is Hindi, if this specific step's audio is English only
+                // (which happens for algorithms missing Hindi translations), we MUST use an English voice.
+                // Otherwise, a Hindi voice may ignore Latin characters and "only read numbers".
+                const effectiveLang = (language === 'hi' && hasHindiCharacters) ? 'hi-IN' : 'en-US';
+                utterance.lang = effectiveLang;
 
-            utterance.onend = () => {
-                if (isPlaying && isSpeechEnabled) {
-                    setTimeout(() => {
-                        setCurrentStep(prev => {
-                            if (prev < steps.length - 1) return prev + 1;
-                            setIsPlaying(false);
-                            return prev;
-                        });
-                    }, 800);
+                if (voices.length > 0) {
+                    let voice = null;
+                    if (effectiveLang === 'hi-IN') {
+                        voice = voices.find(v => v.lang.startsWith('hi') || v.name.toLowerCase().includes('hindi')) ||
+                                voices.find(v => v.lang.includes('IN') && (v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('microsoft')));
+                    } else {
+                        voice = voices.find(v => v.lang.startsWith('en') && v.lang.includes('US')) ||
+                                voices.find(v => v.lang.startsWith('en'));
+                    }
+                    if (voice) utterance.voice = voice;
                 }
-            };
 
-            window.speechSynthesis.speak(utterance);
+                utterance.rate = 0.9;
+
+                utterance.onend = () => {
+                    if (isPlaying && isSpeechEnabled) {
+                        setTimeout(() => {
+                            setCurrentStep(prev => {
+                                if (prev < steps.length - 1) return prev + 1;
+                                setIsPlaying(false);
+                                return prev;
+                            });
+                        }, 800);
+                    }
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }, 50);
         }
 
         return () => {

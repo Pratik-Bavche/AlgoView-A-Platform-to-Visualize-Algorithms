@@ -5227,7 +5227,10 @@ export const generatePrimeCheckSteps = (n) => {
         steps.push({
             type: 'math',
             primaryValues: [{ value: num, status: 'error' }],
-            description: `${num} is not a prime number (Primes must be > 1).`
+            description: {
+                en: `${num} is not a prime number (Primes must be > 1).`,
+                hi: `${num} अभाज्य संख्या (Prime number) नहीं है (अभाज्य संख्याएँ 1 से बड़ी होनी चाहिए)।`
+            }
         });
         return steps;
     }
@@ -5235,7 +5238,10 @@ export const generatePrimeCheckSteps = (n) => {
     steps.push({
         type: 'math',
         primaryValues: [{ value: num, status: 'active' }],
-        description: `Checking if ${num} is prime. We'll test divisors up to sqrt(${num}) ≈ ${Math.floor(Math.sqrt(num))}.`
+        description: {
+            en: `Checking if ${num} is prime. We'll test divisors up to sqrt(${num}) ≈ ${Math.floor(Math.sqrt(num))}.`,
+            hi: `जांच रहे हैं कि क्या ${num} अभाज्य (Prime) है। हम sqrt(${num}) ≈ ${Math.floor(Math.sqrt(num))} तक के विभाजकों का परीक्षण करेंगे।`
+        }
     });
 
     let isPrime = true;
@@ -5244,7 +5250,10 @@ export const generatePrimeCheckSteps = (n) => {
             type: 'math',
             primaryValues: [{ value: num, status: 'active' }],
             calculations: [`${num} % ${i} = ${num % i}`],
-            description: `Testing divisor ${i}.`
+            description: {
+                en: `Testing divisor ${i}.`,
+                hi: `विभाजक ${i} का परीक्षण कर रहे हैं।`
+            }
         });
 
         if (num % i === 0) {
@@ -5254,7 +5263,10 @@ export const generatePrimeCheckSteps = (n) => {
                 type: 'math',
                 primaryValues: [{ value: num, status: 'error' }],
                 factors: factors,
-                description: `Found factor ${i}! ${num} is divisible by ${i}, so it's NOT prime.`
+                description: {
+                    en: `Found factor ${i}! ${num} is divisible by ${i}, so it's NOT prime.`,
+                    hi: `एक गुणनखंड ${i} मिल गया! ${num}, ${i} से विभाज्य है, इसलिए यह अभाज्य (Prime) नहीं है।`
+                }
             });
             break;
         }
@@ -5265,7 +5277,10 @@ export const generatePrimeCheckSteps = (n) => {
             type: 'math',
             primaryValues: [{ value: num, status: 'success' }],
             result: "Prime",
-            description: `No divisors found up to sqrt(${num}). ${num} is a prime number!`
+            description: {
+                en: `No divisors found up to sqrt(${num}). ${num} is a prime number!`,
+                hi: `sqrt(${num}) तक कोई विभाजक नहीं मिला। ${num} एक अभाज्य संख्या (Prime number) है!`
+            }
         });
     }
 
@@ -5285,7 +5300,10 @@ export const generateSieveSteps = (limit) => {
     steps.push({
         type: 'math',
         grid: { numbers, crossed: [], primes: [], active: null },
-        description: `Starting Sieve of Eratosthenes up to ${n}. We'll mark multiples of each prime starting from 2.`
+        description: {
+            en: `Starting Sieve of Eratosthenes up to ${n}. We'll mark multiples of each prime starting from 2.`,
+            hi: `Sieve of Eratosthenes शुरू कर रहे हैं (${n} तक)। हम 2 से शुरू करके प्रत्येक अभाज्य संख्या के गुणजों को चिह्नित करेंगे।`
+        }
     });
 
     const isPrime = Array(n + 1).fill(true);
@@ -6726,7 +6744,10 @@ export const generateFactorialSteps = (n) => {
         steps.push({
             type: 'recursion',
             stack: JSON.parse(JSON.stringify(stack)),
-            description: `Calling factorial(${current}).`
+            description: {
+                en: `Calling factorial(${current}).`,
+                hi: `factorial(${current}) को कॉल कर रहे हैं।`
+            }
         });
 
         if (current <= 1) {
@@ -6735,7 +6756,10 @@ export const generateFactorialSteps = (n) => {
             steps.push({
                 type: 'recursion',
                 stack: JSON.parse(JSON.stringify(stack)),
-                description: `Base case reached: factorial(1) returns 1.`
+                description: {
+                    en: `Base case reached: factorial(1) returns 1.`,
+                    hi: `बेस केस (Base case) मिल गया: factorial(1) का मान 1 है।`
+                }
             });
             stack.pop();
             return 1;
@@ -6749,7 +6773,10 @@ export const generateFactorialSteps = (n) => {
         steps.push({
             type: 'recursion',
             stack: [...JSON.parse(JSON.stringify(stack)), frame],
-            description: `factorial(${current}) returns ${current} * ${result / current} = ${result}.`
+            description: {
+                en: `factorial(${current}) returns ${current} * ${result / current} = ${result}.`,
+                hi: `factorial(${current}) का मान ${current} * ${result / current} = ${result} प्राप्त हुआ।`
+            }
         });
 
         stack.pop();
@@ -6775,7 +6802,10 @@ export const generateFibonacciRecursiveSteps = (n) => {
         steps.push({
             type: 'recursion',
             stack: JSON.parse(JSON.stringify(stack)),
-            description: `Calling fib(${current}).`
+            description: {
+                en: `Calling fib(${current}).`,
+                hi: `fib(${current}) को कॉल कर रहे हैं।`
+            }
         });
 
         if (current <= 1) {
@@ -6784,7 +6814,10 @@ export const generateFibonacciRecursiveSteps = (n) => {
             steps.push({
                 type: 'recursion',
                 stack: JSON.parse(JSON.stringify(stack)),
-                description: `Base case: fib(${current}) returns ${current}.`
+                description: {
+                    en: `Base case: fib(${current}) returns ${current}.`,
+                    hi: `बेस केस (Base case): fib(${current}) का मान ${current} प्राप्त हुआ।`
+                }
             });
             stack.pop();
             return current;
@@ -6799,7 +6832,10 @@ export const generateFibonacciRecursiveSteps = (n) => {
         steps.push({
             type: 'recursion',
             stack: [...JSON.parse(JSON.stringify(stack)), frame],
-            description: `fib(${current}) = fib(${current - 1}) + fib(${current - 2}) = ${res1} + ${res2} = ${result}.`
+            description: {
+                en: `fib(${current}) = fib(${current - 1}) + fib(${current - 2}) = ${res1} + ${res2} = ${result}.`,
+                hi: `fib(${current}) का मान ${res1} + ${res2} = ${result} प्राप्त हुआ।`
+            }
         });
         stack.pop();
         return result;
@@ -6827,7 +6863,10 @@ export const generateHanoiSteps = (n) => {
             type_special: 'hanoi',
             stack: JSON.parse(JSON.stringify(stack)),
             rods: JSON.parse(JSON.stringify(rods)),
-            description: `Call: Solve Hanoi for ${n} disks from ${String.fromCharCode(65 + from)} to ${String.fromCharCode(65 + to)}.`
+            description: {
+                en: `Call: Solve Hanoi for ${n} disks from ${String.fromCharCode(65 + from)} to ${String.fromCharCode(65 + to)}.`,
+                hi: `कॉल: ${n} डिस्क को ${String.fromCharCode(65 + from)} से ${String.fromCharCode(65 + to)} पर ले जाने के लिए हनोई (Hanoi) हल कर रहे हैं।`
+            }
         });
 
         if (n === 1) {
@@ -6840,7 +6879,10 @@ export const generateHanoiSteps = (n) => {
                 stack: JSON.parse(JSON.stringify(stack)),
                 rods: JSON.parse(JSON.stringify(rods)),
                 moveDescription: `Move disk ${disk} from ${String.fromCharCode(65 + from)} to ${String.fromCharCode(65 + to)}`,
-                description: `Base case: Move single disk ${disk}.`
+                description: {
+                    en: `Base case: Move single disk ${disk}.`,
+                    hi: `बेस केस: अकेली डिस्क ${disk} को शिफ्ट कर रहे हैं।`
+                }
             });
             stack.pop();
             return;
@@ -6856,7 +6898,10 @@ export const generateHanoiSteps = (n) => {
             stack: JSON.parse(JSON.stringify(stack)),
             rods: JSON.parse(JSON.stringify(rods)),
             moveDescription: `Move disk ${disk} from ${String.fromCharCode(65 + from)} to ${String.fromCharCode(65 + to)}`,
-            description: `Finished moving ${n - 1} disks to aux. Now moving disk ${disk} to destination.`
+            description: {
+                en: `Finished moving ${n - 1} disks to aux. Now moving disk ${disk} to destination.`,
+                hi: `${n - 1} डिस्क को सहायक (aux) रॉड पर ले जाने के बाद, अब डिस्क ${disk} को लक्ष्य पर ले जा रहे हैं।`
+            }
         });
 
         moveDisks(n - 1, aux, to, from);
