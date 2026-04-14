@@ -207,22 +207,72 @@ export const Visualizer = () => {
         }
     }, [id, algorithmName]);
 
+    const [translationState, setTranslationState] = useState({ step: -1, text: "" });
+
+    // Helper for async translation
+    const fetchHindiTranslation = async (text) => {
+        if (!text || text.length < 2) return text;
+        const cacheKey = 'hi_trans_' + encodeURIComponent(text.substring(0, 80));
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) return cached;
+        try {
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=hi&dt=t&q=${encodeURIComponent(text)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            const translated = data[0].map(x => x[0]).join('');
+            localStorage.setItem(cacheKey, translated);
+            return translated;
+        } catch (e) {
+            return text;
+        }
+    };
+
+    // Calculate the raw fallback textual description synchronously
+    const activeStep = steps[currentStep];
+    const rawFallbackText = typeof activeStep?.description === 'object' 
+        ? activeStep.description['en'] 
+        : activeStep?.description || "";
+
+    // Sync or Translate the description when the step or language changes
+    useEffect(() => {
+        let isMounted = true;
+        const step = steps[currentStep];
+        if (!step) return;
+
+        let text = "";
+        if (typeof step.description === 'object') {
+            text = step.description[language] || step.description['en'];
+        } else {
+            text = step.description;
+        }
+
+        if (language === 'hi') {
+            // Check if it natively exists as an explicit Hindi string in the object
+            if (typeof step.description === 'object' && step.description['hi']) {
+                setTranslationState({ step: currentStep, text: step.description['hi'] });
+            } else {
+                fetchHindiTranslation(text).then(res => {
+                    if (isMounted) setTranslationState({ step: currentStep, text: res });
+                });
+            }
+        } else {
+            setTranslationState({ step: currentStep, text: text });
+        }
+
+        return () => { isMounted = false; };
+    }, [currentStep, language, steps]);
+
     // --- Voice Logic ---
     useEffect(() => {
-        // Stop speech if disabled OR if not playing (only if we want it to stop on pause)
-        if (!isSpeechEnabled || !isPlaying || !steps[currentStep]) {
-            window.speechSynthesis.cancel();
+        // Stop speech if disabled OR if not playing OR if waiting for translation sync for current step
+        if (!isSpeechEnabled || !isPlaying || !steps[currentStep] || translationState.step !== currentStep || !translationState.text) {
+            if (!isPlaying || !isSpeechEnabled || translationState.step !== currentStep) {
+                window.speechSynthesis.cancel();
+            }
             return;
         }
 
-        const step = steps[currentStep];
-        let textToSpeak = "";
-
-        if (typeof step.description === 'object') {
-            textToSpeak = step.description[language] || step.description['en'];
-        } else {
-            textToSpeak = step.description;
-        }
+        const textToSpeak = translationState.text;
 
         if (textToSpeak) {
             window.speechSynthesis.cancel();
@@ -232,14 +282,9 @@ export const Visualizer = () => {
                 const utterance = new SpeechSynthesisUtterance(textToSpeak);
                 const voices = window.speechSynthesis.getVoices();
                 
-                // --- Intelligent Voice & Lang Selection ---
-                // Detect if text actually contains Devanagari (Hindi) characters
-                const hasHindiCharacters = /[\u0900-\u097F]/.test(textToSpeak);
-                
-                // Even if global language state is Hindi, if this specific step's audio is English only
-                // (which happens for algorithms missing Hindi translations), we MUST use an English voice.
-                // Otherwise, a Hindi voice may ignore Latin characters and "only read numbers".
-                const effectiveLang = (language === 'hi' && hasHindiCharacters) ? 'hi-IN' : 'en-US';
+                // Force the voice to match the selected language, 
+                // even if the algorithm doesn't have translated text and fell back to English.
+                const effectiveLang = language === 'hi' ? 'hi-IN' : 'en-US';
                 utterance.lang = effectiveLang;
 
                 if (voices.length > 0) {
@@ -275,7 +320,7 @@ export const Visualizer = () => {
         return () => {
             window.speechSynthesis.cancel();
         };
-    }, [currentStep, isSpeechEnabled, language, steps, isPlaying]);
+    }, [currentStep, isSpeechEnabled, language, steps, isPlaying, translationState]);
 
     // Handle Input Change / Reset
     const handleReset = (newInput = null) => {
@@ -418,9 +463,9 @@ export const Visualizer = () => {
     };
 
     // Helper to get current description based on language
-    const currentDescription = typeof stepData.description === 'object'
-        ? (stepData.description[language] || stepData.description['en'])
-        : stepData.description;
+    const currentDescription = translationState.step === currentStep 
+        ? translationState.text 
+        : rawFallbackText;
 
     // Determine which visualizer to use
     const renderVisualizer = () => {

@@ -101,7 +101,7 @@ export const HeapVisualizer = ({ stepData }) => {
 
             const x = (levelIdx - (numNodesInLevel - 1) / 2) * (initialHorizontalSpacing / Math.pow(2, level));
             const y = level * verticalSpacing;
-            coords.push({ x: x + 400, y: y + 40 }); // Offset for container centering
+            coords.push({ x: x + 400, y: y + 80 }); // Offset for container centering
         }
         return coords;
     }, [heap.length]);
